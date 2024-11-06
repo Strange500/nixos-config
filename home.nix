@@ -37,13 +37,11 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
-	pkgs.git
-    pkgs.swww
-    pkgs.kitty
+
+#    pkgs.rofi-wayland
 	#pkgs.jetbrains.idea-ultimate
-    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
-    pkgs.vscode
-	pkgs.nix-prefetch-git
+
+
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello

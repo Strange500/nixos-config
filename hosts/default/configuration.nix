@@ -147,6 +147,7 @@
         extraGroups = [ "networkmanager" "wheel" "audio" ];
         packages = with pkgs; [
             #(callPackage "/etc/nixos/custom/sddmTheme.nix" {})
+            pkgs.rofi-wayland
         ];
     };
 
@@ -167,13 +168,17 @@
            mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
            })
      )
-     pkgs.rofi-wayland
+
      pkgs.dunst
      pkgs.libnotify
-
-
+     pkgs.git
+     pkgs.swww
+     pkgs.kitty
+     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
      pkgs.networkmanagerapplet
      pkgs.blueman
+     pkgs.vscode
+     pkgs.nix-prefetch-git
 
      pkgs.home-manager
      pkgs.libsForQt5.qt5.qtgraphicaleffects
