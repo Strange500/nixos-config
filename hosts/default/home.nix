@@ -3,6 +3,24 @@
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
+
+  imports = [
+    ../../modules/monitors.nix
+  ];
+
+
+  monitors = [
+   {
+        name = "DP-1";
+        width = 2560;
+   }
+   {
+           name = "HDMI-A-2";
+           width = 1920;
+   }
+  ];
+
+
   home.username = "strange";
   home.homeDirectory = "/home/strange";
 
