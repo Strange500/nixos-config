@@ -89,6 +89,7 @@
     programs.hyprland = { # using Hyprland as WM
         enable = true;
         xwayland.enable = true;
+        systemd.setPath.enable = true;
         package = inputs.hyprland.packages."${pkgs.system}".hyprland;
     };
     environment.sessionVariables = {
@@ -166,17 +167,19 @@
            mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
            })
      )
+     pkgs.rofi-wayland
      pkgs.dunst
      pkgs.libnotify
-     pkgs.swww
-     pkgs.kitty
-     pkgs.rofi-wayland
+
+
      pkgs.networkmanagerapplet
      pkgs.blueman
-     pkgs.vscode
+
      pkgs.home-manager
      pkgs.libsForQt5.qt5.qtgraphicaleffects
      pkgs.nerdfonts
+
+
     #     pkgs.qt6.full
     ];
 

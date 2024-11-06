@@ -38,7 +38,11 @@
   # environment.
   home.packages = [
 	pkgs.git
-	pkgs.jetbrains.idea-ultimate
+    pkgs.swww
+    pkgs.kitty
+	#pkgs.jetbrains.idea-ultimate
+    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
+    pkgs.vscode
 	pkgs.nix-prefetch-git
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
