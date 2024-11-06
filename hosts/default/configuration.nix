@@ -87,8 +87,13 @@
   # Enable the GNOME Desktop Environment.
   services.displayManager.sddm = {
     enable = true;
+#    wayland.enable = true;
     theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
     autoNumlock = true;
+    package = pkgs.kdePackages.sddm;
+    extraPackages = [
+      pkgs.kdePackages.qt5compat
+    ];
   };
  # services.xserver.displayManager.gdm.enable = true;
  # services.xserver.desktopManager.gnome.enable = true;
@@ -180,7 +185,9 @@
      pkgs.blueman
      pkgs.vscode
      pkgs.home-manager
-#     sddmThemeDialog
+     pkgs.libsForQt5.qt5.qtgraphicaleffects
+     pkgs.nerdfonts
+#     pkgs.qt6.full
 ];
 
   xdg.portal.enable = true;

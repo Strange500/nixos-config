@@ -28,6 +28,7 @@
   home.packages = [
 	pkgs.git
 	pkgs.jetbrains.idea-ultimate
+	pkgs.nix-prefetch-git
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
