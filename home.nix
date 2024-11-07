@@ -6,7 +6,7 @@
 
   imports = [
     ./modules/monitors.nix
-    ./hyprland.nix
+    ./modules/hyprland/hyprland.nix
   ];
 
 

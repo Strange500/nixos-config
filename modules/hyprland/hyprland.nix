@@ -22,7 +22,10 @@
       "$fileManager" = "dolphin";
       "$menu" = "wofi --show drun";
 
-      exec-once = "nm-applet & blueman-manager & waybar";
+      exec-once = [
+        "nm-applet & blueman-tray & waybar"
+        "hyprctl setcursor Bibata-Modern-Ice 24"
+      ];
 
       env = [
         "XCURSOR_SIZE,24"
@@ -30,22 +33,13 @@
         ];
 
       general = {
-        gaps_in = 5;
-        gaps_out = 20;
-
-        border_size = 2;
-
-        # https://wiki.hyprland.org/Configuring/Variables/#variable-types for info about colors
-        "col.active_border "= "rgba(33ccffee) rgba(00ff99ee) 45deg";
-        "col.inactive_border" = "rgba(595959aa)";
-
-        # Set to true enable resizing windows by clicking and dragging on borders and gaps
-        resize_on_border = false;
-
-        # Please see https://wiki.hyprland.org/Configuring/Tearing/ before you turn this on
-        allow_tearing = false;
-
+        gaps_in = 10;
+        gaps_out = 14;
+        border_size = 3;
+        "col.active_border" = "$color11";
+        "col.inactive_border" = "rgba(ffffffff)";
         layout = "dwindle";
+        resize_on_border = true;
 
       };
 
@@ -55,37 +49,45 @@
 
           # Change transparency of focused and unfocused windows
           active_opacity = 1.0;
-          inactive_opacity = 1.0;
+          inactive_opacity = 0.8;
+          fullscreen_opacity = 1.0;
 
-#          drop_shadow = true;
-#          shadow_range = 4;
-#          shadow_render_power = 3;
-#          "col.shadow" = "rgba(1a1a1aee)";
+          #drop_shadow = true;
+          #shadow_range = 30;
+          #shadow_render_power = 3;
+          #"col.shadow" = "0x66000000";
 
           # https://wiki.hyprland.org/Configuring/Variables/#blur
           blur =  {
-              enabled = true;
-              size = 3;
-              passes = 1;
-
-              vibrancy = 0.1696;
+            enabled = true;
+            size = 6;
+            passes = 2;
+            new_optimizations = "on";
+            ignore_opacity = true;
+            xray = true;
+            # blurls = waybar
           };
       };
 
       animations = {
           enabled = true;
+          bezier = [
+              "wind, 0.05, 0.9, 0.1, 1.05"
+              "winIn, 0.1, 1.1, 0.1, 1.1"
+              "winOut, 0.3, -0.3, 0, 1"
+              "liner, 1, 1, 1, 1"
+          ];
 
-          # Default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
-
-          bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
 
           animation = [
-           "windows, 1, 7, myBezier"
-           "windowsOut, 1, 7, default, popin 80%"
-           "border, 1, 10, default"
-           "borderangle, 1, 8, default"
-           "fade, 1, 7, default"
-           "workspaces, 1, 6, default"
+             "windows, 1, 6, wind, slide"
+             "windowsIn, 1, 6, winIn, slide"
+             "windowsOut, 1, 5, winOut, slide"
+             "windowsMove, 1, 5, wind, slide"
+             "border, 1, 1, liner"
+             "borderangle, 1, 30, liner, loop"
+             "fade, 1, 10, default"
+             "workspaces, 1, 5, wind"
            ];
 
       };
@@ -111,6 +113,8 @@
         kb_options = "";
         kb_rules = "";
 
+        numlock_by_default = true;
+
         follow_mouse = 1;
 
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
@@ -127,6 +131,12 @@
       device = {
           name = "epic-mouse-v1";
           sensitivity = -0.5;
+      };
+
+      binds = {
+        workspace_back_and_forth = true;
+        allow_workspace_cycles = true;
+        pass_mouse_when_bound = false;
       };
 
       "$mainMod" = "SUPER";
@@ -193,7 +203,22 @@
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      windowrulev2 = "suppressevent maximize, class:.*"; # You'll probably like this.
+      windowrule = [
+          "tile,^(Microsoft-edge)$"
+          "tile,^(Brave-browser)$"
+          "tile,^(Chromium)$"
+          "float,^(pavucontrol)$"
+          "float,^(blueman-manager)$"
+          "float,^(nm-connection-editor)$"
+          "float,^(qalculate-gtk)$"
+      ];
+
+      # Browser Picture in Picture
+      windowrulev2 = [
+          "float, title:^(Picture-in-Picture)$"
+          "pin, title:^(Picture-in-Picture)$"
+          "move 69.5% 4%, title:^(Picture-in-Picture)$"
+      ];
 
     };
   };
