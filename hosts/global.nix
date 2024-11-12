@@ -48,10 +48,39 @@
               graphics.enable = true;
               nvidia.modesetting.enable = true;
           };
+      environment.sessionVariables = {
+                #WLR_NO_HARDWARE_CURSORS = "1"; # uncomment if cursor is invisble
+                NIXOS_OZONE_WL = "1";
+            };
 
       services.xserver.xkb = {
           layout = "fr";
           variant = "";
+      };
+
+      programs.hyprland = { # using Hyprland as WM
+            enable = true;
+            xwayland.enable = true;
+            systemd.setPath.enable = true;
+            package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+            portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+        };
+
+      programs.zsh = {
+        enable = true;
+        enableCompletion = true;
+        syntaxHighlighting.enable = true;
+
+        shellAliases = {
+          ll = "ls -l"; #
+          update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
+        };
+        oh-my-zsh = {
+            enable = true;
+            plugins = [ "git" "thefuck" ];
+            theme = "robbyrussell";
+          };
+
       };
 
       system.stateVersion = "24.05"; # Did you read the comment?

@@ -1,8 +1,6 @@
 { inputs, pkgs, config, ... }:
 
 {
-
-
       hardware.bluetooth.enable = true; # enables support for Bluetooth
       hardware.bluetooth.powerOnBoot = true;
 
@@ -12,7 +10,4 @@
               Enable = "Source,Sink,Media,Socket";
             };
           };
-
-
-
 }

@@ -2,18 +2,9 @@
 
 {
 
-  programs.hyprland = { # using Hyprland as WM
-      enable = true;
-      xwayland.enable = true;
-      systemd.setPath.enable = true;
-      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-      portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-  };
 
-   environment.sessionVariables = {
-          #WLR_NO_HARDWARE_CURSORS = "1"; # uncomment if cursor is invisble
-          NIXOS_OZONE_WL = "1";
-      };
+
+
 
 
   wayland.windowManager.hyprland = {
