@@ -20,7 +20,20 @@
     };
   };
 
+  programs.starship = {
+      enable = true;
+      # Configuration written to ~/.config/starship.toml
+      settings = {
+        # add_newline = false;
 
+        # character = {
+        #   success_symbol = "[➜](bold green)";
+        #   error_symbol = "[➜](bold red)";
+        # };
+
+        # package.disabled = true;
+      };
+    };
 
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
