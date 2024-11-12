@@ -7,14 +7,11 @@
   imports = [
     ./modules/monitors.nix
     ./modules/hyprland/hyprland.nix
+    ./modules/waybar/waybar.nix
   ];
-
-
 
   home.username = "strange";
   home.homeDirectory = "/home/strange";
-
-
 
   nixpkgs = {
     config = {
