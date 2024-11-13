@@ -10,7 +10,7 @@
     };
 
     stylix.url = "github:danth/stylix";
-    #stylix.url = "/home/strange/IdeaProjects/stylix";
+    swww.url = "github:LGFae/swww";
 
     hyprland.url = "github:hyprwm/Hyprland";
   };

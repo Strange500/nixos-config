@@ -8,6 +8,8 @@
     ./modules/monitors.nix
     ./modules/hyprland/hyprland.nix
     ./modules/waybar/waybar.nix
+    ./modules/oh-my-zsh/oh-my-zsh.nix
+    ./modules/kitty/kitty.nix
   ];
 
   home.username = "strange";

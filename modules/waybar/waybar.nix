@@ -27,10 +27,11 @@ with lib;
            spacing = 0;
 
            "modules-left" = [
-             "custom/appmenu"
-             "group/links"
-             "group/settings"
-             "group/quicklinks"
+            #"custom/appmenu"
+             "custom/appmenuicon"
+             #"group/links"
+             #"group/settings"
+             #"group/quicklinks"
              "hyprland/window"
              "custom/empty"
            ];
@@ -38,13 +39,13 @@ with lib;
              "hyprland/workspaces"
            ];
            "modules-right" = [
-             "custom/updates"
+             #"custom/updates"
              "pulseaudio"
              "bluetooth"
              "battery"
-             "network"
+             #"network"
              "group/hardware"
-             "group/tools"
+             #"group/tools"
              "tray"
              "custom/exit"
              "clock"
@@ -98,18 +99,18 @@ with lib;
             format = "";
           };
           "custom/tools" = {
-            format = "\uf5fd";
+            format = "";
             "tooltip-format" = "Tools";
           };
           "custom/cliphist" = {
-            format = "\uf0ea";
+            format = "";
             "on-click" = "sleep 0.1 && ~/.config/ml4w/scripts/cliphist.sh";
             "on-click-right" = "sleep 0.1 && ~/.config/ml4w/scripts/cliphist.sh d";
             "on-click-middle" = "sleep 0.1 && ~/.config/ml4w/scripts/cliphist.sh w";
             "tooltip-format" = "Clipboard Manager";
           };
           "custom/updates" = {
-            format = "\uf0ab  {}";
+            format = "  {}";
             escape = true;
             "return-type" = "json";
             #exec = "~/.config/ml4w/scripts/updates.sh";
@@ -118,23 +119,23 @@ with lib;
             #"on-click-right" = "~/.config/ml4w/settings/software.sh";
           };
           "custom/wallpaper" = {
-            format = "\uf03e";
+            format = "";
             "on-click" = "waypaper";
             #"on-click-right" = "~/.config/hypr/scripts/wallpaper-effects.sh";
             "tooltip-format" = "Left: Select a wallpaper\nRight: Select wallpaper effect";
           };
           "custom/waybarthemes" = {
-            format = "\uf141";
+            format = "";
             #"on-click" = "~/.config/waybar/themeswitcher.sh";
             "tooltip-format" = "Select a waybar theme";
           };
           "custom/settings" = {
-            format = "\uf013";
+            format = "";
             #"on-click" = "com.ml4w.dotfilessettings";
             "tooltip-format" = "ML4W Dotfiles Settings";
           };
           "custom/keybindings" = {
-            format = "\uf11c";
+            format = "";
             #"on-click" = "~/.config/hypr/scripts/keybindings.sh";
             tooltip = false;
           };
@@ -144,12 +145,12 @@ with lib;
             "tooltip-format" = "AI Support";
           };
           "custom/calculator" = {
-            format = "\uf1ec";
+            format = "";
             "on-click" = "qalculate-gtk";
             "tooltip-format" = "Open calculator";
           };
           "custom/windowsvm" = {
-            format = "\uf17a";
+            format = "";
             #"on-click" = "~/.config/ml4w/scripts/launchvm.sh";
             tooltip = false;
           };
@@ -157,27 +158,27 @@ with lib;
             format = "Apps";
             "on-click" = "sleep 0.2;pkill rofi || rofi -show drun -replace";
             #"on-click-right" = "~/.config/hypr/scripts/keybindings.sh";
-            "tooltip-format" = "Left: Open the application launcher\nRight: Show all keybindings";
+            "tooltip-format" = "Left: Open the application launcher";
           };
           "custom/appmenuicon" = {
-            format = "\uf303";
+            format = "";
             "on-click" = "sleep 0.2;rofi -show drun -replace";
             #"on-click-right" = "~/.config/hypr/scripts/keybindings.sh";
-            "tooltip-format" = "Left: Open the application launcher\nRight: Show all keybindings";
+            "tooltip-format" = "Left: Open the application launcher";
           };
           "custom/exit" = {
-            format = "\uf011";
+            format = "";
             "on-click" = "wlogout";
             "tooltip-format" = "Power Menu";
           };
           "custom/hyprshade" = {
-            format = "\ue4dc";
+            format = "";
             "tooltip-format" = "Toggle Screen Shader";
             #"on-click" = "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh";
             #"on-click-right" = "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi";
           };
           "custom/hypridle" = {
-            format = "\uf023";
+            format = "";
             "return-type" = "json";
             escape = true;
             "exec-on-event" = true;
@@ -191,8 +192,8 @@ with lib;
             capslock = true;
             format = "{name} {icon}";
             "format-icons" = {
-              locked = "\uf023";
-              unlocked = "\uf09c";
+              locked = "";
+              unlocked = "";
             };
           };
           tray = {
@@ -205,7 +206,7 @@ with lib;
             tooltip = false;
           };
           "custom/system" = {
-            format = "\ue473";
+            format = "";
             tooltip = false;
           };
           cpu = {
@@ -223,7 +224,7 @@ with lib;
             #"on-click" = "~/.config/ml4w/settings/system-monitor.sh";
           };
           "hyprland/language" = {
-            format = "/ K {short}";
+            format = "/  {short}";
           };
           "group/hardware" = {
             orientation = "inherit";
@@ -277,14 +278,14 @@ with lib;
           network = {
             format = "{ifname}";
             "format-wifi" = "   {signalStrength}%";
-            "format-ethernet" = "\uf796  {ifname}";
+            "format-ethernet" = "  {ifname}";
             "format-disconnected" = "Disconnected";
-            "tooltip-format" = "\uf796 {ifname} via {gwaddri}";
-            "tooltip-format-wifi" = "\uf1eb  {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\nUp: {bandwidthUpBits} Down: {bandwidthDownBits}";
-            "tooltip-format-ethernet" = "\uf796 {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}";
+            "tooltip-format" = " {ifname} via {gwaddri}";
+            "tooltip-format-wifi" = "  {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\nUp: {bandwidthUpBits} Down: {bandwidthDownBits}";
+            "tooltip-format-ethernet" = " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}";
             "tooltip-format-disconnected" = "Disconnected";
             "max-length" = 50;
-            #"on-click" = "~/.config/ml4w/settings/networkmanager.sh";
+            "on-click" = "~/.config/ml4w/settings/networkmanager.sh";
             #"on-click-right" = "~/.config/ml4w/scripts/nm-applet.sh toggle";
           };
           battery = {
@@ -293,41 +294,31 @@ with lib;
               critical = 15;
             };
             format = "{icon} {capacity}%";
-            "format-charging" = "\uf5e7  {capacity}%";
-            "format-plugged" = "\uf1e6  {capacity}%";
+            "format-charging" = "  {capacity}%";
+            "format-plugged" = "  {capacity}%";
             "format-alt" = "{icon}  {time}";
-            "format-icons" = [
-              "\uf244 "
-              "\uf243 "
-              "\uf242 "
-              "\uf241 "
-              "\uf240 "
-            ];
+            "format-icons" =  [" " " " " " " " " "];
           };
           pulseaudio = {
             format = "{icon}  {volume}%";
-            "format-bluetooth" = "{volume}% {icon}\uf294 {format_source}";
-            "format-bluetooth-muted" = "\uf6a9 {icon}\uf294 {format_source}";
-            "format-muted" = "\uf6a9 {format_source}";
-            "format-source" = "{volume}% \uf130";
-            "format-source-muted" = "\uf131";
+            "format-bluetooth" = "{volume}% {icon} {format_source}";
+            "format-bluetooth-muted" = " {icon} {format_source}";
+            "format-muted" = " {format_source}";
+            "format-source" = "{volume}% ";
+            "format-source-muted" = "";
             "format-icons" = {
-              headphone = "\uf025 ";
-              "hands-free" = "\uf590 ";
-              headset = "\uf590 ";
-              phone = "\uf095 ";
-              portable = "\uf095 ";
-              car = "\uf1b9 ";
-              default = [
-                "\uf026"
-                "\uf028"
-                "\uf028"
-              ];
+              headphone = " ";
+              "hands-free" = " ";
+              headset = " ";
+              phone = " ";
+              portable = " ";
+              car = " ";
+              default = ["" "" ""];
             };
             "on-click" = "pavucontrol";
           };
           bluetooth = {
-            format = "\uf293 {status}";
+            format = " {status}";
             "format-disabled" = "";
             "format-off" = "";
             interval = 30;
@@ -342,22 +333,22 @@ with lib;
           backlight = {
             format = "{icon} {percent}%";
             "format-icons" = [
-              "\ue38d"
-              "\ue3d4"
-              "\ue3d3"
-              "\ue3d2"
-              "\ue3d1"
-              "\ue3d0"
-              "\ue3cf"
-              "\ue3ce"
-              "\ue3cd"
-              "\ue3cc"
-              "\ue3cb"
-              "\ue3ca"
-              "\ue3c9"
-              "\ue3c8"
-              "\ue39b"
-            ];
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+               ""
+             ];
             "scroll-step" = 1;
           };
         }
@@ -383,9 +374,8 @@ with lib;
         /* -----------------------------------------------------
          * General
          * ----------------------------------------------------- */
-
         * {
-            font-family: "Fira Sans Semibold", "Font Awesome 6 Free", Material Design Icons, FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+            font-family: "FiraCode", "Font Awesome 6 Free", serif;
             border: none;
             border-radius: 0px;
         }
@@ -590,7 +580,7 @@ with lib;
 
         #custom-ml4w-welcome {
             margin-right: 12px;
-            background-image: url("../assets/ml4w-icon.svg");
+            background-image: url("./assets/ml4w-icon.svg");
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -600,7 +590,7 @@ with lib;
 
         #custom-chatgpt {
             margin-right: 12px;
-            background-image: url("../assets/openai.svg");
+            background-image: url("./assets/openai.svg");
             background-repeat: no-repeat;
             background-position: center;
             background-size: contain;

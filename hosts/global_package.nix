@@ -10,7 +10,7 @@
           rofi-wayland
           alacritty
           (jetbrains.plugins.addPlugins jetbrains.idea-ultimate ["github-copilot"])
-          (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono"]; })
+
           python3
     ];
 
@@ -36,7 +36,8 @@
          pkgs.nix-prefetch-git
          pkgs.home-manager
          pkgs.libsForQt5.qt5.qtgraphicaleffects
-         pkgs.nerdfonts
+         pkgs.pavucontrol
+         inputs.swww.packages.${pkgs.system}.swww
         ];
 
 }

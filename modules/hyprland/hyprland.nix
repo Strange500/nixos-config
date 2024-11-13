@@ -28,7 +28,8 @@
       "$menu" = "wofi --show drun";
 
       exec-once = [
-        "nm-applet & blueman-tray & waybar"
+        "blueman-tray"
+        "nm-applet & waybar"
         "hyprctl setcursor Bibata-Modern-Ice 24"
       ];
 
@@ -215,6 +216,11 @@
       bindm = [
         "$mainMod, mouse:272, movewindow"
         "$mainMod, mouse:273, resizewindow"
+      ];
+
+      binde = [
+        ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"
+        ", XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"
       ];
 
       windowrule = [

@@ -10,7 +10,11 @@
         ../modules/bluetooth/bluetooth.nix
         ../modules/polkit/polkit.nix
         ../modules/stylix/stylix.nix
+        #../modules/oh-my-zsh/oh-my-zsh.nix
+        #../modules/kitty/kitty.nix
       ];
+
+     # users.defaultUserShell = pkgs.zsh;
 
       services.xserver.enable = true;
       qt.enable = true;
@@ -19,6 +23,7 @@
       xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
       users.users.strange = {
+          shell = pkgs.zsh;
           isNormalUser = true;
           description = "strange";
           extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" ];
@@ -59,6 +64,15 @@
           variant = "";
       };
 
+      fonts.packages = with pkgs; [
+
+        #powerline-fonts
+        #powerline-symbols
+        (nerdfonts.override { fonts = [ "FiraCode" ]; })
+        font-awesome
+      ];
+
+
       programs.hyprland = { # using Hyprland as WM
             enable = true;
             xwayland.enable = true;
@@ -67,22 +81,8 @@
             portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
         };
 
-      programs.zsh = {
-        enable = true;
-        enableCompletion = true;
-        syntaxHighlighting.enable = true;
+      programs.zsh.enable = true;
 
-        shellAliases = {
-          ll = "ls -l"; #
-          update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
-        };
-        oh-my-zsh = {
-            enable = true;
-            plugins = [ "git" "thefuck" ];
-            theme = "robbyrussell";
-          };
-
-      };
 
       system.stateVersion = "24.05"; # Did you read the comment?
 
