@@ -57,12 +57,13 @@
           inactive_opacity = 0.8;
           fullscreen_opacity = 1.0;
 
-          shadow = {
-            enabled = true;
+          # for v0.45.0
+          #shadow = {
+          #  enabled = true;
           #  color = "0x66000000";
-            range = 30;
-            render_power = 3;
-          };
+          #  range = 30;
+          #  render_power = 3;
+          #};
 
 
           #drop_shadow = true;
