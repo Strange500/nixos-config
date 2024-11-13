@@ -36,6 +36,8 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
+    boot.kernelParams = [ "acpi_enforce_resources=lax" ];
+
     networking.hostName = "Clovis"; # Define your hostname.
 
     home-manager = {

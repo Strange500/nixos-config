@@ -31,6 +31,7 @@
         "blueman-tray"
         "nm-applet & waybar"
         "hyprctl setcursor Bibata-Modern-Ice 24"
+        "openrgb --startminimized -p default"
       ];
 
       env = [

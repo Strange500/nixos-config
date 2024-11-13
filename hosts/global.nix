@@ -30,7 +30,12 @@
       };
 
 
+    services.hardware.openrgb = {
+      enable = true;
+      package = pkgs.openrgb-with-all-plugins;
+      motherboard = "amd";
 
+    };
       nix.settings.experimental-features = [ "nix-command" "flakes" ];
       time.timeZone = "Europe/Paris";
       i18n.defaultLocale = "fr_FR.UTF-8";
