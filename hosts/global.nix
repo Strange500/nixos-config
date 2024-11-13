@@ -9,6 +9,7 @@
         ../modules/login/sddm/sddm.nix
         ../modules/bluetooth/bluetooth.nix
         ../modules/polkit/polkit.nix
+        ../modules/stylix/stylix.nix
       ];
 
       services.xserver.enable = true;

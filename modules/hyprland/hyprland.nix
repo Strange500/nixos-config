@@ -41,8 +41,8 @@
         gaps_in = 10;
         gaps_out = 14;
         border_size = 3;
-        "col.active_border" = "$color11";
-        "col.inactive_border" = "rgba(ffffffff)";
+        #"col.active_border" = "$color11";
+        #"col.inactive_border" = "rgba(ffffffff)";
         layout = "dwindle";
         resize_on_border = true;
 
@@ -56,6 +56,14 @@
           active_opacity = 1.0;
           inactive_opacity = 0.8;
           fullscreen_opacity = 1.0;
+
+          shadow = {
+            enabled = true;
+          #  color = "0x66000000";
+            range = 30;
+            render_power = 3;
+          };
+
 
           #drop_shadow = true;
           #shadow_range = 30;
