@@ -632,6 +632,16 @@ with lib;
             opacity:0.8;
             border:3px solid @bordercolor;
         }
+        #custom-appmenuicon {
+            background-color: @backgrounddark;
+            font-size: 24px;
+            color: @textcolor1;
+            border-radius: 15px;
+            padding: 0px 10px 0px 10px;
+            margin: 8px 16px 8px 0px;
+            opacity:0.8;
+        }
+
 
         /* -----------------------------------------------------
          * Custom Exit
