@@ -180,38 +180,40 @@
           "$mainMod, down, movefocus, d"
 
           # Switch workspaces with mainMod + [0-9]
-          "$mainMod, 1, workspace, 1"
-          "$mainMod, 2, workspace, 2"
-          "$mainMod, 3, workspace, 3"
-          "$mainMod, 4, workspace, 4"
-          "$mainMod, 5, workspace, 5"
-          "$mainMod, 6, workspace, 6"
-          "$mainMod, 7, workspace, 7"
-          "$mainMod, 8, workspace, 8"
-          "$mainMod, 9, workspace, 9"
-          "$mainMod, 0, workspace, 10"
+          "SUPER, ampersand, workspace, 1"
+          "SUPER, eacute, workspace, 2"
+          "SUPER, quotedbl, workspace, 3"
+          "SUPER, apostrophe, workspace, 4"
+          "SUPER, parenleft, workspace, 5"
+          "SUPER, egrave, workspace, 6"
+          "SUPER, minus, workspace, 7"
+          "SUPER, underscore, workspace, 8"
+          "SUPER, ccedilla, workspace, 9"
+          "SUPER, agrave, workspace, 10"
 
           # Move active window to a workspace with mainMod + SHIFT + [0-9]
-          "$mainMod SHIFT, 1, movetoworkspace, 1"
-          "$mainMod SHIFT, 2, movetoworkspace, 2"
-          "$mainMod SHIFT, 3, movetoworkspace, 3"
-          "$mainMod SHIFT, 4, movetoworkspace, 4"
-          "$mainMod SHIFT, 5, movetoworkspace, 5"
-          "$mainMod SHIFT, 6, movetoworkspace, 6"
-          "$mainMod SHIFT, 7, movetoworkspace, 7"
-          "$mainMod SHIFT, 8, movetoworkspace, 8"
-          "$mainMod SHIFT, 9, movetoworkspace, 9"
-          "$mainMod SHIFT, 0, movetoworkspace, 10"
+          "SUPER_SHIFT, ampersand, movetoworkspace, 1"
+          "SUPER_SHIFT, eacute, movetoworkspace, 2"
+          "SUPER_SHIFT, quotedbl, movetoworkspace, 3"
+          "SUPER_SHIFT, apostrophe, movetoworkspace, 4"
+          "SUPER_SHIFT, parenleft, movetoworkspace, 5"
+          "SUPER_SHIFT, egrave, movetoworkspace, 6"
+          "SUPER_SHIFT, minus, movetoworkspace, 7"
+          "SUPER_SHIFT, underscore, movetoworkspace, 8"
+          "SUPER_SHIFT, ccedilla, movetoworkspace, 9"
+          "SUPER_SHIFT, agrave, movetoworkspace, 10"
 
           # Example special workspace (scratchpad)
           "$mainMod, S, togglespecialworkspace, magic"
           "$mainMod SHIFT, S, movetoworkspace, special:magic"
 
           # Scroll through existing workspaces with mainMod + scroll
-          "$mainMod, mouse_down, workspace, e+1"
-          "$mainMod, mouse_up, workspace, e-1"
+          "$mainMod, mouse_down, exec, hyprctl dispatch workspace r-1"
+          "$mainMod, mouse_up, exec, hyprctl dispatch workspace r+1"
 
           "$mainMod Control_L, RETURN , exec, rofi -show drun -show-icons"
+
+          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
 
       bindm = [
