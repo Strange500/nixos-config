@@ -84,11 +84,6 @@
         recursive = true;
    };
 
-   ".scripts" = {
-           source = ./home/.scripts;
-           recursive = true;
-      };
-
    "wallpaper" = {
               source = ./home/wallpapers;
               recursive = true;
