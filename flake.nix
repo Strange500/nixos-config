@@ -11,6 +11,7 @@
 
     stylix.url = "github:danth/stylix";
     hyprland.url = "github:hyprwm/Hyprland";
+    sops-nix.url = "github:Mic92/sops-nix";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {

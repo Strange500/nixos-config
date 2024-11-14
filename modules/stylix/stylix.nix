@@ -4,6 +4,7 @@
 
       stylix.enable = true;
       stylix.polarity = "dark";
-      stylix.image = ./wallpaper/apple-dark.jpg;
+      stylix.opacity.desktop = 0.5;
+      stylix.image = ./wallpaper/dark.jpg;
 }
 
