@@ -1,1 +1,9 @@
 /hosts/*/result/
+/.idea/modules.xml
+/.idea/nixos.iml
+/hosts/Clovis/result/
+/result/
+/.idea/vcs.xml
+
+*result*
+/*/*/result/
