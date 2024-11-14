@@ -32,6 +32,7 @@
         "nm-applet & waybar"
         "hyprctl setcursor Bibata-Modern-Ice 24"
         "openrgb --startminimized -p default"
+        #"sleep 5 ; ${config.home.homeDirectory}/.scripts/swwwRollWallpaper.sh ${config.home.homeDirectory}/wallpapers 300 "
       ];
 
       env = [

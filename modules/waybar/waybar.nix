@@ -29,6 +29,7 @@ with lib;
            "modules-left" = [
             #"custom/appmenu"
              "custom/appmenuicon"
+             "custom/wallpaper"
              #"group/links"
              #"group/settings"
              #"group/quicklinks"
@@ -121,8 +122,7 @@ with lib;
           "custom/wallpaper" = {
             format = "";
             "on-click" = "waypaper";
-            #"on-click-right" = "~/.config/hypr/scripts/wallpaper-effects.sh";
-            "tooltip-format" = "Left: Select a wallpaper\nRight: Select wallpaper effect";
+            "tooltip-format" = "Change Wallpaper";
           };
           "custom/waybarthemes" = {
             format = "";

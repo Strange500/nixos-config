@@ -10,8 +10,6 @@
     };
 
     stylix.url = "github:danth/stylix";
-    swww.url = "github:LGFae/swww";
-
     hyprland.url = "github:hyprwm/Hyprland";
   };
 

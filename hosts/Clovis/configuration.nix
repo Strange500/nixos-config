@@ -18,7 +18,7 @@
         primary = true;
         x = 0;
         y = 0;
-        refreshRate = 60;
+        refreshRate = 144;
         enabled = true;
        }
        {
@@ -32,6 +32,7 @@
         enabled = true;
        }
       ];
+
 
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;

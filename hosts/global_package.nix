@@ -37,7 +37,6 @@
          pkgs.home-manager
          pkgs.libsForQt5.qt5.qtgraphicaleffects
          pkgs.pavucontrol
-         inputs.swww.packages.${pkgs.system}.swww
          pkgs.openrgb-with-all-plugins
         ];
 
