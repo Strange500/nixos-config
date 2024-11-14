@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, sops-nix, inputs, pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -10,10 +10,30 @@
     ./modules/waybar/waybar.nix
     ./modules/oh-my-zsh/oh-my-zsh.nix
     ./modules/kitty/kitty.nix
+    inputs.sops-nix.homeManagerModule
   ];
 
   home.username = "strange";
   home.homeDirectory = "/home/strange";
+
+  sops = {
+      age.keyFile = "/home/strange/.config/sops/age/keys.txt";
+      defaultSopsFile = ./secrets/secrets.yaml;
+
+      defaultSymlinkPath = "/run/user/1000/secrets";
+      defaultSecretsMountPoint = "/run/user/1000/secrets.d";
+
+      secrets."git/ssh/private" = {
+            path = "${config.sops.defaultSymlinkPath}/git/ssh/private";
+          };
+
+      secrets."wireguard/conf" = {
+                path = "${config.sops.defaultSymlinkPath}/wireguard/conf";
+                #path = "./wireguard/conf";
+              };
+    };
+
+
 
   nixpkgs = {
     config = {
@@ -88,6 +108,15 @@
               source = ./home/wallpapers;
               recursive = true;
          };
+
+   ".wg0.conf" = {
+    source = (config.lib.file.mkOutOfStoreSymlink config.sops.secrets."wireguard/conf".path);
+   };
+
+   ".ssh/config".text = "Host *
+    User strange
+    IdentityFile '${config.sops.secrets."git/ssh/private".path}'
+    ";
 
 
 
