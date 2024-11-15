@@ -7,11 +7,14 @@
       ../../modules/monitors.nix
       ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
+      inputs.sops-nix.nixosModules.sops
     ];
+
+
 
     monitors = [
        {
-        name = "HDMI-1";
+        name = "DP-1";
         width = 1920;
         height = 1080;
         workspace = "1";
@@ -26,14 +29,10 @@
     boot.loader.systemd-boot.enable = true;
     boot.loader.efi.canTouchEfiVariables = true;
 
-    networking.hostName = "NixLille"; # Define your hostname.
+    boot.kernelParams = [ "acpi_enforce_resources=lax" ];
 
-    home-manager = {
-        # also pass inputs to home-manager modules
-        extraSpecialArgs = {inherit inputs;};
-        users = {
-          "strange" = import ./home.nix;
-        };
-    };
+    networking.hostName = "Clovis"; # Define your hostname.
+
+
 }
 

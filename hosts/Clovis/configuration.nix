@@ -10,19 +10,7 @@
       inputs.sops-nix.nixosModules.sops
     ];
 
-    sops.defaultSopsFile = ../../secrets/secrets.yaml;
-    sops.defaultSopsFormat = "yaml";
 
-    ## put age key here
-    sops.age.keyFile = "/home/strange/.config/sops/age/keys.txt";
-
-    sops.secrets."git/ssh/private" = {
-      owner = "strange";
-    };
-
-    sops.secrets."wireguard/conf" = {
-          owner = "strange";
-        };
 
     monitors = [
        {
@@ -56,12 +44,6 @@
 
     networking.hostName = "Clovis"; # Define your hostname.
 
-    home-manager = {
-        # also pass inputs to home-manager modules
-        extraSpecialArgs = {inherit inputs pkgs;};
-        users = {
-          "strange" = import ./home.nix;
-        };
-    };
+
 }
 

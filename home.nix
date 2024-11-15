@@ -71,6 +71,9 @@
   home.packages = [
     pkgs.waypaper
     pkgs.hyprpaper
+    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
+    pkgs.grim
+    pkgs.slurp
 
 #    pkgs.rofi-wayland
 	#pkgs.jetbrains.idea-ultimate
@@ -109,9 +112,7 @@
               recursive = true;
          };
 
-   ".wg0.conf" = {
-    source = (config.lib.file.mkOutOfStoreSymlink config.sops.secrets."wireguard/conf".path);
-   };
+
 
    ".ssh/config".text = "Host *
     User strange

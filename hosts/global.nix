@@ -41,6 +41,20 @@
           extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" ];
       };
 
+      sops.defaultSopsFile = ../../secrets/secrets.yaml;
+          sops.defaultSopsFormat = "yaml";
+
+      ## put age key here
+      sops.age.keyFile = "/home/strange/.config/sops/age/keys.txt";
+
+      sops.secrets."git/ssh/private" = {
+        owner = "strange";
+      };
+
+      sops.secrets."wireguard/conf" = {
+            owner = "strange";
+      };
+
 
     services.hardware.openrgb = {
       enable = true;
@@ -100,6 +114,13 @@
 
       programs.zsh.enable = true;
 
+    home-manager = {
+            # also pass inputs to home-manager modules
+            extraSpecialArgs = {inherit inputs pkgs;};
+            users = {
+              "strange" = import ./home.nix;
+            };
+        };
 
       system.stateVersion = "24.05"; # Did you read the comment?
 

@@ -214,6 +214,8 @@
 
           "$mainMod Control_L, RETURN , exec, rofi -show drun -show-icons"
 
+          "$mainMod Control_L, S, exec, grim -g \"$(slurp)\" $HOME/Images/$(date +'%s_grim.png')"
+
           ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
 
