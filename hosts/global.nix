@@ -22,6 +22,11 @@
       xdg.portal.enable = true;
       xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
+      virtualisation.libvirtd.enable = true;
+      programs.virt-manager.enable = true;
+
+
+
       networking.firewall = {
           extraCommands = ''
                ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
@@ -38,22 +43,10 @@
           shell = pkgs.zsh;
           isNormalUser = true;
           description = "strange";
-          extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" ];
+          extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" "libvirtd" "kvm"];
       };
 
-      sops.defaultSopsFile = ../../secrets/secrets.yaml;
-          sops.defaultSopsFormat = "yaml";
 
-      ## put age key here
-      sops.age.keyFile = "/home/strange/.config/sops/age/keys.txt";
-
-      sops.secrets."git/ssh/private" = {
-        owner = "strange";
-      };
-
-      sops.secrets."wireguard/conf" = {
-            owner = "strange";
-      };
 
 
     services.hardware.openrgb = {
@@ -118,7 +111,7 @@
             # also pass inputs to home-manager modules
             extraSpecialArgs = {inherit inputs pkgs;};
             users = {
-              "strange" = import ./home.nix;
+              "strange" = import ../home.nix;
             };
         };
 

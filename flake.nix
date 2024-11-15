@@ -24,5 +24,15 @@
         inputs.stylix.nixosModules.stylix
       ];
     };
+
+    nixosConfigurations.Septimius = nixpkgs.lib.nixosSystem {
+          specialArgs = {inherit inputs;};
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/Septimius/configuration.nix
+            inputs.home-manager.nixosModules.default
+            inputs.stylix.nixosModules.stylix
+          ];
+        };
   };
 }

@@ -118,12 +118,6 @@
     User strange
     IdentityFile '${config.sops.secrets."git/ssh/private".path}'
     ";
-
-
-
-
-
-
   };
 
   # Home Manager can also manage your environment variables through

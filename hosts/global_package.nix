@@ -17,6 +17,9 @@
 
 
     environment.systemPackages = [
+         pkgs.qemu
+         pkgs.qemu_kvm
+         pkgs.quickemu
          pkgs.rofi-wayland
          pkgs.vim
          pkgs.emacs
