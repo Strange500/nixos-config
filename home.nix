@@ -69,6 +69,7 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = [
+    pkgs.lunarvim
     pkgs.waypaper
     pkgs.hyprpaper
     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
