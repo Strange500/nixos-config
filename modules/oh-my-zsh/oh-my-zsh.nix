@@ -145,8 +145,8 @@
       y = "yazi";
       cat = "bat";
       lg = "lazygit";
-      #nano = "vim";
-      #vim = "neovide";
+      nano = "lvim";
+      vim = "lvim";
       ls = "eza";
       update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
 
