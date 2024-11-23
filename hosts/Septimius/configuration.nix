@@ -5,7 +5,7 @@
     [ # Include the results of the hardware scan.
       ../global.nix
       ../../modules/monitors.nix
-      #./hardware-configuration.nix
+      ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
       inputs.sops-nix.nixosModules.sops
     ];
