@@ -139,7 +139,7 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    sessionVariables = {EDITOR = "vim";};
+    sessionVariables = {EDITOR = "lvim";};
 
     shellAliases = {
       y = "yazi";
