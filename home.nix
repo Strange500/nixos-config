@@ -75,7 +75,8 @@
     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
     pkgs.grim
     pkgs.slurp
-
+    pkgs.brave
+    pkgs.devbox
 #    pkgs.rofi-wayland
 	#pkgs.jetbrains.idea-ultimate
 

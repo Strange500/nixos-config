@@ -19,6 +19,8 @@
       services.xserver.enable = true;
       qt.enable = true;
 
+      virtualisation.docker.enable = true;
+
       xdg.portal.enable = true;
       xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
@@ -74,6 +76,14 @@
       console.keyMap = "fr";
       services.printing.enable = true;
 
+      xdg.mime.defaultApplications = {
+        "application/pdf" = "firefox.desktop";
+          "image/png" = [
+            "firefox.desktop"
+            "firefox.desktop"
+          ];
+         "inode/directory" = "thunar.desktop";
+      };
       hardware = {
               graphics.enable = true;
               nvidia.modesetting.enable = true;
