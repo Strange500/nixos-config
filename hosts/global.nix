@@ -87,6 +87,7 @@
       hardware = {
               graphics.enable = true;
               nvidia.modesetting.enable = true;
+              ledger.enable = true;
           };
       environment.sessionVariables = {
                 #WLR_NO_HARDWARE_CURSORS = "1"; # uncomment if cursor is invisble

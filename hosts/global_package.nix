@@ -62,6 +62,9 @@
          pkgs.gtk3
          pkgs.nodePackages."@tailwindcss/language-server"
          pkgs.vscode        
-        ];
+        
+        # CRYPTO
+         pkgs.ledger-live-desktop
+  ];
 
 }
