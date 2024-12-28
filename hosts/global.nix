@@ -16,6 +16,8 @@
 
      # users.defaultUserShell = pkgs.zsh;
 
+     
+
       services.xserver.enable = true;
       qt.enable = true;
 

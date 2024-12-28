@@ -57,6 +57,32 @@
       };
     };
 
+  programs.vscode = {
+    enable = true;
+    enableExtensionUpdateCheck = true;
+    enableUpdateCheck = true;
+    extensions = with pkgs.vscode-extensions; [
+            bbenoist.nix
+            zainchen.json
+            github.copilot
+            github.copilot-chat
+            ms-vscode.live-server
+            oderwat.indent-rainbow
+            esbenp.prettier-vscode
+            dbaeumer.vscode-eslint
+            codezombiech.gitignore
+            yoavbls.pretty-ts-errors
+            vscjava.vscode-java-pack
+            mechatroner.rainbow-csv
+            bradlc.vscode-tailwindcss
+            ms-azuretools.vscode-docker
+            matthewpi.caddyfile-support
+            jeff-hykin.better-nix-syntax
+            dracula-theme.theme-dracula
+            ms-vscode.cpptools-extension-pack
+        ];
+  };
+
   # This value determines the Home Manager release that your configuration is
   # compatible with. This helps avoid breakage when a new Home Manager release
   # introduces backwards incompatible changes.
