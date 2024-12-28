@@ -28,6 +28,11 @@
 
       virtualisation.libvirtd.enable = true;
       programs.virt-manager.enable = true;
+      virtualisation.virtualbox.host.enable = true;
+      virtualisation.virtualbox.host.enableExtensionPack = true;
+      virtualisation.virtualbox.guest.enable = true;
+
+      users.extraGroups.vboxusers.members = [ "strange" ];
 
 
 
@@ -79,10 +84,10 @@
       services.printing.enable = true;
 
       xdg.mime.defaultApplications = {
-        "application/pdf" = "firefox.desktop";
+        "application/pdf" = "brave.desktop";
           "image/png" = [
-            "firefox.desktop"
-            "firefox.desktop"
+            "brave.desktop"
+            "brave.desktop"
           ];
          "inode/directory" = "thunar.desktop";
       };

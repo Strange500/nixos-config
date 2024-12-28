@@ -80,7 +80,21 @@
             jeff-hykin.better-nix-syntax
             dracula-theme.theme-dracula
             ms-vscode.cpptools-extension-pack
+            ms-vscode-remote.remote-ssh
         ];
+    userSettings = {
+      "files.autoSave"= "afterDelay";
+    };
+  };
+
+  programs.chromium = {
+    enable = true;
+    package = pkgs.brave;
+    extensions = [
+      { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # Ublock Origin
+      { id = "nngceckbapebfimnlniiiahkandclblb"; } # BITWARDEN
+      { id = "nkbihfbeogaeaoehlefnkodbefgpgknn"; } # METAMASK
+    ];
   };
 
   # This value determines the Home Manager release that your configuration is
@@ -101,7 +115,6 @@
     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
     pkgs.grim
     pkgs.slurp
-    pkgs.brave
     pkgs.devbox
 #    pkgs.rofi-wayland
 	#pkgs.jetbrains.idea-ultimate

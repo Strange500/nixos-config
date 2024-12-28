@@ -4,7 +4,6 @@
     nixpkgs.config.allowUnfree = true;
 
 
-    programs.firefox.enable = true;
 
     programs.thunar.enable = true;
     programs.xfconf.enable = true;
