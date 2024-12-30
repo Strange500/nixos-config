@@ -16,10 +16,7 @@
     ];
     
     users.users.strange.packages = with pkgs; [
-          rofi-wayland
-          alacritty
-          (jetbrains.plugins.addPlugins jetbrains.idea-ultimate ["github-copilot"])
-          python3
+          rofi-wayland          
     ];
 
     programs.dconf.enable = true;

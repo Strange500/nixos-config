@@ -37,6 +37,8 @@
 
 
       networking.firewall = {
+
+        # Allow WireGuard
           extraCommands = ''
                ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
                ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN
@@ -83,14 +85,6 @@
       console.keyMap = "fr";
       services.printing.enable = true;
 
-      xdg.mime.defaultApplications = {
-        "application/pdf" = "brave.desktop";
-          "image/png" = [
-            "brave.desktop"
-            "brave.desktop"
-          ];
-         "inode/directory" = "thunar.desktop";
-      };
       hardware = {
               graphics.enable = true;
               nvidia.modesetting.enable = true;

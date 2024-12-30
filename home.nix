@@ -84,6 +84,7 @@
         ];
     userSettings = {
       "files.autoSave"= "afterDelay";
+      "remote.SSH.configFile" = "/home/strange/ssh-config";
     };
   };
 
@@ -97,49 +98,46 @@
     ];
   };
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "23.11"; # Please read the comment before changing.
 
-  # The home.packages option allows you to install Nix packages into your
-  # environment.
+  home.stateVersion = "23.11";
+
   home.packages = [
+    # EDITOR
     pkgs.lunarvim
+    # Wallpaper
     pkgs.waypaper
     pkgs.hyprpaper
-    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
+
+    # Utility for screenshots
     pkgs.grim
     pkgs.slurp
+
+    # DEV
+    # jetbrain with github copilot
+    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
+    (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
+
+
+    # devbox for dependencies
     pkgs.devbox
-#    pkgs.rofi-wayland
-	#pkgs.jetbrains.idea-ultimate
 
+    # Video
+    pkgs.mpv
 
-    # # Adds the 'hello' command to your environment. It prints a friendly
-    # # "Hello, world!" when run.
-    # pkgs.hello
+    # Text editor
+    pkgs.libreoffice
 
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
+    # Video editor
+    pkgs.kdePackages.kdenlive
 
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
+    # Image Veiwer
+    pkgs.qview
+
+    # Archive manager
+    pkgs.peazip
+
   ];
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
   home.file = {
 
 
@@ -161,24 +159,57 @@
     ";
   };
 
-  # Home Manager can also manage your environment variables through
-  # 'home.sessionVariables'. These will be explicitly sourced when using a
-  # shell provided by Home Manager. If you don't want to manage your shell
-  # through Home Manager then you have to manually source 'hm-session-vars.sh'
-  # located at either
-  #
-  #  ~/.nix-profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  ~/.local/state/nix/profiles/profile/etc/profile.d/hm-session-vars.sh
-  #
-  # or
-  #
-  #  /etc/profiles/per-user/strange/etc/profile.d/hm-session-vars.sh
-  #
+  xdg.mimeApps.defaultApplications = {
+  # Navigateurs
+  "text/html" = "brave.desktop";
+  "application/xhtml+xml" = "brave.desktop";
+  
+  # Documents
+  "application/pdf" = "brave.desktop";
+  "application/msword" = "libreoffice-writer.desktop";
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = "libreoffice-writer.desktop"; # DOCX
+  "application/vnd.oasis.opendocument.text" = "libreoffice-writer.desktop"; # ODT
+  
+  # Images
+  "image/png" = "qview.desktop"; # Un gestionnaire d'images
+  "image/jpeg" = "qview.desktop";
+  "image/gif" = "qview.desktop";
+  "image/webp" = "qview.desktop"; 
+  "image/bmp" = "qview.desktop";
+
+  # Vidéos
+  "video/mp4" = "mpv.desktop"; # Par exemple, MPV pour le lecteur vidéo
+  "video/x-matroska" = "mpv.desktop";
+  "video/x-msvideo" = "mpv.desktop";
+  
+  # Audio
+  "audio/mpeg" = "mpv.desktop"; # Utilisation de mpv pour l'audio aussi
+  "audio/flac" = "mpv.desktop";
+  "audio/x-wav" = "mpv.desktop";
+  "audio/ogg" = "mpv.desktop";
+
+  # Archives
+  "application/zip" = "peazip.desktop"; # Archive manager
+  "application/x-rar" = "peazip.desktop"; # RAR
+  "application/x-tar" = "peazip.desktop"; # TAR
+
+  # Types de fichiers texte
+  "text/plain" = "lvim.desktop"; # Éditeurs de texte
+  "text/markdown" = "lvim.desktop";
+  
+  # Répertoires
+  "inode/directory" = "thunar.desktop";
+
+  # Autres types de fichiers
+  "application/octet-stream" = "lvim.desktop"; # Fichiers génériques
+};
+
   home.sessionVariables = {
-    EDITOR = "vim";
+    EDITOR = "lvim";
+    VISUAL = "lvim";
+    BROWSER = "brave";
+    TERMINAL = "kitty";
+    FILE_MANAGER = "thunar";
   };
 
   # Let Home Manager install and manage itself.
