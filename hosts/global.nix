@@ -32,6 +32,10 @@
       virtualisation.virtualbox.host.enableExtensionPack = true;
       virtualisation.virtualbox.guest.enable = true;
 
+      # Enable the OpenCL support for AMD GPUs (needed for davinci-resolve)
+      hardware.amdgpu.opencl.enable = true;
+
+
       users.extraGroups.vboxusers.members = [ "strange" ];
 
 

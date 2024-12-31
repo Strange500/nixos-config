@@ -128,7 +128,8 @@
     pkgs.libreoffice
 
     # Video editor
-    pkgs.kdePackages.kdenlive
+    # pkgs.kdePackages.kdenlive
+    pkgs.davinci-resolve
 
     # Image Veiwer
     pkgs.qview
