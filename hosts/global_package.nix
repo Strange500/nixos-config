@@ -15,9 +15,6 @@
       thunar-volman
     ];
     
-    users.users.strange.packages = with pkgs; [
-          rofi-wayland          
-    ];
 
     programs.dconf.enable = true;
 
@@ -34,7 +31,6 @@
          pkgs.qemu
          pkgs.qemu_kvm
          pkgs.quickemu
-         pkgs.rofi-wayland
          pkgs.vim
          pkgs.emacs
          pkgs.wget

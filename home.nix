@@ -88,6 +88,11 @@
     };
   };
 
+  programs.rofi = {
+    enable = true;
+    theme = lib.mkForce("/home/strange/.local/share/rofi/themes/theme.rasi") ;
+  };
+
   programs.chromium = {
     enable = true;
     package = pkgs.brave;
@@ -144,6 +149,11 @@
 
    ".config" = {
         source = ./home/.config;
+        recursive = true;
+   };
+
+   ".local" = {
+        source = ./home/.local;
         recursive = true;
    };
 

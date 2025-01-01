@@ -156,13 +156,13 @@ with lib;
           };
           "custom/appmenu" = {
             format = "Apps";
-            "on-click" = "sleep 0.2;pkill rofi || rofi -show drun -replace";
+            "on-click" = "sleep 0.2;pkill rofi || rofi -show drun -show-icons -replace";
             #"on-click-right" = "~/.config/hypr/scripts/keybindings.sh";
             "tooltip-format" = "Left: Open the application launcher";
           };
           "custom/appmenuicon" = {
             format = "";
-            "on-click" = "sleep 0.2;rofi -show drun -replace";
+            "on-click" = "sleep 0.2;rofi -show drun -show-icons -replace";
             #"on-click-right" = "~/.config/hypr/scripts/keybindings.sh";
             "tooltip-format" = "Left: Open the application launcher";
           };
