@@ -156,15 +156,17 @@
           recursive = true;
     };
 
-    "wallpaper" = {
+    "wallpaper/current" = {
                 source = ./home/wallpapers;
                 recursive = true;
           };
 
-    ".ssh/config".text = "Host *
-      User strange
-      IdentityFile '${config.sops.secrets."git/ssh/private".path}'
-      ";
+
+
+   ".ssh/config".text = "Host *
+    User strange
+    IdentityFile '${config.sops.secrets."git/ssh/private".path}'
+    ";
   };
 
   xdg.mimeApps.defaultApplications = {
@@ -220,34 +222,34 @@
     FILE_MANAGER = "thunar";
   };
 
-  stylix = {
-    cursor = {
-      package = pkgs.vanilla-dmz;
-      name = "Vanilla-DMZ";
-      size = 32;
-    };
-    fonts = {
-      serif = {
-        package = pkgs.jetbrains-mono;
-        name = "JetBrainsMono-Regular";
-      };
+  # stylix = {
+  #   cursor = {
+  #     package = pkgs.vanilla-dmz;
+  #     name = "Vanilla-DMZ";
+  #     size = 32;
+  #   };
+  #   fonts = {
+  #     serif = {
+  #       package = pkgs.jetbrains-mono;
+  #       name = "JetBrainsMono-Regular";
+  #     };
 
-      sansSerif = {
-        package = pkgs.dejavu_fonts;
-        name = "JetBrainsMono-Regular";
-      };
+  #     sansSerif = {
+  #       package = pkgs.dejavu_fonts;
+  #       name = "JetBrainsMono-Regular";
+  #     };
 
-      monospace = {
-        package = pkgs.dejavu_fonts;
-        name = "JetBrainsMono-Regular";
-      };
+  #     monospace = {
+  #       package = pkgs.dejavu_fonts;
+  #       name = "JetBrainsMono-Regular";
+  #     };
 
-      emoji = {
-        package = pkgs.noto-fonts-emoji;
-        name = "Noto Color Emoji";
-      };
-    };
-  };
+  #     emoji = {
+  #       package = pkgs.noto-fonts-emoji;
+  #       name = "Noto Color Emoji";
+  #     };
+  #   };
+  # };
 
   systemd.user.services.wallapaper-cycle = {
     Unit = {
