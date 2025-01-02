@@ -375,7 +375,7 @@ with lib;
          * General
          * ----------------------------------------------------- */
         * {
-            font-family: "FiraCodet", "Font Awesome 6 Free", serif;
+            font-family: "JetBrainsMono", serif;
             border: none;
             border-radius: 0px;
         }

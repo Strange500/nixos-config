@@ -108,7 +108,7 @@
 
         #powerline-fonts
         #powerline-symbols
-        (nerdfonts.override { fonts = [ "FiraCode" ]; })
+        (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
         font-awesome
       ];
 
