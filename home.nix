@@ -111,7 +111,7 @@
     pkgs.lunarvim
     # Wallpaper
     pkgs.waypaper
-    pkgs.hyprpaper
+    pkgs.swww
 
     # Utility for screenshots
     pkgs.grim
@@ -161,6 +161,7 @@
               source = ./home/wallpapers;
               recursive = true;
          };
+
 
 
 
@@ -221,6 +222,57 @@
     BROWSER = "brave";
     TERMINAL = "kitty";
     FILE_MANAGER = "thunar";
+  };
+
+
+  systemd.user.services.wallapaper-cycle = {
+    Unit = {
+      Description = "Cycle wallpaper using swww";
+      After = [ "hyprland-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "hyprland-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.writeShellScript "wallpaper-cycle.sh" ''
+                # This script automatically changes wallpaper for Linux desktop using Hyprland as DP
+
+                WAIT=300
+                dir=$1
+                trans_type="any"
+
+                swww-daemon &
+
+                # Define the function for setting wallpapers in Hyprland
+                set_wallpaper_hyprland() {
+                    BG="$(find "$dir" -name '*.jpg' -o -name '*.png' | shuf -n1)"
+                    PROGRAM="swww-daemon"
+
+                    for dp in $(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}'); do
+                        BG="$(find "$dir" -name '*.jpg' -o -name '*.png' | shuf -n1)"
+                        swww img "$BG" --transition-fps 244 --transition-type "$trans_type" --transition-duration 1 -o "$dp"
+                        sleep 1
+                    done
+                    
+                }
+
+                # Main loop to check for monitor configuration changes and update wallpaper
+                while true; do
+                    initial_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
+                    set_wallpaper_hyprland
+                    # Wait for the specified amount of time or until a monitor configuration change
+                    for ((i=1; i<=WAIT; i++)); do
+                        current_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
+                        if [ "$initial_monitors" != "$current_monitors" ]; then
+                            echo "Monitor configuration changed. Breaking out of the loop."
+                            break
+                        fi
+                        sleep 1
+                    done
+                done
+            ''} /home/strange/wallpaper";
+    };
   };
 
   # Let Home Manager install and manage itself.

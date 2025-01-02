@@ -9,12 +9,12 @@
   programs.fastfetch = {
     enable = true;
     settings = {
-      logo = {
-        source = "${config.home.homeDirectory}/.config/fastfetch/logo.txt";
-            padding = {
-              right = 1;
-            };
-          };
+      # logo = {
+      #   source = "${config.home.homeDirectory}/.config/fastfetch/logo.txt";
+      #       padding = {
+      #         right = 1;
+      #       };
+      #     };
       #display = {
       #  size = {
       #    binaryPrefix = "MB";

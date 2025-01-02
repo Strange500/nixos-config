@@ -43,7 +43,6 @@
          pkgs.dunst
          pkgs.libnotify
          pkgs.git
-         pkgs.swww
          pkgs.networkmanagerapplet
          pkgs.blueman
          pkgs.nix-prefetch-git
