@@ -146,75 +146,71 @@
 
   home.file = {
 
+    ".config" = {
+          source = ./home/.config;
+          recursive = true;
+    };
 
-   ".config" = {
-        source = ./home/.config;
-        recursive = true;
-   };
+    ".local" = {
+          source = ./home/.local;
+          recursive = true;
+    };
 
-   ".local" = {
-        source = ./home/.local;
-        recursive = true;
-   };
+    "wallpaper" = {
+                source = ./home/wallpapers;
+                recursive = true;
+          };
 
-   "wallpaper" = {
-              source = ./home/wallpapers;
-              recursive = true;
-         };
-
-
-
-
-   ".ssh/config".text = "Host *
-    User strange
-    IdentityFile '${config.sops.secrets."git/ssh/private".path}'
-    ";
+    ".ssh/config".text = "Host *
+      User strange
+      IdentityFile '${config.sops.secrets."git/ssh/private".path}'
+      ";
   };
 
   xdg.mimeApps.defaultApplications = {
-  # Navigateurs
-  "text/html" = "brave.desktop";
-  "application/xhtml+xml" = "brave.desktop";
-  
-  # Documents
-  "application/pdf" = "brave.desktop";
-  "application/msword" = "libreoffice-writer.desktop";
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = "libreoffice-writer.desktop"; # DOCX
-  "application/vnd.oasis.opendocument.text" = "libreoffice-writer.desktop"; # ODT
-  
-  # Images
-  "image/png" = "qview.desktop"; # Un gestionnaire d'images
-  "image/jpeg" = "qview.desktop";
-  "image/gif" = "qview.desktop";
-  "image/webp" = "qview.desktop"; 
-  "image/bmp" = "qview.desktop";
+    # Navigateurs
+    "text/html" = "brave.desktop";
+    "application/xhtml+xml" = "brave.desktop";
+    
+    # Documents
+    "application/pdf" = "brave.desktop";
+    "application/msword" = "libreoffice-writer.desktop";
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = "libreoffice-writer.desktop"; # DOCX
+    "application/vnd.oasis.opendocument.text" = "libreoffice-writer.desktop"; # ODT
+    
+    # Images
+    "image/png" = "qview.desktop"; # Un gestionnaire d'images
+    "image/jpeg" = "qview.desktop";
+    "image/gif" = "qview.desktop";
+    "image/webp" = "qview.desktop"; 
+    "image/bmp" = "qview.desktop";
 
-  # Vidéos
-  "video/mp4" = "mpv.desktop"; # Par exemple, MPV pour le lecteur vidéo
-  "video/x-matroska" = "mpv.desktop";
-  "video/x-msvideo" = "mpv.desktop";
-  
-  # Audio
-  "audio/mpeg" = "mpv.desktop"; # Utilisation de mpv pour l'audio aussi
-  "audio/flac" = "mpv.desktop";
-  "audio/x-wav" = "mpv.desktop";
-  "audio/ogg" = "mpv.desktop";
+    # Vidéos
+    "video/mp4" = "mpv.desktop"; # Par exemple, MPV pour le lecteur vidéo
+    "video/x-matroska" = "mpv.desktop";
+    "video/x-msvideo" = "mpv.desktop";
+    
+    # Audio
+    "audio/mpeg" = "mpv.desktop"; # Utilisation de mpv pour l'audio aussi
+    "audio/flac" = "mpv.desktop";
+    "audio/x-wav" = "mpv.desktop";
+    "audio/ogg" = "mpv.desktop";
 
-  # Archives
-  "application/zip" = "peazip.desktop"; # Archive manager
-  "application/x-rar" = "peazip.desktop"; # RAR
-  "application/x-tar" = "peazip.desktop"; # TAR
+    # Archives
+    "application/zip" = "peazip.desktop"; # Archive manager
+    "application/x-rar" = "peazip.desktop"; # RAR
+    "application/x-tar" = "peazip.desktop"; # TAR
 
-  # Types de fichiers texte
-  "text/plain" = "lvim.desktop"; # Éditeurs de texte
-  "text/markdown" = "lvim.desktop";
-  
-  # Répertoires
-  "inode/directory" = "thunar.desktop";
+    # Types de fichiers texte
+    "text/plain" = "lvim.desktop"; # Éditeurs de texte
+    "text/markdown" = "lvim.desktop";
+    
+    # Répertoires
+    "inode/directory" = "thunar.desktop";
 
-  # Autres types de fichiers
-  "application/octet-stream" = "lvim.desktop"; # Fichiers génériques
-};
+    # Autres types de fichiers
+    "application/octet-stream" = "lvim.desktop"; # Fichiers génériques
+  };
 
   home.sessionVariables = {
     EDITOR = "lvim";
@@ -224,6 +220,34 @@
     FILE_MANAGER = "thunar";
   };
 
+  stylix = {
+    cursor = {
+      package = pkgs.vanilla-dmz;
+      name = "Vanilla-DMZ";
+      size = 32;
+    };
+    fonts = {
+      serif = {
+        package = pkgs.jetbrains-mono;
+        name = "JetBrainsMono-Regular";
+      };
+
+      sansSerif = {
+        package = pkgs.dejavu_fonts;
+        name = "JetBrainsMono-Regular";
+      };
+
+      monospace = {
+        package = pkgs.dejavu_fonts;
+        name = "JetBrainsMono-Regular";
+      };
+
+      emoji = {
+        package = pkgs.noto-fonts-emoji;
+        name = "Noto Color Emoji";
+      };
+    };
+  };
 
   systemd.user.services.wallapaper-cycle = {
     Unit = {
@@ -246,7 +270,7 @@
 
                 # Define the function for setting wallpapers in Hyprland
                 set_wallpaper_hyprland() {
-                    BG="$(find "$dir" -name '*.jpg' -o -name '*.png' | shuf -n1)"
+                    BG="$(find "$dir" -iname '*.jpg' -o -iname '*.png' -o -iname '*.gif' | shuf -n1)"
                     PROGRAM="swww-daemon"
 
                     for dp in $(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}'); do
@@ -271,7 +295,7 @@
                         sleep 1
                     done
                 done
-            ''} /home/strange/wallpaper";
+            ''} /home/strange/wallpaper/current";
     };
   };
 
