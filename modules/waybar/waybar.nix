@@ -45,7 +45,7 @@ with lib;
              "bluetooth"
              "battery"
              #"network"
-             "group/hardware"
+             #"group/hardware"
              #"group/tools"
              "tray"
              "custom/exit"

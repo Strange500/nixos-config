@@ -82,7 +82,7 @@
             new_optimizations = "on";
             ignore_opacity = true;
             xray = true;
-            # blurls = waybar
+            blurls = "waybar";
           };
       };
 

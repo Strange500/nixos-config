@@ -157,7 +157,7 @@
     };
 
     "wallpaper/current" = {
-                source = ./home/wallpapers;
+                source = ./home/wallpapers/current;
                 recursive = true;
           };
 
