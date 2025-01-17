@@ -52,9 +52,13 @@
          pkgs.openrgb-with-all-plugins
          pkgs.gtk3
          pkgs.nodePackages."@tailwindcss/language-server"
-        
-        # CRYPTO
+
+         pkgs.wireguard-tools
+
+         # CRYPTO
          pkgs.ledger-live-desktop
+        
+        
   ];
 
 }
