@@ -57,6 +57,9 @@
 
          # CRYPTO
          pkgs.ledger-live-desktop
+
+         # Screen Brightness
+         pkgs.brightnessctl
         
         
   ];
