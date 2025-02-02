@@ -212,8 +212,11 @@
           "$mainMod, mouse_down, exec, hyprctl dispatch workspace r-1"
           "$mainMod, mouse_up, exec, hyprctl dispatch workspace r+1"
 
+
+          # launch Rofi
           "$mainMod Control_L, RETURN , exec, rofi -show drun -show-icons"
 
+          # Screenshot
           "$mainMod Control_L, S, exec, grim -g \"$(slurp)\" $HOME/Images/$(date +'%s_grim.png')"
 
           ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
@@ -227,6 +230,8 @@
       binde = [
         ", XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"
+        ", F1, exec, brightnessctl set 10%-"
+        ", F2, exec, brightnessctl set +10%"
       ];
 
       windowrule = [
