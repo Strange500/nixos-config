@@ -85,6 +85,12 @@
     userSettings = {
       "files.autoSave"= "afterDelay";
       "remote.SSH.configFile" = "/home/strange/ssh-config";
+      "github.copilot.enable" = {
+          "*" = true;
+          "plaintext" = true;
+          "markdown" = true;
+          "scminput" = false;
+      };
     };
   };
 
@@ -141,6 +147,10 @@
 
     # Archive manager
     pkgs.peazip
+
+    pkgs.monero-gui
+
+    pkgs.discord
 
   ];
 
