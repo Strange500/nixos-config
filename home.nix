@@ -152,6 +152,8 @@
 
     pkgs.discord
 
+    pkgs.blender
+
   ];
 
   home.file = {

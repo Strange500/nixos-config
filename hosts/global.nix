@@ -16,7 +16,8 @@
 
      # users.defaultUserShell = pkgs.zsh;
 
-     
+      system.autoUpgrade.enable = true;
+      system.autoUpgrade.allowReboot = true;
 
       services.xserver.enable = true;
       qt.enable = true;

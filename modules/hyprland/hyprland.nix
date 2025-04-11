@@ -1,12 +1,6 @@
 { pkgs, inputs, config, ...}:
 
 {
-
-
-
-
-
-
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
@@ -24,7 +18,7 @@
 
 
       "$terminal" = "kitty";
-      "$fileManager" = "dolphin";
+      "$fileManager" = "yazi";
       "$menu" = "wofi --show drun";
 
       exec-once = [

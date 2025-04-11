@@ -140,7 +140,7 @@
     syntaxHighlighting.enable = true;
 
     sessionVariables = {EDITOR = "lvim";};
-
+    initExtra = "function y() {\nlocal tmp=\"$(mktemp -t \"yazi-cwd.XXXXXX\")\" cwd\n yazi \"$@\" --cwd-file=\"$tmp\"\n	if cwd=\"$(command cat -- \"$tmp\")\" && [ -n \"$cwd\" ] && [ \"$cwd\" != \"$PWD\" ]; then\n builtin cd -- \"$cwd\"\n fi\n rm -f -- \"$tmp\"\n }";
     shellAliases = {
       y = "yazi";
       cat = "bat";

@@ -145,7 +145,8 @@ with lib;
             "tooltip-format" = "AI Support";
           };
           "custom/calculator" = {
-            format = "";
+            format = "❄️";
+            #format = "";
             "on-click" = "qalculate-gtk";
             "tooltip-format" = "Open calculator";
           };
