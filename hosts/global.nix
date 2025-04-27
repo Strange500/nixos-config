@@ -16,8 +16,13 @@
 
      # users.defaultUserShell = pkgs.zsh;
 
-      system.autoUpgrade.enable = true;
-      system.autoUpgrade.allowReboot = true;
+
+      # Tailscale
+      services.tailscale = {
+        enable = true;
+        useRoutingFeatures = "client";
+      };
+
 
       services.xserver.enable = true;
       qt.enable = true;
