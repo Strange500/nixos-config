@@ -31,6 +31,7 @@
          pkgs.home-manager
          pkgs.openrgb-with-all-plugins
          pkgs.brightnessctl
+         pkgs.cachix
   ];
 
 }
