@@ -26,6 +26,7 @@
             package = pkgs.openrgb-with-all-plugins;
             motherboard = "amd";
         };
+        gvfs.enable = true;
     };
 
     virtualisation = {
@@ -77,18 +78,6 @@
         font-awesome
     ];
 
-    programs = {
-        hyprland = {
-                enable = true;
-                xwayland.enable = true;
-                systemd.setPath.enable = true;
-                package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-                portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-            };
-        virt-manager.enable = true;
-        zsh.enable = true;
-    };
-
     home-manager = {
         # also pass inputs to home-manager modules
         extraSpecialArgs = {inherit inputs pkgs;};
@@ -97,7 +86,13 @@
         };
     };
 
+    nixpkgs.config = {
+            allowUnfree = true;
+            allowUnfreePredicate = (_: true);
+        };
+
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
     time.timeZone = "Europe/Paris";
     console.keyMap = "fr";
 

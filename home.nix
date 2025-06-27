@@ -33,13 +33,6 @@
               };
     };
 
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-      allowUnfreePredicate = (_: true);
-    };
-  };
-
   programs.starship = {
       enable = true;
     };
