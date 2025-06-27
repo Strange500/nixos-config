@@ -6,7 +6,6 @@
         ../modules/NetworkManager/NetworkManager.nix
         ../modules/login/ly/ly.nix
         ../modules/bluetooth/bluetooth.nix
-        ../modules/polkit/polkit.nix
         ../modules/stylix/stylix.nix
         ./setting.nix
     ];
