@@ -26,12 +26,10 @@
          pkgs.qemu
          pkgs.qemu_kvm
          pkgs.wget
-         pkgs.git
          pkgs.blueman
          pkgs.nix-prefetch-git
          pkgs.home-manager
          pkgs.openrgb-with-all-plugins
-         pkgs.ledger-live-desktop
          pkgs.brightnessctl
   ];
 
