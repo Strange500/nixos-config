@@ -1,10 +1,10 @@
-{ config, pkgs, inputs, ... }:
+{ pkgs, inputs, ... }:
 
     {
     imports =
-    [ # Include the results of the hardware scan.
+    [
       ../global.nix
-      ../../modules/monitors.nix
+      ../../modules/config.nix
       ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
       inputs.sops-nix.nixosModules.sops
@@ -24,40 +24,12 @@
           owner = "strange";
     };
 
-
-    monitors = [
-       {
-        name = "DP-1";
-        width = 2560;
-        height = 1440;
-        workspace = "1";
-        primary = true;
-        x = 0;
-        y = 0;
-        refreshRate = 144;
-        enabled = true;
-       }
-       {
-        name = "HDMI-A-2";
-        width = 1920;
-        height = 1080;
-        workspace = "2";
-        x = 1440;
-        y = 0;
-        refreshRate = 60;
-        enabled = true;
-       }
-      ];
-
-
     boot.loader.grub.enable = true;
     boot.loader.grub.device = "/dev/nvme0n1";
     boot.loader.grub.useOSProber = true;
 
     boot.kernelParams = [ "acpi_enforce_resources=lax" ];
 
-    networking.hostName = "Clovis"; # Define your hostname.
-
-
+    networking.hostName = "Clovis";
 }
 

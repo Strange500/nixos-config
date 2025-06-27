@@ -5,7 +5,7 @@
   # manage.
 
   imports = [
-    ./modules/monitors.nix
+    ./modules/config.nix
     ./modules/hyprland/hyprland.nix
     ./modules/waybar/waybar.nix
     ./modules/oh-my-zsh/oh-my-zsh.nix
@@ -33,8 +33,6 @@
               };
     };
 
-
-
   nixpkgs = {
     config = {
       allowUnfree = true;
@@ -44,17 +42,6 @@
 
   programs.starship = {
       enable = true;
-      # Configuration written to ~/.config/starship.toml
-      settings = {
-        # add_newline = false;
-
-        # character = {
-        #   success_symbol = "[➜](bold green)";
-        #   error_symbol = "[➜](bold red)";
-        # };
-
-        # package.disabled = true;
-      };
     };
 
   programs.vscode = {
@@ -109,71 +96,47 @@
     ];
   };
 
-
   home.stateVersion = "23.11";
 
   home.packages = [
-    # EDITOR
     pkgs.lunarvim
-    # Wallpaper
-    pkgs.waypaper
     pkgs.swww
-
     # Utility for screenshots
     pkgs.grim
     pkgs.slurp
-
     # DEV
     # jetbrain with github copilot
     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
     (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
-
-
     # devbox for dependencies
     pkgs.devbox
 
     # Video
     pkgs.mpv
-
-    # Text editor
-    pkgs.libreoffice
-
-    # Video editor
-    # pkgs.kdePackages.kdenlive
-    pkgs.davinci-resolve
-
-    # Image Veiwer
-    pkgs.qview
-
-    # Archive manager
-    pkgs.peazip
-
-    pkgs.monero-gui
-
     pkgs.discord
 
-    pkgs.blender
+    pkgs.hyprpanel
 
+    pkgs.moonlight-qt
+
+    pkgs.unzip
+    pkgs.unrar
+    pkgs.zip
   ];
 
   home.file = {
-
     ".config" = {
           source = ./home/.config;
           recursive = true;
     };
-
     ".local" = {
           source = ./home/.local;
           recursive = true;
     };
-
     "wallpaper/current" = {
                 source = ./home/wallpapers/current;
                 recursive = true;
           };
-
-
 
    ".ssh/config".text = "Host *
     User strange
@@ -233,35 +196,6 @@
     TERMINAL = "kitty";
     FILE_MANAGER = "thunar";
   };
-
-  # stylix = {
-  #   cursor = {
-  #     package = pkgs.vanilla-dmz;
-  #     name = "Vanilla-DMZ";
-  #     size = 32;
-  #   };
-  #   fonts = {
-  #     serif = {
-  #       package = pkgs.jetbrains-mono;
-  #       name = "JetBrainsMono-Regular";
-  #     };
-
-  #     sansSerif = {
-  #       package = pkgs.dejavu_fonts;
-  #       name = "JetBrainsMono-Regular";
-  #     };
-
-  #     monospace = {
-  #       package = pkgs.dejavu_fonts;
-  #       name = "JetBrainsMono-Regular";
-  #     };
-
-  #     emoji = {
-  #       package = pkgs.noto-fonts-emoji;
-  #       name = "Noto Color Emoji";
-  #     };
-  #   };
-  # };
 
   systemd.user.services.wallapaper-cycle = {
     Unit = {

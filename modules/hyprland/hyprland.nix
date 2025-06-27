@@ -1,20 +1,11 @@
 { pkgs, inputs, config, ...}:
-
 {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
 
 
-      monitor = map
-        (m:
-          let
-            resolution = "${toString m.width}x${toString m.height}@${toString m.refreshRate}";
-            position = "${toString m.x}x${toString m.y}";
-          in
-          "${m.name},${if m.enabled then "${resolution},${position},1" else "disable"}"
-        )
-        (config.monitors);
+      monitor = config.settings.monitors ;
 
 
       "$terminal" = "kitty";
@@ -23,10 +14,10 @@
 
       exec-once = [
         "blueman-tray"
-        "nm-applet & waybar"
+        "nm-applet"
+        "hyprpanel"
         "hyprctl setcursor Bibata-Modern-Ice 24"
         "openrgb --startminimized -p default"
-        #"sleep 5 ; ${config.home.homeDirectory}/.scripts/swwwRollWallpaper.sh ${config.home.homeDirectory}/wallpapers 300 "
       ];
 
       env = [
@@ -48,27 +39,10 @@
 
       decoration = {
           rounding = 10;
-
-          # Change transparency of focused and unfocused windows
           active_opacity = 1.0;
           inactive_opacity = 0.8;
           fullscreen_opacity = 1.0;
 
-          # for v0.45.0
-          #shadow = {
-          #  enabled = true;
-          #  color = "0x66000000";
-          #  range = 30;
-          #  render_power = 3;
-          #};
-
-
-          #drop_shadow = true;
-          #shadow_range = 30;
-          #shadow_render_power = 3;
-          #"col.shadow" = "0x66000000";
-
-          # https://wiki.hyprland.org/Configuring/Variables/#blur
           blur =  {
             enabled = true;
             size = 6;
