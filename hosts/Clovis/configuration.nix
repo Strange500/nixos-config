@@ -3,14 +3,14 @@
     imports = [
         ../global.nix
         ../../modules/config.nix
-        ./hardware-configuration.nix
         inputs.home-manager.nixosModules.default
         inputs.sops-nix.nixosModules.sops
+        ./disk-config.nix
         ];
 
     boot.loader.grub = {
-        enable = true;
-        device = "/dev/nvme0n1";
+        efiSupport = true;
+        efiInstallAsRemovable = true;
         useOSProber = true;
     };
 
