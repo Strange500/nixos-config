@@ -29,6 +29,20 @@
         };
     };
 
+    # Enable OpenSSH
+    services.openssh.enable = true;
+
+    # Allow root login (optional, insecure unless you add a key)
+    services.openssh.settings.PermitRootLogin = "yes";
+    users.users.root.openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy strange@Clovis"
+    ];
+
+    # Set a root password
+    users.users.root.initialPassword = "nixos";
+
+    services.openssh.settings.PasswordAuthentication = false;
+
     services.xserver.xkb = {
          layout = "fr";
          variant = "";
