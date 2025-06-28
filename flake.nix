@@ -16,22 +16,23 @@
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
-    nixosConfigurations.Clovis = nixpkgs.lib.nixosSystem {
-      specialArgs = {
-          inherit inputs;
-          hostname = "Clovis";
-      };
-      system = "x86_64-linux";
-      modules = [
-        ./hosts/Clovis/configuration.nix
-        inputs.home-manager.nixosModules.default
-        inputs.stylix.nixosModules.stylix
-        {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
+    nixosConfigurations = {
+        Clovis = nixpkgs.lib.nixosSystem {
+          specialArgs = {
+              inherit inputs;
+              hostname = "Clovis";
+          };
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/Clovis/configuration.nix
+            inputs.home-manager.nixosModules.default
+            inputs.stylix.nixosModules.stylix
+            {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
 
-      ];
-    };
+          ];
+        };
 
-    nixosConfigurations.Septimius = nixpkgs.lib.nixosSystem {
+        Septimius = nixpkgs.lib.nixosSystem {
           specialArgs = {
               inherit inputs;
               hostname = "Septimius";
@@ -44,5 +45,21 @@
             {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
           ];
         };
+
+        installer = nixpkgs.lib.nixosSystem {
+          specialArgs = {
+              inherit inputs;
+              hostname = "installer";
+          };
+          system = "x86_64-linux";
+          modules = [
+            ./hosts/installer/configuration.nix
+            inputs.home-manager.nixosModules.default
+            inputs.stylix.nixosModules.stylix
+            {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
+          ];
+        };
+
+    };
   };
 }

@@ -42,6 +42,7 @@
     users.users.strange = {
       shell = pkgs.zsh;
       isNormalUser = true;
+      home = "/home/strange";
       description = "strange";
       extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" "libvirtd" "kvm"];
     };

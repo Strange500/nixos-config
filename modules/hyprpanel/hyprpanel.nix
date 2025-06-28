@@ -59,8 +59,8 @@
 
         menus.clock = {
             time = {
-            military = true;
-            hideSeconds = true;
+                military = true;
+                hideSeconds = true;
             };
             weather.unit = "metric";
         };
