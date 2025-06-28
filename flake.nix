@@ -28,9 +28,11 @@
           system = "x86_64-linux";
           modules = [
             ./hosts/Clovis/configuration.nix
+            ./hardware-configuration.nix
             inputs.home-manager.nixosModules.default
             inputs.stylix.nixosModules.stylix
             {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
+            disko.nixosModules.disko
           ];
         };
 
