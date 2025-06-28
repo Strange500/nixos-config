@@ -26,6 +26,14 @@
             motherboard = "amd";
         };
         gvfs.enable = true;
+
+        openssh = {
+            enable = true;
+            settings = {
+                PermitRootLogin = "no";
+            };
+        };
+
     };
 
     virtualisation = {
@@ -39,12 +47,18 @@
         extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
 
+    users.users.root.hashedPassword = "$6$13gz85QezPcMpTXb$jalGiNan9u2PYc3jP4zgUYoZqNcu.811AqfVNadcNQhH4kn9uWC0FxO7UPArX5Apm49lhDbQ5elFeBRS76.s.1";
+
     users.users.strange = {
       shell = pkgs.zsh;
       isNormalUser = true;
       home = "/home/strange";
       description = "strange";
+      hashedPassword = "$6$tN1HR03Pv6LQFA.w$1byWSM0wWLFn6nQkYebqYLrPzYNf2eyqmGDvTqI8OET9M3y74in7lVGr1KJOHZQys6wWh.ggaRafH6fyrgPmm.";
       extraGroups = [ "networkmanager" "wheel" "audio" "docker" "nix-users" "libvirtd" "kvm"];
+      openssh.authorizedKeys.keys = [
+              "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy strange@Clovis"
+      ];
     };
 
     i18n = {
@@ -61,6 +75,8 @@
         LC_TIME = "fr_FR.UTF-8";
         };
     };
+
+
 
     hardware = {
           graphics.enable = true;
