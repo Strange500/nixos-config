@@ -1,4 +1,8 @@
-{ pkgs, config, ... }: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   services.syncthing = {
     enable = true;
 
@@ -17,10 +21,9 @@
 
       devices = {
         "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY" = {
-          id =
-            "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY";
+          id = "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY";
           name = "Server";
-          addresses = [ "dynamic" ];
+          addresses = ["dynamic"];
         };
       };
 
@@ -29,6 +32,7 @@
         localAnnounceEnabled = true;
         globalAnnounceEnabled = true;
         relaysEnabled = true;
+        urAccepted = -1;
       };
     };
   };
