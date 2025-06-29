@@ -62,7 +62,8 @@ in {
                   *~
                   *.swp
                   .DS_Store
-                  wallpaper'';
+                  wallpaper
+                  nixos'';
 
       ".ssh/config".text =
         "Host *\n          User strange\n          IdentityFile '${
