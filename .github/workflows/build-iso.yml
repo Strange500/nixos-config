@@ -5,7 +5,7 @@ on:
     branches: [ main, master, ci ]
   pull_request:
     branches: [ main, master, ci ]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build-iso:
@@ -21,13 +21,6 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
             experimental-features = nix-command flakes
-
-      - name: Setup Cachix (optional - for faster builds)
-        uses: cachix/cachix-action@v14
-        with:
-          name: your-cache-name  # Replace with your cachix cache name if you have one
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-        continue-on-error: true  # Don't fail if cachix is not configured
 
       - name: Build NixOS ISO
         run: |
