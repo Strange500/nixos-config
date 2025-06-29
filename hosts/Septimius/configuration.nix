@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, hostname, ... }:
+{ config, pkgs, inputs, ... }:
 {
     imports = [
       ../global.nix
@@ -14,6 +14,4 @@
     };
 
     boot.kernelParams = [ "acpi_enforce_resources=lax" ];
-
-    networking.hostName = "${hostname}";
 }

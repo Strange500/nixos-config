@@ -1,4 +1,4 @@
-{ inputs, pkgs, config, ... }:
+{ inputs, pkgs, config, hostname, ... }:
 {
     imports = [
         ./global_package.nix
@@ -130,6 +130,8 @@
         };
         optimise.automatic = true;
     };
+
+    networking.hostName = "${hostname}";
 
 
     time.timeZone = "Europe/Paris";
