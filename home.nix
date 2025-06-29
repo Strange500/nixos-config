@@ -13,6 +13,7 @@ in
     ./modules/hyprland/hyprland.nix
     ./modules/firefox/firefox.nix
     ./modules/syncthing/syncthing.nix
+    ./modules/hyprlock/config.nix
     ./modules/oh-my-zsh/oh-my-zsh.nix
     ./modules/kitty/kitty.nix
     inputs.sops-nix.homeManagerModule
