@@ -1,10 +1,5 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
-}: {
-  home.packages = with pkgs; [fzf fastfetch delta neovide];
+{ lib, pkgs, config, ... }: {
+  home.packages = with pkgs; [ fzf fastfetch delta neovide ];
 
   programs.fastfetch = {
     enable = true;
@@ -18,13 +13,13 @@
           type = "kernel";
           format = "{release}";
         }
-         "uptime"
+        "uptime"
         "packages"
         "shell"
         {
-            type = "display";
-            compactType = "original";
-            key = "Resolution";
+          type = "display";
+          compactType = "original";
+          key = "Resolution";
         }
         "de"
         "wm"
@@ -33,17 +28,17 @@
         "icons"
         "terminal"
         {
-            type = "terminalfont";
-            format = "{/name}{-}{/}{name}{?size} {size}{?}";
+          type = "terminalfont";
+          format = "{/name}{-}{/}{name}{?size} {size}{?}";
         }
         "cpu"
         {
-            type =  "gpu";
-            key = "GPU";
+          type = "gpu";
+          key = "GPU";
         }
         {
-            type = "memory";
-            format = "{} / {}";
+          type = "memory";
+          format = "{} / {}";
         }
         "break"
         "colors"
@@ -70,14 +65,10 @@
 
   programs.bat = {
     enable = true;
-    config = {
-      pager = "less -FR";
-    };
+    config = { pager = "less -FR"; };
   };
 
-  programs.btop = {
-    enable = true;
-  };
+  programs.btop = { enable = true; };
 
   programs.git = {
     enable = true;
@@ -99,7 +90,7 @@
     };
   };
 
-  programs.lazygit = {enable = true;};
+  programs.lazygit = { enable = true; };
 
   programs.eza = {
     enable = true;
@@ -115,9 +106,9 @@
     ];
   };
 
-  programs.yazi = {enable = true;};
+  programs.yazi = { enable = true; };
 
-  programs.zoxide = {enable = true;};
+  programs.zoxide = { enable = true; };
 
   programs.zsh = {
     enable = true;
@@ -125,8 +116,17 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    sessionVariables = {EDITOR = "lvim";};
-    initContent = "fastfetch\nfunction y() {\nlocal tmp=\"$(mktemp -t \"yazi-cwd.XXXXXX\")\" cwd\n yazi \"$@\" --cwd-file=\"$tmp\"\n	if cwd=\"$(command cat -- \"$tmp\")\" && [ -n \"$cwd\" ] && [ \"$cwd\" != \"$PWD\" ]; then\n builtin cd -- \"$cwd\"\n fi\n rm -f -- \"$tmp\"\n }";
+    sessionVariables = { EDITOR = "lvim"; };
+    initContent = ''
+      fastfetch
+      function y() {
+      local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+       yazi "$@" --cwd-file="$tmp"
+      	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+       builtin cd -- "$cwd"
+       fi
+       rm -f -- "$tmp"
+       }'';
     shellAliases = {
       y = "yazi";
       cat = "bat";
@@ -143,14 +143,15 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = ["z" "fzf" "git" "extract"];
+      plugins = [ "z" "fzf" "git" "extract" ];
     };
   };
 
   programs.starship = {
     enable = true;
     settings = {
-    format = "$os $directory $git_branch $git_status $fill $python $lua $nodejs $golang $haskell $rust $ruby $package $aws $docker_context $jobs $cmd_duration $line_break $character";
+      format =
+        "$os $directory $git_branch $git_status $fill $python $lua $nodejs $golang $haskell $rust $ruby $package $aws $docker_context $jobs $cmd_duration $line_break $character";
 
       os = {
         disabled = false;
@@ -211,10 +212,7 @@
         format = "([$all_status$ahead_behind]($style) )";
       };
 
-      fill = {
-        symbol = " ";
-      };
-
+      fill = { symbol = " "; };
 
       nodejs = {
         symbol = "";
@@ -278,7 +276,8 @@
 
       conda = {
         style = "bg:color_bg3";
-        format = "[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)";
+        format =
+          "[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)";
       };
 
       jobs = {
@@ -287,7 +286,6 @@
         number_threshold = 1;
         format = "[$symbol]($style)";
       };
-
 
       time = {
         disabled = false;
@@ -299,39 +297,37 @@
       line_break.disabled = false;
 
       cmd_duration = {
-          min_time = 500;
-          style = "fg:gray";
-          format = "[$duration]($style)";
+        min_time = 500;
+        style = "fg:gray";
+        format = "[$duration]($style)";
       };
-
 
       palettes.nord = {
-          dark_blue = "#5E81AC";
-          blue = "#81A1C1";
-          teal = "#88C0D0";
-          red = "#BF616A";
-          orange = "#D08770";
-          green = "#A3BE8C";
-          yellow = "#EBCB8B";
-          purple = "#B48EAD";
-          gray = "#434C5E";
-          black = "#2E3440";
-          white= "#D8DEE9";
+        dark_blue = "#5E81AC";
+        blue = "#81A1C1";
+        teal = "#88C0D0";
+        red = "#BF616A";
+        orange = "#D08770";
+        green = "#A3BE8C";
+        yellow = "#EBCB8B";
+        purple = "#B48EAD";
+        gray = "#434C5E";
+        black = "#2E3440";
+        white = "#D8DEE9";
       };
 
-
       palettes.onedark = {
-            dark_blue="#61afef";
-            blue="#56b6c2";
-            red="#e06c75";
-            green="#98c379";
-            purple="#c678dd";
-            cyan="#56b6c2";
-            orange="#be5046";
-            yellow="#e5c07b";
-            gray="#828997";
-            white ="#abb2bf";
-            black="#2c323c";
+        dark_blue = "#61afef";
+        blue = "#56b6c2";
+        red = "#e06c75";
+        green = "#98c379";
+        purple = "#c678dd";
+        cyan = "#56b6c2";
+        orange = "#be5046";
+        yellow = "#e5c07b";
+        gray = "#828997";
+        white = "#abb2bf";
+        black = "#2c323c";
       };
 
     };

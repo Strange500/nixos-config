@@ -52,61 +52,61 @@
 
   outputs = { self, nixpkgs, disko, nur, ... }@inputs: {
     nixosConfigurations = {
-        Clovis = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-              inherit inputs;
-              hostname = "Clovis";
-          };
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/Clovis/configuration.nix
-            ./hardware-configuration.nix
-            inputs.home-manager.nixosModules.default
-            inputs.stylix.nixosModules.stylix
-            {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
-            disko.nixosModules.disko
-            nur.modules.nixos.default
-            nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-            ({ pkgs, ... }: {
-              environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
-            })
-          ];
+      Clovis = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "Clovis";
         };
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/Clovis/configuration.nix
+          ./hardware-configuration.nix
+          inputs.home-manager.nixosModules.default
+          inputs.stylix.nixosModules.stylix
+          { nixpkgs.overlays = [ inputs.hyprpanel.overlay ]; }
+          disko.nixosModules.disko
+          nur.modules.nixos.default
+          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+          ({ pkgs, ... }: {
+            environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
+          })
+        ];
+      };
 
-        Septimius = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-              inherit inputs;
-              hostname = "Septimius";
-          };
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/Septimius/configuration.nix
-            ./hardware-configuration.nix
-            inputs.home-manager.nixosModules.default
-            inputs.stylix.nixosModules.stylix
-            {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
-            disko.nixosModules.disko
-            nur.modules.nixos.default
-            nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-            ({ pkgs, ... }: {
-              environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
-            })
-          ];
+      Septimius = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "Septimius";
         };
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/Septimius/configuration.nix
+          ./hardware-configuration.nix
+          inputs.home-manager.nixosModules.default
+          inputs.stylix.nixosModules.stylix
+          { nixpkgs.overlays = [ inputs.hyprpanel.overlay ]; }
+          disko.nixosModules.disko
+          nur.modules.nixos.default
+          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+          ({ pkgs, ... }: {
+            environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
+          })
+        ];
+      };
 
-        installer = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-              inherit inputs;
-              hostname = "installer";
-          };
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/installer/configuration.nix
-            inputs.home-manager.nixosModules.default
-            inputs.stylix.nixosModules.stylix
-            {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
-          ];
+      installer = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "installer";
         };
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/installer/configuration.nix
+          inputs.home-manager.nixosModules.default
+          inputs.stylix.nixosModules.stylix
+          { nixpkgs.overlays = [ inputs.hyprpanel.overlay ]; }
+        ];
+      };
 
     };
   };

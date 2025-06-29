@@ -1,12 +1,9 @@
-{ pkgs, inputs, config, lib, ...}:
-{
+{ pkgs, inputs, config, lib, ... }: {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
 
-
-      monitor = config.settings.monitors ;
-
+      monitor = config.settings.monitors;
 
       "$terminal" = "kitty";
       "$fileManager" = "yazi";
@@ -23,7 +20,7 @@
         "XCURSOR_SIZE,24"
         "HYPRCURSOR_SIZE,24"
         "HYPRCURSOR_THEME,rose-pine-hyprcursor"
-        ];
+      ];
 
       general = {
         gaps_in = 10;
@@ -36,65 +33,64 @@
 
       };
 
-
       decoration = {
-          rounding = 10;
-          active_opacity = 1.0;
-          inactive_opacity = 0.8;
-          fullscreen_opacity = 1.0;
+        rounding = 10;
+        active_opacity = 1.0;
+        inactive_opacity = 0.8;
+        fullscreen_opacity = 1.0;
 
-          shadow = {
-            enabled = true;
-            color = lib.mkDefault "0x66000000";
-            range = 30;
-            render_power = 3;
-          };
+        shadow = {
+          enabled = true;
+          color = lib.mkDefault "0x66000000";
+          range = 30;
+          render_power = 3;
+        };
 
-          blur =  {
-            enabled = true;
-            size = 6;
-            passes = 2;
-            new_optimizations = "on";
-            ignore_opacity = true;
-            xray = true;
-          };
+        blur = {
+          enabled = true;
+          size = 6;
+          passes = 2;
+          new_optimizations = "on";
+          ignore_opacity = true;
+          xray = true;
+        };
       };
 
       animations = {
-          enabled = true;
-          bezier = [
-              "wind, 0.05, 0.9, 0.1, 1.05"
-              "winIn, 0.1, 1.1, 0.1, 1.1"
-              "winOut, 0.3, -0.3, 0, 1"
-              "liner, 1, 1, 1, 1"
-          ];
+        enabled = true;
+        bezier = [
+          "wind, 0.05, 0.9, 0.1, 1.05"
+          "winIn, 0.1, 1.1, 0.1, 1.1"
+          "winOut, 0.3, -0.3, 0, 1"
+          "liner, 1, 1, 1, 1"
+        ];
 
-
-          animation = [
-             "windows, 1, 6, wind, slide"
-             "windowsIn, 1, 6, winIn, slide"
-             "windowsOut, 1, 5, winOut, slide"
-             "windowsMove, 1, 5, wind, slide"
-             "border, 1, 1, liner"
-             "borderangle, 1, 30, liner, loop"
-             "fade, 1, 10, default"
-             "workspaces, 1, 5, wind"
-           ];
+        animation = [
+          "windows, 1, 6, wind, slide"
+          "windowsIn, 1, 6, winIn, slide"
+          "windowsOut, 1, 5, winOut, slide"
+          "windowsMove, 1, 5, wind, slide"
+          "border, 1, 1, liner"
+          "borderangle, 1, 30, liner, loop"
+          "fade, 1, 10, default"
+          "workspaces, 1, 5, wind"
+        ];
 
       };
 
       dwindle = {
-          pseudotile = "true"; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
-          preserve_split = "true"; # You probably want this
+        pseudotile =
+          "true"; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+        preserve_split = "true"; # You probably want this
       };
 
-      master = {
-          new_status = "master";
-      };
+      master = { new_status = "master"; };
 
       misc = {
-          force_default_wallpaper = -1 ;# Set to 0 or 1 to disable the anime mascot wallpapers
-          disable_hyprland_logo = true; # If true disables the random hyprland logo / anime girl background. :(
+        force_default_wallpaper =
+          -1; # Set to 0 or 1 to disable the anime mascot wallpapers
+        disable_hyprland_logo =
+          true; # If true disables the random hyprland logo / anime girl background. :(
       };
 
       input = {
@@ -110,18 +106,14 @@
 
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
 
-        touchpad = {
-            natural_scroll = false;
-        };
+        touchpad = { natural_scroll = false; };
       };
 
-      gestures = {
-          workspace_swipe = false;
-      };
+      gestures = { workspace_swipe = false; };
 
       device = {
-          name = "epic-mouse-v1";
-          sensitivity = -0.5;
+        name = "epic-mouse-v1";
+        sensitivity = -0.5;
       };
 
       binds = {
@@ -131,69 +123,69 @@
       };
 
       "$mainMod" = "SUPER";
-       # Sets "Windows" key as main modifier
+      # Sets "Windows" key as main modifier
       bind = [
-          "$mainMod, RETURN, exec, $terminal"
-          "$mainMod, Q, killactive,"
-          "$mainMod, M, exit,"
-          "$mainMod, E, exec, $fileManager"
-          "$mainMod, V, togglefloating,"
-          "$mainMod, Q, killactive,"
-          "$mainMod, M, exit,"
-          "$mainMod, E, exec, $fileManager"
-          "$mainMod, V, togglefloating,"
-          "$mainMod, R, exec, $menu"
-          "$mainMod, P, pseudo," # dwindle
-          "$mainMod, J, togglesplit," # dwindle
+        "$mainMod, RETURN, exec, $terminal"
+        "$mainMod, Q, killactive,"
+        "$mainMod, M, exit,"
+        "$mainMod, E, exec, $fileManager"
+        "$mainMod, V, togglefloating,"
+        "$mainMod, Q, killactive,"
+        "$mainMod, M, exit,"
+        "$mainMod, E, exec, $fileManager"
+        "$mainMod, V, togglefloating,"
+        "$mainMod, R, exec, $menu"
+        "$mainMod, P, pseudo," # dwindle
+        "$mainMod, J, togglesplit," # dwindle
 
-          "$mainMod, W, exec, wlogout"
+        "$mainMod, W, exec, wlogout"
 
-          # Move focus with mainMod + arrow keys
-          "$mainMod, left, movefocus, l"
-          "$mainMod, right, movefocus, r"
-          "$mainMod, up, movefocus, u"
-          "$mainMod, down, movefocus, d"
+        # Move focus with mainMod + arrow keys
+        "$mainMod, left, movefocus, l"
+        "$mainMod, right, movefocus, r"
+        "$mainMod, up, movefocus, u"
+        "$mainMod, down, movefocus, d"
 
-          # Switch workspaces with mainMod + [0-9]
-          "SUPER, ampersand, workspace, 1"
-          "SUPER, eacute, workspace, 2"
-          "SUPER, quotedbl, workspace, 3"
-          "SUPER, apostrophe, workspace, 4"
-          "SUPER, parenleft, workspace, 5"
-          "SUPER, egrave, workspace, 6"
-          "SUPER, minus, workspace, 7"
-          "SUPER, underscore, workspace, 8"
-          "SUPER, ccedilla, workspace, 9"
-          "SUPER, agrave, workspace, 10"
+        # Switch workspaces with mainMod + [0-9]
+        "SUPER, ampersand, workspace, 1"
+        "SUPER, eacute, workspace, 2"
+        "SUPER, quotedbl, workspace, 3"
+        "SUPER, apostrophe, workspace, 4"
+        "SUPER, parenleft, workspace, 5"
+        "SUPER, egrave, workspace, 6"
+        "SUPER, minus, workspace, 7"
+        "SUPER, underscore, workspace, 8"
+        "SUPER, ccedilla, workspace, 9"
+        "SUPER, agrave, workspace, 10"
 
-          # Move active window to a workspace with mainMod + SHIFT + [0-9]
-          "SUPER_SHIFT, ampersand, movetoworkspace, 1"
-          "SUPER_SHIFT, eacute, movetoworkspace, 2"
-          "SUPER_SHIFT, quotedbl, movetoworkspace, 3"
-          "SUPER_SHIFT, apostrophe, movetoworkspace, 4"
-          "SUPER_SHIFT, parenleft, movetoworkspace, 5"
-          "SUPER_SHIFT, egrave, movetoworkspace, 6"
-          "SUPER_SHIFT, minus, movetoworkspace, 7"
-          "SUPER_SHIFT, underscore, movetoworkspace, 8"
-          "SUPER_SHIFT, ccedilla, movetoworkspace, 9"
-          "SUPER_SHIFT, agrave, movetoworkspace, 10"
+        # Move active window to a workspace with mainMod + SHIFT + [0-9]
+        "SUPER_SHIFT, ampersand, movetoworkspace, 1"
+        "SUPER_SHIFT, eacute, movetoworkspace, 2"
+        "SUPER_SHIFT, quotedbl, movetoworkspace, 3"
+        "SUPER_SHIFT, apostrophe, movetoworkspace, 4"
+        "SUPER_SHIFT, parenleft, movetoworkspace, 5"
+        "SUPER_SHIFT, egrave, movetoworkspace, 6"
+        "SUPER_SHIFT, minus, movetoworkspace, 7"
+        "SUPER_SHIFT, underscore, movetoworkspace, 8"
+        "SUPER_SHIFT, ccedilla, movetoworkspace, 9"
+        "SUPER_SHIFT, agrave, movetoworkspace, 10"
 
-          # Example special workspace (scratchpad)
-          "$mainMod, S, togglespecialworkspace, magic"
-          "$mainMod SHIFT, S, movetoworkspace, special:magic"
+        # Example special workspace (scratchpad)
+        "$mainMod, S, togglespecialworkspace, magic"
+        "$mainMod SHIFT, S, movetoworkspace, special:magic"
 
-          # Scroll through existing workspaces with mainMod + scroll
-          "$mainMod, mouse_down, exec, hyprctl dispatch workspace r-1"
-          "$mainMod, mouse_up, exec, hyprctl dispatch workspace r+1"
+        # Scroll through existing workspaces with mainMod + scroll
+        "$mainMod, mouse_down, exec, hyprctl dispatch workspace r-1"
+        "$mainMod, mouse_up, exec, hyprctl dispatch workspace r+1"
 
+        # launch Rofi
+        "$mainMod Control_L, RETURN , exec, rofi -show drun -show-icons"
 
-          # launch Rofi
-          "$mainMod Control_L, RETURN , exec, rofi -show drun -show-icons"
+        # Screenshot
+        ''
+          $mainMod Control_L, S, exec, grim -g "$(slurp)" $HOME/Images/$(date +'%s_grim.png')''
 
-          # Screenshot
-          "$mainMod Control_L, S, exec, grim -g \"$(slurp)\" $HOME/Images/$(date +'%s_grim.png')"
-
-          ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
 
       bindm = [
@@ -210,9 +202,9 @@
 
       # Browser Picture in Picture
       windowrulev2 = [
-          "float, title:^(Picture-in-Picture)$"
-          "pin, title:^(Picture-in-Picture)$"
-          "move 69.5% 4%, title:^(Picture-in-Picture)$"
+        "float, title:^(Picture-in-Picture)$"
+        "pin, title:^(Picture-in-Picture)$"
+        "move 69.5% 4%, title:^(Picture-in-Picture)$"
       ];
 
     };

@@ -1,19 +1,16 @@
 { inputs, pkgs, config, ... }:
 
 {
-    services.displayManager.ly = {
-            enable = true;
-            settings = {
-                numlock = true;
-                animation = "matrix";
+  services.displayManager.ly = {
+    enable = true;
+    settings = {
+      numlock = true;
+      animation = "matrix";
 
-            };
-        };
+    };
+  };
 
 }
-
-
-
 
 # The color settings in Ly take a digit 0-8 corresponding to:
 #define TB_DEFAULT 0x00
@@ -234,5 +231,4 @@
 
 # # Xorg desktop environments
 # xsessions = $PREFIX_DIRECTORY/share/xsessions
-
 

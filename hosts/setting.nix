@@ -1,6 +1,1 @@
-{ config, hostname, ... }:
-{
-  imports = [
-    ./${hostname}/settings.nix
-  ];
-}
+{ config, hostname, ... }: { imports = [ ./${hostname}/settings.nix ]; }
