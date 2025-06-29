@@ -1,8 +1,13 @@
-{ pkgs, inputs, config, lib, ... }: {
+{
+  pkgs,
+  inputs,
+  config,
+  lib,
+  ...
+}: {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-
       monitor = config.settings.monitors;
 
       "$terminal" = "kitty";
@@ -14,6 +19,7 @@
         "nm-applet"
         "hyprpanel"
         "openrgb --startminimized -p default"
+        "hypridle"
       ];
 
       env = [
@@ -30,7 +36,6 @@
         #"col.inactive_border" = "rgba(ffffffff)";
         layout = "dwindle";
         resize_on_border = true;
-
       };
 
       decoration = {
@@ -75,16 +80,14 @@
           "fade, 1, 10, default"
           "workspaces, 1, 5, wind"
         ];
-
       };
 
       dwindle = {
-        pseudotile =
-          "true"; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+        pseudotile = "true"; # Master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
         preserve_split = "true"; # You probably want this
       };
 
-      master = { new_status = "master"; };
+      master = {new_status = "master";};
 
       misc = {
         force_default_wallpaper =
@@ -106,10 +109,10 @@
 
         sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
 
-        touchpad = { natural_scroll = false; };
+        touchpad = {natural_scroll = false;};
       };
 
-      gestures = { workspace_swipe = false; };
+      gestures = {workspace_swipe = false;};
 
       device = {
         name = "epic-mouse-v1";
@@ -206,7 +209,6 @@
         "pin, title:^(Picture-in-Picture)$"
         "move 69.5% 4%, title:^(Picture-in-Picture)$"
       ];
-
     };
   };
 }

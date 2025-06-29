@@ -1,6 +1,9 @@
-{ inputs, pkgs, config, ... }:
-
 {
+  inputs,
+  pkgs,
+  config,
+  ...
+}: {
   programs = {
     hyprland = {
       enable = true;
@@ -12,7 +15,7 @@
     };
     thunar = {
       enable = true;
-      plugins = with pkgs.xfce; [ thunar-archive-plugin thunar-volman ];
+      plugins = with pkgs.xfce; [thunar-archive-plugin thunar-volman];
     };
     virt-manager.enable = true;
     zsh.enable = true;
@@ -30,7 +33,7 @@
     pkgs.openrgb-with-all-plugins
     pkgs.brightnessctl
     pkgs.cachix
+    pkgs.hypridle
     inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
   ];
-
 }
