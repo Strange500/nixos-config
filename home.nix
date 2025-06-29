@@ -87,37 +87,40 @@ in
     starship.enable = true;
     vscode = {
         enable = true;
-        enableExtensionUpdateCheck = true;
-        enableUpdateCheck = true;
-        extensions = with pkgs.vscode-extensions; [
-            bbenoist.nix
-            zainchen.json
-            github.copilot
-            github.copilot-chat
-            ms-vscode.live-server
-            oderwat.indent-rainbow
-            esbenp.prettier-vscode
-            dbaeumer.vscode-eslint
-            codezombiech.gitignore
-            yoavbls.pretty-ts-errors
-            vscjava.vscode-java-pack
-            mechatroner.rainbow-csv
-            bradlc.vscode-tailwindcss
-            ms-azuretools.vscode-docker
-            jeff-hykin.better-nix-syntax
-            ms-vscode.cpptools-extension-pack
-            ms-vscode-remote.remote-ssh
-        ];
-        userSettings = {
-            "files.autoSave"= "afterDelay";
-            "remote.SSH.configFile" = "/home/strange/ssh-config";
-            "github.copilot.enable" = {
-                "*" = true;
-                "plaintext" = true;
-                "markdown" = true;
-                "scminput" = false;
+        profiles.default = {
+            enableExtensionUpdateCheck = true;
+            enableUpdateCheck = true;
+            extensions = with pkgs.vscode-extensions; [
+                bbenoist.nix
+                zainchen.json
+                github.copilot
+                github.copilot-chat
+                ms-vscode.live-server
+                oderwat.indent-rainbow
+                esbenp.prettier-vscode
+                dbaeumer.vscode-eslint
+                codezombiech.gitignore
+                yoavbls.pretty-ts-errors
+                vscjava.vscode-java-pack
+                mechatroner.rainbow-csv
+                bradlc.vscode-tailwindcss
+                ms-azuretools.vscode-docker
+                jeff-hykin.better-nix-syntax
+                ms-vscode.cpptools-extension-pack
+                ms-vscode-remote.remote-ssh
+            ];
+            userSettings = {
+                "files.autoSave"= "afterDelay";
+                "remote.SSH.configFile" = "/home/strange/ssh-config";
+                "github.copilot.enable" = {
+                  "*" = true;
+                  "plaintext" = true;
+                  "markdown" = true;
+                  "scminput" = false;
+                };
             };
         };
+
     };
 
     rofi = {

@@ -2,9 +2,6 @@
 
 {
 
-      imports = [
-      ];
-
       nixpkgs.config.pulseaudio = true;
 
 
@@ -16,7 +13,7 @@
           };
 
           # audio
-      hardware.pulseaudio = {
+      services.pulseaudio = {
           enable = false;
           package = pkgs.pulseaudioFull;
           support32Bit = true;

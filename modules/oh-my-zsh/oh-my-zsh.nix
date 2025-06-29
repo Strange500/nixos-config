@@ -9,18 +9,6 @@
   programs.fastfetch = {
     enable = true;
     settings = {
-      # logo = {
-      #   source = "${config.home.homeDirectory}/.config/fastfetch/logo.txt";
-      #       padding = {
-      #         right = 1;
-      #       };
-      #     };
-      #display = {
-      #  size = {
-      #    binaryPrefix = "MB";
-      #  };
-      #  "ndigits" = 0;
-      #};
       modules = [
         "title"
         "separator"
@@ -138,7 +126,7 @@
     syntaxHighlighting.enable = true;
 
     sessionVariables = {EDITOR = "lvim";};
-    initExtra = "function y() {\nlocal tmp=\"$(mktemp -t \"yazi-cwd.XXXXXX\")\" cwd\n yazi \"$@\" --cwd-file=\"$tmp\"\n	if cwd=\"$(command cat -- \"$tmp\")\" && [ -n \"$cwd\" ] && [ \"$cwd\" != \"$PWD\" ]; then\n builtin cd -- \"$cwd\"\n fi\n rm -f -- \"$tmp\"\n }";
+    initContent = "fastfetch\nfunction y() {\nlocal tmp=\"$(mktemp -t \"yazi-cwd.XXXXXX\")\" cwd\n yazi \"$@\" --cwd-file=\"$tmp\"\n	if cwd=\"$(command cat -- \"$tmp\")\" && [ -n \"$cwd\" ] && [ \"$cwd\" != \"$PWD\" ]; then\n builtin cd -- \"$cwd\"\n fi\n rm -f -- \"$tmp\"\n }";
     shellAliases = {
       y = "yazi";
       cat = "bat";
@@ -157,35 +145,15 @@
       enable = true;
       plugins = ["z" "fzf" "git" "extract"];
     };
-
-    initExtraFirst = ''
-      fastfetch
-    '';
   };
 
   programs.starship = {
     enable = true;
     settings = {
     format = "$os $directory $git_branch $git_status $fill $python $lua $nodejs $golang $haskell $rust $ruby $package $aws $docker_context $jobs $cmd_duration $line_break $character";
-#      palette = "gruvbox_dark";
-#
-#      palettes.gruvbox_dark = {
-#        color_fg0 = "#fbf1c7";
-#        color_bg1 = "#3c3836";
-#        color_bg3 = "#665c54";
-#        color_blue = "#458588";
-#        color_aqua = "#689d6a";
-#        color_green = "#98971a";
-#        color_orange = "#d65d0e";
-#        color_purple = "#b16286";
-#        color_red = "#cc241d";
-#        color_yellow = "#d79921";
-#      };
 
       os = {
         disabled = false;
-        #style = "bg:color_orange fg:color_fg0";
-
         symbols = {
           Windows = "󰍲";
           Ubuntu = "󰕈";
