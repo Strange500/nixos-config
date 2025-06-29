@@ -1,5 +1,11 @@
-{ lib, config, sops-nix, inputs, pkgs, ... }:
-let
+{
+  lib,
+  config,
+  sops-nix,
+  inputs,
+  pkgs,
+  ...
+}: let
   pluginListInte = [
     inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.1"."com.github.copilot"
   ];
@@ -39,6 +45,9 @@ in {
       pkgs.unrar
       pkgs.zip
       pkgs.git
+      pkgs.libnotify
+      pkgs.pre-commit
+      pkgs.alejandra
       pkgs.ledger-live-desktop
     ];
     file = {
@@ -65,10 +74,9 @@ in {
                   wallpaper
                   nixos'';
 
-      ".ssh/config".text =
-        "Host *\n          User strange\n          IdentityFile '${
-                    config.sops.secrets."git/ssh/private".path
-                  }'\n          ";
+      ".ssh/config".text = "Host *\n          User strange\n          IdentityFile '${
+        config.sops.secrets."git/ssh/private".path
+      }'\n          ";
     };
     sessionVariables = {
       EDITOR = "lvim";
@@ -133,73 +141,71 @@ in {
           };
         };
       };
-
     };
 
     rofi = {
       enable = true;
-      theme = lib.mkForce ("/home/strange/.local/share/rofi/themes/theme.rasi");
+      theme = lib.mkForce "/home/strange/.local/share/rofi/themes/theme.rasi";
     };
 
     chromium = {
       enable = true;
       package = pkgs.brave;
       extensions = [
-        { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # Ublock Origin
-        { id = "nngceckbapebfimnlniiiahkandclblb"; } # BITWARDEN
-        { id = "nkbihfbeogaeaoehlefnkodbefgpgknn"; } # METAMASK
+        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock Origin
+        {id = "nngceckbapebfimnlniiiahkandclblb";} # BITWARDEN
+        {id = "nkbihfbeogaeaoehlefnkodbefgpgknn";} # METAMASK
       ];
     };
-
   };
 
   systemd.user.services.wallapaper-cycle = {
     Unit = {
       Description = "Cycle wallpaper using swww";
-      After = [ "hyprland-session.target" ];
+      After = ["hyprland-session.target"];
     };
-    Install = { WantedBy = [ "hyprland-session.target" ]; };
+    Install = {WantedBy = ["hyprland-session.target"];};
     Service = {
       Type = "simple";
       ExecStart = "${
-          pkgs.writeShellScript "wallpaper-cycle.sh" ''
-            # This script automatically changes wallpaper for Linux desktop using Hyprland as DP
+        pkgs.writeShellScript "wallpaper-cycle.sh" ''
+          # This script automatically changes wallpaper for Linux desktop using Hyprland as DP
 
-            WAIT=300
-            dir=$1
-            trans_type="any"
+          WAIT=300
+          dir=$1
+          trans_type="any"
 
-            swww-daemon &
+          swww-daemon &
 
-            # Define the function for setting wallpapers in Hyprland
-            set_wallpaper_hyprland() {
-                BG="$(find "$dir" -iname '*.jpg' -o -iname '*.png' -o -iname '*.gif' | shuf -n1)"
-                PROGRAM="swww-daemon"
+          # Define the function for setting wallpapers in Hyprland
+          set_wallpaper_hyprland() {
+              BG="$(find "$dir" -iname '*.jpg' -o -iname '*.png' -o -iname '*.gif' | shuf -n1)"
+              PROGRAM="swww-daemon"
 
-                for dp in $(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}'); do
-                    BG="$(find "$dir" -name '*.jpg' -o -name '*.png' | shuf -n1)"
-                    swww img "$BG" --transition-fps 244 --transition-type "$trans_type" --transition-duration 1 -o "$dp"
-                    sleep 1
-                done
-                
-            }
+              for dp in $(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}'); do
+                  BG="$(find "$dir" -name '*.jpg' -o -name '*.png' | shuf -n1)"
+                  swww img "$BG" --transition-fps 244 --transition-type "$trans_type" --transition-duration 1 -o "$dp"
+                  sleep 1
+              done
 
-            # Main loop to check for monitor configuration changes and update wallpaper
-            while true; do
-                initial_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
-                set_wallpaper_hyprland
-                # Wait for the specified amount of time or until a monitor configuration change
-                for ((i=1; i<=WAIT; i++)); do
-                    current_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
-                    if [ "$initial_monitors" != "$current_monitors" ]; then
-                        echo "Monitor configuration changed. Breaking out of the loop."
-                        break
-                    fi
-                    sleep 1
-                done
-            done
-          ''
-        } /home/strange/wallpaper/current";
+          }
+
+          # Main loop to check for monitor configuration changes and update wallpaper
+          while true; do
+              initial_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
+              set_wallpaper_hyprland
+              # Wait for the specified amount of time or until a monitor configuration change
+              for ((i=1; i<=WAIT; i++)); do
+                  current_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
+                  if [ "$initial_monitors" != "$current_monitors" ]; then
+                      echo "Monitor configuration changed. Breaking out of the loop."
+                      break
+                  fi
+                  sleep 1
+              done
+          done
+        ''
+      } /home/strange/wallpaper/current";
     };
   };
   programs.home-manager.enable = true;
