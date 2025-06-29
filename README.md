@@ -64,7 +64,7 @@ sudo nixos-rebuild switch --flake ~/nixos#your-hostname
 <details>
 <summary>🖥️ <b>Desktop Applications</b></summary>
 
-- **Browser**: Brave
+- **Browser**: Firefox
 - **Communication**: Discord
 - **Media**: mpv
 - **VM**: QEMU/KVM with virt-manager

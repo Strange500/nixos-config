@@ -11,6 +11,7 @@ in
   imports = [
     ./modules/config.nix
     ./modules/hyprland/hyprland.nix
+    ./modules/firefox/firefox.nix
     ./modules/oh-my-zsh/oh-my-zsh.nix
     ./modules/kitty/kitty.nix
     inputs.sops-nix.homeManagerModule

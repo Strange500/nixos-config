@@ -36,7 +36,6 @@
         };
       };
 
-      # Second SSD - Option 1: Add to existing LVM volume group
       disk2 = {
         device = lib.mkDefault "/dev/sda";
         type = "disk";
@@ -48,7 +47,7 @@
               size = "100%";
               content = {
                 type = "lvm_pv";
-                vg = "pool";  # Same volume group as disk1
+                vg = "pool";
               };
             };
           };
@@ -61,7 +60,7 @@
         type = "lvm_vg";
         lvs = {
           root = {
-            size = "40%FREE";  # Adjusted to leave space for other volumes
+            size = "40%FREE";
             content = {
               type = "filesystem";
               format = "ext4";
@@ -71,7 +70,6 @@
               ];
             };
           };
-          # Example additional logical volume using the extra space
           home = {
             size = "60%FREE";
             content = {

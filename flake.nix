@@ -44,9 +44,13 @@
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, nur, ... }@inputs: {
     nixosConfigurations = {
         Clovis = nixpkgs.lib.nixosSystem {
           specialArgs = {
@@ -61,6 +65,11 @@
             inputs.stylix.nixosModules.stylix
             {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
             disko.nixosModules.disko
+            nur.modules.nixos.default
+            nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+            ({ pkgs, ... }: {
+              environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
+            })
           ];
         };
 
@@ -77,6 +86,11 @@
             inputs.stylix.nixosModules.stylix
             {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
             disko.nixosModules.disko
+            nur.modules.nixos.default
+            nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+            ({ pkgs, ... }: {
+              environment.systemPackages = [ pkgs.nur.repos.mic92.hello-nur ];
+            })
           ];
         };
 
