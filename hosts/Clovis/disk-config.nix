@@ -61,7 +61,7 @@
         type = "lvm_vg";
         lvs = {
           root = {
-            size = "30%FREE";  # Adjusted to leave space for other volumes
+            size = "40%FREE";  # Adjusted to leave space for other volumes
             content = {
               type = "filesystem";
               format = "ext4";
@@ -73,7 +73,7 @@
           };
           # Example additional logical volume using the extra space
           home = {
-            size = "70%FREE";
+            size = "60%FREE";
             content = {
               type = "filesystem";
               format = "ext4";
