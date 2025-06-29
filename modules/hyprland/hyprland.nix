@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ...}:
+{ pkgs, inputs, config, lib, ...}:
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -16,13 +16,13 @@
         "blueman-tray"
         "nm-applet"
         "hyprpanel"
-        "hyprctl setcursor Bibata-Modern-Ice 24"
         "openrgb --startminimized -p default"
       ];
 
       env = [
         "XCURSOR_SIZE,24"
         "HYPRCURSOR_SIZE,24"
+        "HYPRCURSOR_THEME,rose-pine-hyprcursor"
         ];
 
       general = {
@@ -42,6 +42,13 @@
           active_opacity = 1.0;
           inactive_opacity = 0.8;
           fullscreen_opacity = 1.0;
+
+          shadow = {
+            enabled = true;
+            color = lib.mkDefault "0x66000000";
+            range = 30;
+            render_power = 3;
+          };
 
           blur =  {
             enabled = true;
@@ -87,7 +94,7 @@
 
       misc = {
           force_default_wallpaper = -1 ;# Set to 0 or 1 to disable the anime mascot wallpapers
-          disable_hyprland_logo = false; # If true disables the random hyprland logo / anime girl background. :(
+          disable_hyprland_logo = true; # If true disables the random hyprland logo / anime girl background. :(
       };
 
       input = {
@@ -199,16 +206,6 @@
         ", XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && wpctl set-volume -l 1.4 @DEFAULT_AUDIO_SINK@ 5%-"
         ", F1, exec, brightnessctl set 10%-"
         ", F2, exec, brightnessctl set +10%"
-      ];
-
-      windowrule = [
-          "tile,^(Microsoft-edge)$"
-          "tile,^(Brave-browser)$"
-          "tile,^(Chromium)$"
-          "float,^(pavucontrol)$"
-          "float,^(blueman-manager)$"
-          "float,^(nm-connection-editor)$"
-          "float,^(qalculate-gtk)$"
       ];
 
       # Browser Picture in Picture

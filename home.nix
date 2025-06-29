@@ -1,5 +1,12 @@
 { lib, config, sops-nix, inputs, pkgs, ... }:
-
+let
+  pluginListInte = [
+    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.1"."com.github.copilot"
+  ];
+  pluginListWeb = [
+    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.1"."com.github.copilot"
+  ];
+in
 {
   imports = [
     ./modules/config.nix
@@ -18,8 +25,8 @@
         pkgs.swww
         pkgs.grim
         pkgs.slurp
-        (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm ["github-copilot"])
-        (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate ["github-copilot"])
+        (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm pluginListWeb)
+        (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate pluginListInte)
         pkgs.devbox
         pkgs.mpv
         pkgs.discord

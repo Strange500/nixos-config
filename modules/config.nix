@@ -9,6 +9,13 @@
         ];
         description = "List of monitors with their specifications.";
       };
+      stylix = {
+        theme = lib.mkOption {
+          type = lib.types.str;
+          default = "tomorrow-night";
+          description = "The base16 theme to use with Stylix.";
+        };
+      };
     };
   };
 }

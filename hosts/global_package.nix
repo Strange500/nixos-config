@@ -32,6 +32,7 @@
          pkgs.openrgb-with-all-plugins
          pkgs.brightnessctl
          pkgs.cachix
+         inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
   ];
 
 }
