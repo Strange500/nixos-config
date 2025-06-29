@@ -12,6 +12,7 @@ in
     ./modules/config.nix
     ./modules/hyprland/hyprland.nix
     ./modules/firefox/firefox.nix
+    ./modules/syncthing/syncthing.nix
     ./modules/oh-my-zsh/oh-my-zsh.nix
     ./modules/kitty/kitty.nix
     inputs.sops-nix.homeManagerModule
@@ -52,6 +53,15 @@ in
                       source = ./home/wallpapers/current;
                       recursive = true;
                 };
+          # syncthing ignore hidden files
+          ".stignore".text = ".*
+          *.tmp
+          *.log
+          *~
+          *.swp
+          .DS_Store
+          wallpaper";
+
 
          ".ssh/config".text = "Host *
           User strange
