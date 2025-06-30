@@ -29,10 +29,18 @@ jobs:
 
       - name: Find and rename ISO
         run: |
-          # Find the built ISO file
-          ISO_PATH=$(find result -name "*.iso" -type f | head -1)
+          # Find the built ISO file in result/iso directory
+          ISO_PATH=$(find result/iso -name "*.iso" -type f | head -1)
           if [ -z "$ISO_PATH" ]; then
-            echo "No ISO file found!"
+            echo "No ISO file found in result/iso!"
+            echo "Contents of result directory:"
+            ls -la result/ || echo "result directory doesn't exist"
+            if [ -d "result/iso" ]; then
+              echo "Contents of result/iso directory:"
+              ls -la result/iso/
+            else
+              echo "result/iso directory doesn't exist"
+            fi
             exit 1
           fi
           
