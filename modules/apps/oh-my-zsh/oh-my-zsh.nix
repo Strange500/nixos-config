@@ -1,5 +1,10 @@
-{ lib, pkgs, config, ... }: {
-  home.packages = with pkgs; [ fzf fastfetch delta neovide ];
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}: {
+  home.packages = with pkgs; [fzf fastfetch delta neovide];
 
   programs.fastfetch = {
     enable = true;
@@ -44,7 +49,6 @@
         "colors"
       ];
     };
-
   };
 
   programs.atuin = {
@@ -65,10 +69,10 @@
 
   programs.bat = {
     enable = true;
-    config = { pager = "less -FR"; };
+    config = {pager = "less -FR";};
   };
 
-  programs.btop = { enable = true; };
+  programs.btop = {enable = true;};
 
   programs.git = {
     enable = true;
@@ -90,7 +94,7 @@
     };
   };
 
-  programs.lazygit = { enable = true; };
+  programs.lazygit = {enable = true;};
 
   programs.eza = {
     enable = true;
@@ -106,9 +110,9 @@
     ];
   };
 
-  programs.yazi = { enable = true; };
+  programs.yazi = {enable = true;};
 
-  programs.zoxide = { enable = true; };
+  programs.zoxide = {enable = true;};
 
   programs.zsh = {
     enable = true;
@@ -116,7 +120,7 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    sessionVariables = { EDITOR = "lvim"; };
+    sessionVariables = {EDITOR = "lvim";};
     initContent = ''
       fastfetch
       function y() {
@@ -143,15 +147,14 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = [ "z" "fzf" "git" "extract" ];
+      plugins = ["z" "fzf" "git" "extract"];
     };
   };
 
   programs.starship = {
     enable = true;
     settings = {
-      format =
-        "$os $directory $git_branch $git_status $fill $python $lua $nodejs $golang $haskell $rust $ruby $package $aws $docker_context $jobs $cmd_duration $line_break $character";
+      format = "$os $directory $git_branch $git_status $fill $python $lua $nodejs $golang $haskell $rust $ruby $package $aws $docker_context $jobs $cmd_duration $line_break $character";
 
       os = {
         disabled = false;
@@ -212,7 +215,7 @@
         format = "([$all_status$ahead_behind]($style) )";
       };
 
-      fill = { symbol = " "; };
+      fill = {symbol = " ";};
 
       nodejs = {
         symbol = "";
@@ -276,8 +279,7 @@
 
       conda = {
         style = "bg:color_bg3";
-        format =
-          "[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)";
+        format = "[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)";
       };
 
       jobs = {
@@ -329,7 +331,6 @@
         white = "#abb2bf";
         black = "#2c323c";
       };
-
     };
   };
 }

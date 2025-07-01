@@ -1,7 +1,6 @@
 {
   lib,
   config,
-  sops-nix,
   inputs,
   pkgs,
   ...
@@ -15,13 +14,13 @@
 in {
   imports = [
     ./modules/config.nix
-    ./modules/hyprland/hyprland.nix
-    ./modules/firefox/firefox.nix
-    ./modules/syncthing/syncthing.nix
-    ./modules/hypridle/config.nix
-    ./modules/hyprlock/config.nix
-    ./modules/oh-my-zsh/oh-my-zsh.nix
-    ./modules/kitty/kitty.nix
+    ./modules/desktop/hyprland/hyprland.nix
+    ./modules/apps/firefox/firefox.nix
+    ./modules/apps/syncthing/syncthing.nix
+    ./modules/desktop/hypridle/config.nix
+    ./modules/desktop/hyprlock/config.nix
+    ./modules/apps/oh-my-zsh/oh-my-zsh.nix
+    ./modules/apps/kitty/kitty.nix
     inputs.sops-nix.homeManagerModule
   ];
 

@@ -6,14 +6,16 @@
 }: {
   imports = [
     ./global_package.nix
-    ../modules/audio/audio.nix
-    ../modules/NetworkManager/NetworkManager.nix
-    ../modules/login/ly/ly.nix
-    ../modules/bluetooth/bluetooth.nix
-    ../modules/stylix/stylix.nix
+    ../modules/system/audio/audio.nix
+    ../modules/system/login/login.nix
+    ../modules/system/bluetooth/bluetooth.nix
+    ../modules/desktop/stylix/stylix.nix
     ./setting.nix
   ];
 
+  login.ly.enable = true;
+
+  networking.networkmanager = {enable = true;};
   services = {
     tailscale = {
       enable = true;

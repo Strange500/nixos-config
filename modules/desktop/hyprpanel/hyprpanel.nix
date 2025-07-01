@@ -1,9 +1,10 @@
-{ pkgs, inputs, config, ... }:
-
 {
-
+  pkgs,
+  inputs,
+  config,
+  ...
+}: {
   programs.hyprpanel = {
-
     # Enable the module.
     # Default: false
     enable = true;
@@ -31,7 +32,7 @@
     # Override the final config with an arbitrary set.
     # Useful for overriding colors in your selected theme.
     # Default: {}
-    override = { theme.bar.menus.text = "#123ABC"; };
+    override = {theme.bar.menus.text = "#123ABC";};
 
     # Configure bar layouts for monitors.
     # See 'https://hyprpanel.com/configuration/panel.html'.
@@ -39,9 +40,9 @@
     layout = {
       "bar.layouts" = {
         "0" = {
-          left = [ "dashboard" "workspaces" ];
-          middle = [ "media" ];
-          right = [ "volume" "systray" "notifications" ];
+          left = ["dashboard" "workspaces"];
+          middle = ["media"];
+          right = ["volume" "systray" "notifications"];
         };
       };
     };
