@@ -15,14 +15,17 @@ in {
   imports = [
     ./modules/config.nix
     ./modules/desktop/hyprland/hyprland.nix
-    ./modules/apps/firefox/firefox.nix
-    ./modules/apps/syncthing/syncthing.nix
+    ./modules/apps/desktopsApps.nix
     ./modules/desktop/hypridle/config.nix
     ./modules/desktop/hyprlock/config.nix
-    ./modules/apps/oh-my-zsh/oh-my-zsh.nix
-    ./modules/apps/kitty/kitty.nix
     inputs.sops-nix.homeManagerModule
   ];
+
+  desktopsApps = {
+    firefox.enable = true;
+    kitty.enable = true;
+    syncthing.enable = true;
+  };
 
   home = {
     username = "strange";
