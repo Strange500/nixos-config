@@ -34,6 +34,7 @@
     pkgs.brightnessctl
     pkgs.cachix
     pkgs.hypridle
+    pkgs.nixd
     inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
   ];
 }

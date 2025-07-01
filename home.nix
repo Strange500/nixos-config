@@ -50,6 +50,7 @@ in {
       pkgs.pre-commit
       pkgs.alejandra
       pkgs.ledger-live-desktop
+      pkgs.nixd
     ];
     file = {
       ".config" = {
@@ -113,7 +114,6 @@ in {
         enableExtensionUpdateCheck = true;
         enableUpdateCheck = true;
         extensions = with pkgs.vscode-extensions; [
-          bbenoist.nix
           zainchen.json
           github.copilot
           github.copilot-chat
@@ -127,7 +127,6 @@ in {
           mechatroner.rainbow-csv
           bradlc.vscode-tailwindcss
           ms-azuretools.vscode-docker
-          jeff-hykin.better-nix-syntax
           ms-vscode.cpptools-extension-pack
           ms-vscode-remote.remote-ssh
         ];
@@ -139,6 +138,23 @@ in {
             "plaintext" = true;
             "markdown" = true;
             "scminput" = false;
+          };
+          "nix.serverPath" = "nixd";
+          "nix.enableLanguageServer" = true;
+          "nix.serverSettings" = {
+            "nixd" = {
+              "formatting" = {
+                "command" = ["alejandra"];
+              };
+              "options" = {
+                "nixos" = {
+                  "expr" = "(builtins.getFlake \"${config.confDirectory}\").nixosConfigurations.Clovis.options";
+                };
+                #"home_manager" = {
+                #  "expr" = "(builtins.getFlake \"${config.confDirectory}\").homeConfigurations.Clovis.options";
+                #};
+              };
+            };
           };
         };
       };
