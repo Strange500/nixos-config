@@ -22,6 +22,8 @@
     dconf.enable = true;
   };
 
+  xdg.portal.enable = true;
+
   environment.systemPackages = [
     pkgs.qemu
     pkgs.qemu_kvm

@@ -1,14 +1,14 @@
 {
-  pkgs,
-  inputs,
   config,
   lib,
   ...
-}: {
+}: let
+  inherit (config.desktop.hyprDesktop.settings) monitor;
+in {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      monitor = config.settings.monitors;
+      monitor = monitor;
 
       "$terminal" = "kitty";
       "$fileManager" = "yazi";

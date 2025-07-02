@@ -1,9 +1,4 @@
-{
-  pkgs,
-  inputs,
-  config,
-  ...
-}: {
+{inputs, ...}: {
   programs.hyprpanel = {
     # Enable the module.
     # Default: false
@@ -18,34 +13,34 @@
     # Add '/nix/store/.../hyprpanel' to your
     # Hyprland config 'exec-once'.
     # Default: false
-    hyprland.enable = true;
+    # hyprland.enable = true;
 
     # Fix the overwrite issue with HyprPanel.
     # See below for more information.
     # Default: false
-    overwrite.enable = true;
+    # overwrite.enable = true;
 
     # Import a theme from './themes/*.json'.
     # Default: ""
-    theme = "gruvbox_split";
+    # theme = "gruvbox_split";
 
     # Override the final config with an arbitrary set.
     # Useful for overriding colors in your selected theme.
     # Default: {}
-    override = {theme.bar.menus.text = "#123ABC";};
+    # override = {theme.bar.menus.text = "#123ABC";};
 
     # Configure bar layouts for monitors.
     # See 'https://hyprpanel.com/configuration/panel.html'.
     # Default: null
-    layout = {
-      "bar.layouts" = {
-        "0" = {
-          left = ["dashboard" "workspaces"];
-          middle = ["media"];
-          right = ["volume" "systray" "notifications"];
-        };
-      };
-    };
+    # layout = {
+    #   "bar.layouts" = {
+    #     "0" = {
+    #       left = ["dashboard" "workspaces"];
+    #       middle = ["media"];
+    #       right = ["volume" "systray" "notifications"];
+    #     };
+    #   };
+    # };
 
     # Configure and theme almost all options from the GUI.
     # Options that require '{}' or '[]' are not yet implemented,

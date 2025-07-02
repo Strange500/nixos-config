@@ -14,17 +14,23 @@
 in {
   imports = [
     ./modules/config.nix
-    ./modules/desktop/hyprland/hyprland.nix
+    ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
-    ./modules/desktop/hypridle/config.nix
-    ./modules/desktop/hyprlock/config.nix
     inputs.sops-nix.homeManagerModule
+    inputs.hyprpanel.homeManagerModules.hyprpanel
   ];
 
   desktopsApps = {
     firefox.enable = true;
     kitty.enable = true;
     syncthing.enable = true;
+  };
+
+  desktop.hyprDesktop = {
+    enable = true;
+    settings = {
+      monitor = [", preferred, auto, 1"];
+    };
   };
 
   home = {
