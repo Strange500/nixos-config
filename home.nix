@@ -17,7 +17,6 @@ in {
     ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
     inputs.sops-nix.homeManagerModule
-    inputs.hyprpanel.homeManagerModules.hyprpanel
   ];
 
   desktopsApps = {

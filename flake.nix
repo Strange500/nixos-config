@@ -69,7 +69,6 @@
           ./hardware-configuration.nix
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
-          {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
           disko.nixosModules.disko
           nur.modules.nixos.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
@@ -90,7 +89,6 @@
           ./hardware-configuration.nix
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
-          {nixpkgs.overlays = [inputs.hyprpanel.overlay];}
           disko.nixosModules.disko
           nur.modules.nixos.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
