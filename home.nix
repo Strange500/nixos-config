@@ -154,13 +154,16 @@ in {
               "formatting" = {
                 "command" = ["alejandra"];
               };
+              "nixpkgs" = {
+                "expr" = "import (builtins.getFlake \"${config.confDirectory}\").inputs.nixpkgs { }";
+              };
               "options" = {
                 "nixos" = {
                   "expr" = "(builtins.getFlake \"${config.confDirectory}\").nixosConfigurations.Clovis.options";
                 };
-                #"home_manager" = {
-                #  "expr" = "(builtins.getFlake \"${config.confDirectory}\").homeConfigurations.Clovis.options";
-                #};
+                "home-manager" = {
+                  "expr" = "(builtins.getFlake \"${config.confDirectory}\").nixosConfigurations.Clovis.options.home-manager.users.type.getSubOptions []";
+                };
               };
             };
           };
