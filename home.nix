@@ -11,6 +11,11 @@
   pluginListWeb = [
     inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.1"."com.github.copilot"
   ];
+
+  monitors =
+    config.settings.monitors or [
+      ", preferred, auto, 1"
+    ];
 in {
   imports = [
     ./modules/config.nix
@@ -28,7 +33,7 @@ in {
   desktop.hyprDesktop = {
     enable = true;
     settings = {
-      monitor = [", preferred, auto, 1"];
+      monitor = monitors;
     };
   };
 
