@@ -10,6 +10,7 @@
     ../modules/system/login/login.nix
     ../modules/system/bluetooth/bluetooth.nix
     ../modules/desktop/stylix/stylix.nix
+    ../modules/system/boot/plymouth.nix
     ./setting.nix
   ];
 

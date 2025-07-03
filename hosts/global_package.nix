@@ -37,5 +37,6 @@
     pkgs.hypridle
     pkgs.nixd
     inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
+    pkgs.plymouth
   ];
 }
