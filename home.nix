@@ -5,29 +5,37 @@
   pkgs,
   ...
 }: let
-  pluginListInte = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.1"."com.github.copilot"
-  ];
-  pluginListWeb = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.1"."com.github.copilot"
-  ];
-
   monitors =
     config.settings.monitors or [
       ", preferred, auto, 1"
     ];
 in {
   imports = [
+    ./settings.nix
     ./modules/config.nix
     ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
     inputs.sops-nix.homeManagerModule
   ];
 
-  desktopsApps = {
-    firefox.enable = true;
-    kitty.enable = true;
-    syncthing.enable = true;
+  qgroget.nixos = {
+    # remote-access = true;
+    apps = {
+      basic = true;
+      sync = true;
+      dev = {
+        enable = true;
+        jetbrains.enable = false;
+      };
+      media = true;
+      crypto = true;
+    };
+    # gaming = true;
+    # desktop = {
+    #   desktopEnvironment = "hyprland";
+    #   loginManager = "gdm";
+    #   monitors = monitors;
+    # };
   };
 
   desktop.hyprDesktop = {
@@ -42,27 +50,12 @@ in {
     homeDirectory = "/home/strange";
     stateVersion = "23.11";
     packages = [
-      pkgs.lunarvim
       pkgs.swww
       pkgs.grim
       pkgs.slurp
-      (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.webstorm pluginListWeb)
-      (pkgs.jetbrains.plugins.addPlugins pkgs.jetbrains.idea-ultimate
-        pluginListInte)
-      pkgs.devbox
-      pkgs.mpv
       pkgs.discord
       pkgs.hyprpanel
       pkgs.moonlight-qt
-      pkgs.unzip
-      pkgs.unrar
-      pkgs.zip
-      pkgs.git
-      pkgs.libnotify
-      pkgs.pre-commit
-      pkgs.alejandra
-      pkgs.ledger-live-desktop
-      pkgs.nixd
     ];
     file = {
       ".config" = {
@@ -92,13 +85,6 @@ in {
         config.sops.secrets."git/ssh/private".path
       }'\n          ";
     };
-    sessionVariables = {
-      EDITOR = "lvim";
-      VISUAL = "lvim";
-      BROWSER = "brave";
-      TERMINAL = "kitty";
-      FILE_MANAGER = "thunar";
-    };
   };
 
   sops = {
@@ -118,77 +104,9 @@ in {
     };
   };
 
-  programs = {
-    starship.enable = true;
-    vscode = {
-      enable = true;
-      profiles.default = {
-        enableExtensionUpdateCheck = true;
-        enableUpdateCheck = true;
-        extensions = with pkgs.vscode-extensions; [
-          zainchen.json
-          github.copilot
-          github.copilot-chat
-          ms-vscode.live-server
-          oderwat.indent-rainbow
-          esbenp.prettier-vscode
-          dbaeumer.vscode-eslint
-          codezombiech.gitignore
-          yoavbls.pretty-ts-errors
-          vscjava.vscode-java-pack
-          mechatroner.rainbow-csv
-          bradlc.vscode-tailwindcss
-          ms-azuretools.vscode-docker
-          ms-vscode.cpptools-extension-pack
-          ms-vscode-remote.remote-ssh
-        ];
-        userSettings = {
-          "files.autoSave" = "afterDelay";
-          "remote.SSH.configFile" = "/home/strange/ssh-config";
-          "github.copilot.enable" = {
-            "*" = true;
-            "plaintext" = true;
-            "markdown" = true;
-            "scminput" = false;
-          };
-          "nix.serverPath" = "nixd";
-          "nix.enableLanguageServer" = true;
-          "nix.serverSettings" = {
-            "nixd" = {
-              "formatting" = {
-                "command" = ["alejandra"];
-              };
-              "nixpkgs" = {
-                "expr" = "import (builtins.getFlake \"${config.confDirectory}\").inputs.nixpkgs { }";
-              };
-              "options" = {
-                "nixos" = {
-                  "expr" = "(builtins.getFlake \"${config.confDirectory}\").nixosConfigurations.Clovis.options";
-                };
-                "home-manager" = {
-                  "expr" = "(builtins.getFlake \"${config.confDirectory}\").nixosConfigurations.Clovis.options.home-manager.users.type.getSubOptions []";
-                };
-              };
-            };
-          };
-        };
-      };
-    };
-
-    rofi = {
-      enable = true;
-      theme = lib.mkForce "/home/strange/.local/share/rofi/themes/theme.rasi";
-    };
-
-    chromium = {
-      enable = true;
-      package = pkgs.brave;
-      extensions = [
-        {id = "cjpalhdlnbpafiamejdnhcphjbkeiagm";} # Ublock Origin
-        {id = "nngceckbapebfimnlniiiahkandclblb";} # BITWARDEN
-        {id = "nkbihfbeogaeaoehlefnkodbefgpgknn";} # METAMASK
-      ];
-    };
+  programs.rofi = {
+    enable = true;
+    theme = lib.mkForce "/home/strange/.local/share/rofi/themes/theme.rasi";
   };
 
   systemd.user.services.wallapaper-cycle = {

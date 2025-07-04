@@ -1,28 +1,34 @@
 {
   config,
   lib,
-  inputs,
   pkgs,
+  inputs,
   ...
 }: {
-  options = {
-    desktopsApps = lib.mkOption {
-      type = lib.types.submodule {
-        options = {
-          firefox.enable = lib.mkEnableOption "Firefox";
-          kitty.enable = lib.mkEnableOption "Kitty terminal";
-          syncthing.enable = lib.mkEnableOption "Syncthing";
-        };
-      };
-      default = {};
-      description = "Desktop applications options";
-    };
-  };
-
   config = lib.mkMerge [
-    (lib.mkIf config.desktopsApps.firefox.enable (import ./firefox/firefox.nix {inherit config inputs pkgs lib;}))
-    (lib.mkIf config.desktopsApps.kitty.enable (import ./kitty/kitty.nix {inherit config inputs lib pkgs;}))
-    (lib.mkIf config.desktopsApps.syncthing.enable (import ./syncthing/syncthing.nix {inherit config inputs pkgs lib;}))
-    (import ./oh-my-zsh/oh-my-zsh.nix {inherit config inputs pkgs lib;})
+    (lib.mkIf config.qgroget.nixos.apps.basic (import ./basics.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.basic (import ./firefox/firefox.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.basic (import ./kitty/kitty.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.basic (import ./oh-my-zsh/oh-my-zsh.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.sync (import ./syncthing/syncthing.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.dev.enable (import ./dev.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.media (import ./media.nix {
+      inherit config lib pkgs inputs;
+    }))
+    (lib.mkIf config.qgroget.nixos.apps.crypto (import ./crypto.nix {
+      inherit config lib pkgs inputs;
+    }))
   ];
 }
