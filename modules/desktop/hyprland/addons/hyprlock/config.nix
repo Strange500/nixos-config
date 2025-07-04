@@ -7,7 +7,7 @@
     enable = true;
     settings = {
       background = {
-        monitor = "DP-2";
+        #monitor = "DP-2";
         #path = screenshot
         #color = $background;
         blur_passes = 2;
@@ -17,8 +17,8 @@
         vibrancy_darkness = 0.2;
       };
       general = {
-        no_fade_in = true;
-        no_fade_out = true;
+        no_fade_in = false;
+        no_fade_out = false;
         hide_cursor = false;
         grace = 0;
         disable_loading_bar = true;
@@ -45,7 +45,7 @@
       label = [
         {
           #monitor =
-          text = ''cmd[update:1000] echo "$(date +"%A, %B %d")"'';
+          text = ''cmd[update:1000] echo "$(date +"%A %d %B")"'';
           # color = "rgba(242, 243, 244, 0.75)";
           font_size = 22;
           font_family = "JetBrains Mono";
@@ -79,7 +79,7 @@
         {
           #monitor =
           text = ''
-            cmd[update:1000] echo "$(/home/justin/Documents/Scripts/whoami.sh)"'';
+            cmd[update:1000] echo "$(whoami)"'';
           #                              color = "$foreground";
           font_size = 14;
           font_family = "JetBrains Mono";
@@ -87,33 +87,33 @@
           halign = "center";
           valign = "top";
         }
-        {
-          #monitor =
-          text = ''
-            cmd[update:1000] echo "$(/home/justin/Documents/Scripts/battery.sh)"'';
-          #                                            color = "$foreground";
-          font_size = 24;
-          font_family = "JetBrains Mono";
-          position = "-90, -10";
-          halign = "right";
-          valign = "top";
-        }
-        {
-          #monitor =;
-          text = ''
-            cmd[update:1000] echo "$(/home/justin/Documents/Scripts/network-status.sh)"'';
-          #                                                          color = "$foreground";
-          font_size = 24;
-          font_family = "JetBrains Mono";
-          position = "-20, -10";
-          halign = "right";
-          valign = "top";
-        }
+        # {
+        #   #monitor =
+        #   text = ''
+        #     cmd[update:1000] echo "$(/home/justin/Documents/Scripts/battery.sh)"'';
+        #   #                                            color = "$foreground";
+        #   font_size = 24;
+        #   font_family = "JetBrains Mono";
+        #   position = "-90, -10";
+        #   halign = "right";
+        #   valign = "top";
+        # }
+        # {
+        #   #monitor =;
+        #   text = ''
+        #     cmd[update:1000] echo "$(/home/justin/Documents/Scripts/network-status.sh)"'';
+        #   #                                                          color = "$foreground";
+        #   font_size = 24;
+        #   font_family = "JetBrains Mono";
+        #   position = "-20, -10";
+        #   halign = "right";
+        #   valign = "top";
+        # }
       ];
       image = [
         {
           # monitor =
-          path = "/home/justin/Pictures/profile_pictures/justin_square.png";
+          path = "/home/strange/.local/share/user/profile.png";
           size = 100;
           border_size = 2;
           #    border_color = "$foreground";
@@ -121,16 +121,16 @@
           halign = "center";
           valign = "center";
         }
-        {
-          #monitor =
-          path = "/home/justin/Pictures/profile_pictures/hypr.png";
-          size = 75;
-          border_size = 2;
-          #                  border_color = "$foreground";
-          position = "-50, 50";
-          halign = "right";
-          valign = "bottom";
-        }
+        # {
+        #   #monitor =
+        #   path = "/home/justin/Pictures/profile_pictures/hypr.png";
+        #   size = 75;
+        #   border_size = 2;
+        #   #                  border_color = "$foreground";
+        #   position = "-50, 50";
+        #   halign = "right";
+        #   valign = "bottom";
+        # }
       ];
     };
   };

@@ -1,4 +1,4 @@
-{inputs, ...}: {
+{...}: {
   programs.hyprpanel = {
     # Enable the module.
     # Default: false
