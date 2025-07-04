@@ -2,9 +2,8 @@ name: Daily Nix Flake Update
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch: 
 
 jobs:
   update-flake:

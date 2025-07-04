@@ -14,7 +14,7 @@
     ./setting.nix
   ];
 
-  login.ly.enable = true;
+  login.gdm.enable = true;
 
   networking.networkmanager = {enable = true;};
   services = {
