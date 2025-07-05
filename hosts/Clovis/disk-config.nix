@@ -1,6 +1,4 @@
 {lib, ...}: {
-  # OPTION 1: Separate encrypted Btrfs filesystems (RECOMMENDED)
-  # disk1 = system (root, nix), disk2 = user data (home)
   disko.devices = {
     disk = {
       disk1 = {
@@ -35,8 +33,6 @@
                   "--perf-no_read_workqueue"
                   "--perf-no_write_workqueue"
                 ];
-                # Optional: FIDO2/YubiKey support
-                # settings = {crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];};
                 content = {
                   type = "btrfs";
                   extraArgs = ["-L" "nixos-system" "-f"];
@@ -81,8 +77,6 @@
                   "--perf-no_read_workqueue"
                   "--perf-no_write_workqueue"
                 ];
-                # Optional: FIDO2/YubiKey support
-                # settings = {crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];};
                 content = {
                   type = "btrfs";
                   extraArgs = ["-L" "nixos-data" "-f"];
@@ -99,9 +93,6 @@
         };
       };
     };
+    
   };
-
-  # Mark critical filesystems as needed for boot
-  # fileSystems."/persist".neededForBoot = true;
-  # fileSystems."/var/log".neededForBoot = true;
 }
