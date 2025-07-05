@@ -1,5 +1,6 @@
-# Example to create a bios compatible gpt partition with second SSD
-{ lib, ... }: {
+{lib, ...}: {
+  # OPTION 1: Separate encrypted Btrfs filesystems (RECOMMENDED)
+  # disk1 = system (root, nix), disk2 = user data (home)
   disko.devices = {
     disk = {
       disk1 = {
@@ -23,61 +24,84 @@
                 mountpoint = "/boot";
               };
             };
-            root = {
-              name = "root";
+            luks = {
+              name = "luks-system";
               size = "100%";
               content = {
-                type = "lvm_pv";
-                vg = "pool";
+                type = "luks";
+                name = "cryptsystem";
+                extraOpenArgs = [
+                  "--allow-discards"
+                  "--perf-no_read_workqueue"
+                  "--perf-no_write_workqueue"
+                ];
+                # Optional: FIDO2/YubiKey support
+                # settings = {crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];};
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-L" "nixos-system" "-f"];
+                  subvolumes = {
+                    "/root" = {
+                      mountpoint = "/";
+                      mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                    };
+                    "/nix" = {
+                      mountpoint = "/nix";
+                      mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    };
+                    "/persist" = {
+                      mountpoint = "/persist";
+                      mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                    };
+                    "/swap" = {
+                      mountpoint = "/swap";
+                      swap.swapfile.size = "8G";
+                    };
+                  };
+                };
               };
             };
           };
         };
       };
-
       disk2 = {
         device = lib.mkDefault "/dev/sda";
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
-            lvm = {
-              name = "lvm";
+            luks = {
+              name = "luks-data";
               size = "100%";
               content = {
-                type = "lvm_pv";
-                vg = "pool";
+                type = "luks";
+                name = "cryptdata";
+                extraOpenArgs = [
+                  "--allow-discards"
+                  "--perf-no_read_workqueue"
+                  "--perf-no_write_workqueue"
+                ];
+                # Optional: FIDO2/YubiKey support
+                # settings = {crypttabExtraOpts = ["fido2-device=auto" "token-timeout=10"];};
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-L" "nixos-data" "-f"];
+                  subvolumes = {
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    };
+                  };
+                };
               };
             };
           };
         };
       };
     };
-
-    lvm_vg = {
-      pool = {
-        type = "lvm_vg";
-        lvs = {
-          root = {
-            size = "40%FREE";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/";
-              mountOptions = [ "defaults" ];
-            };
-          };
-          home = {
-            size = "60%FREE";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/home";
-              mountOptions = [ "defaults" ];
-            };
-          };
-        };
-      };
-    };
   };
+
+  # Mark critical filesystems as needed for boot
+  # fileSystems."/persist".neededForBoot = true;
+  # fileSystems."/var/log".neededForBoot = true;
 }
