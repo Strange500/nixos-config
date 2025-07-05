@@ -18,6 +18,7 @@
         "hyprpanel"
         "openrgb --startminimized -p default"
         "hypridle"
+        "systemctl --user start hyprpolkitagent"
       ];
 
       env = [
