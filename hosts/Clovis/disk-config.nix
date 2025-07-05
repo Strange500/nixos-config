@@ -1,5 +1,4 @@
-# Example to create a bios compatible gpt partition with second SSD
-{ lib, ... }: {
+{lib, ...}: {
   disko.devices = {
     disk = {
       disk1 = {
@@ -23,61 +22,77 @@
                 mountpoint = "/boot";
               };
             };
-            root = {
-              name = "root";
+            luks = {
+              name = "luks-system";
               size = "100%";
               content = {
-                type = "lvm_pv";
-                vg = "pool";
+                type = "luks";
+                name = "cryptsystem";
+                extraOpenArgs = [
+                  "--allow-discards"
+                  "--perf-no_read_workqueue"
+                  "--perf-no_write_workqueue"
+                ];
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-L" "nixos-system" "-f"];
+                  subvolumes = {
+                    "/root" = {
+                      mountpoint = "/";
+                      mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                    };
+                    "/nix" = {
+                      mountpoint = "/nix";
+                      mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                    };
+                    "/persist" = {
+                      mountpoint = "/persist";
+                      mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                    };
+                    "/swap" = {
+                      mountpoint = "/swap";
+                      swap.swapfile.size = "8G";
+                    };
+                  };
+                };
               };
             };
           };
         };
       };
-
       disk2 = {
         device = lib.mkDefault "/dev/sda";
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
-            lvm = {
-              name = "lvm";
+            luks = {
+              name = "luks-data";
               size = "100%";
               content = {
-                type = "lvm_pv";
-                vg = "pool";
+                type = "luks";
+                name = "cryptdata";
+                extraOpenArgs = [
+                  "--allow-discards"
+                  "--perf-no_read_workqueue"
+                  "--perf-no_write_workqueue"
+                ];
+                content = {
+                  type = "btrfs";
+                  extraArgs = ["-L" "nixos-data" "-f"];
+                  subvolumes = {
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                    };
+                  };
+                };
               };
             };
           };
         };
       };
     };
-
-    lvm_vg = {
-      pool = {
-        type = "lvm_vg";
-        lvs = {
-          root = {
-            size = "40%FREE";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/";
-              mountOptions = [ "defaults" ];
-            };
-          };
-          home = {
-            size = "60%FREE";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/home";
-              mountOptions = [ "defaults" ];
-            };
-          };
-        };
-      };
-    };
+    
   };
 }
