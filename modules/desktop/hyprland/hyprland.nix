@@ -2,13 +2,11 @@
   config,
   lib,
   ...
-}: let
-  inherit (config.desktop.hyprDesktop.settings) monitor;
-in {
+}: {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      monitor = monitor;
+      monitor = config.qgroget.nixos.desktop.monitors;
 
       "$terminal" = "kitty";
       "$fileManager" = "yazi";

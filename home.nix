@@ -4,46 +4,15 @@
   inputs,
   pkgs,
   ...
-}: let
-  monitors =
-    config.settings.monitors or [
-      ", preferred, auto, 1"
-    ];
-in {
+}: {
   imports = [
     ./settings.nix
+    ./hosts/setting.nix
     ./modules/config.nix
     ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
     inputs.sops-nix.homeManagerModule
   ];
-
-  qgroget.nixos = {
-    # remote-access = true;
-    apps = {
-      basic = true;
-      sync = true;
-      dev = {
-        enable = true;
-        jetbrains.enable = false;
-      };
-      media = true;
-      crypto = true;
-    };
-    # gaming = true;
-    # desktop = {
-    #   desktopEnvironment = "hyprland";
-    #   loginManager = "gdm";
-    #   monitors = monitors;
-    # };
-  };
-
-  desktop.hyprDesktop = {
-    enable = true;
-    settings = {
-      monitor = monitors;
-    };
-  };
 
   home = {
     username = "strange";

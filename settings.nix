@@ -1,4 +1,26 @@
 {lib, ...}: {
+  config = {
+    qgroget.nixos = {
+      # remote-access = true;
+      apps = {
+        basic = true;
+        sync = true;
+        dev = {
+          enable = true;
+          jetbrains.enable = false;
+        };
+        media = true;
+        crypto = true;
+      };
+      # gaming = true;
+      desktop = {
+        desktopEnvironment = "hyprland";
+        loginManager = "gdm";
+        # monitors = ["HDMI-A-1, 1920x1080, 0x0, 1" "DP-2, 2560x1440@144, 1920x0, 1"];
+      };
+    };
+  };
+
   options = {
     qgroget.nixos = {
       apps = {
@@ -33,6 +55,23 @@
           type = lib.types.bool;
           default = true;
           description = "Enable crypto apps.";
+        };
+      };
+      desktop = {
+        desktopEnvironment = lib.mkOption {
+          type = lib.types.str;
+          default = "hyprland";
+          description = "The desktop environment to use.";
+        };
+        loginManager = lib.mkOption {
+          type = lib.types.str;
+          default = "gdm";
+          description = "The login manager to use.";
+        };
+        monitors = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [", preferred, auto, 1"];
+          description = "List of monitor configurations. (only for Hyprland)";
         };
       };
       settings = {
