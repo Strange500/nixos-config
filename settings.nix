@@ -16,7 +16,7 @@
         media = true;
         crypto = true;
       };
-      # gaming = true;
+      gaming = true;
       desktop = {
         desktopEnvironment = "hyprland";
         loginManager = "gdm";
@@ -101,6 +101,11 @@
           default = ./modules/desktop/stylix/wallpaper/apple-dark.jpg;
           description = "Path to the wallpaper";
         };
+      };
+      gaming = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Enable gaming apps and configurations.";
       };
       settings = {
         confDirectory = lib.mkOption {

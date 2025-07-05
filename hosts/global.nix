@@ -12,6 +12,7 @@
     ../modules/system/bluetooth/bluetooth.nix
     ../modules/desktop/stylix/stylix.nix
     ../modules/system/boot/plymouth.nix
+    ../modules/game/game.nix
     ./setting.nix
   ];
 

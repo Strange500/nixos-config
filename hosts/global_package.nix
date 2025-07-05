@@ -1,14 +1,16 @@
 {
   inputs,
   pkgs,
+  lib,
+  config,
   ...
 }: {
   programs = {
-    hyprland = {
+    hyprland = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") {
       enable = true;
       xwayland.enable = true;
       systemd.setPath.enable = true;
-      package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
       portalPackage =
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
@@ -18,7 +20,6 @@
     };
     virt-manager.enable = true;
     zsh.enable = true;
-    steam.enable = true;
     dconf.enable = true;
   };
 
