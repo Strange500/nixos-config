@@ -1,4 +1,8 @@
-{lib, ...}: {
+{
+  lib,
+  config,
+  ...
+}: {
   config = {
     qgroget.nixos = {
       # remote-access = true;
@@ -19,6 +23,20 @@
         theme = "atelier-cave";
       };
     };
+
+    assertions = [
+      {
+        assertion = config.qgroget.nixos.desktop.desktopEnvironment == "hyprland";
+        message = "Hyprland is the only supported desktop environment.";
+      }
+      {
+        assertion =
+          config.qgroget.nixos.desktop.loginManager
+          == "gdm"
+          || config.qgroget.nixos.desktop.loginManager == "ly";
+        message = "Only gdm and ly are supported as login managers.";
+      }
+    ];
   };
 
   options = {

@@ -15,8 +15,6 @@
     ./setting.nix
   ];
 
-  login.gdm.enable = true;
-
   networking.networkmanager = {enable = true;};
   services = {
     tailscale = {
