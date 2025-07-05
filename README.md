@@ -137,6 +137,11 @@ Put your age keys in the following file:
 ```bash
 nix run nixpkgs#nixos-anywhere -- --flake .#host --generate-hardware-config nixos-generate-config ./hardware-configuration.nix root@ip-address
 ```
+If you need Luks and use tpm2 for disk encryption, reboot inside the live cd and type:
+```bash
+systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0 /dev/<device>
+```
+do it for all partition that requires encryption
 
 ### Step 3: Post-Installation
 
