@@ -5,6 +5,7 @@
   ...
 }: {
   imports = [
+    ../settings.nix
     ./global_package.nix
     ../modules/system/audio/audio.nix
     ../modules/system/login/login.nix

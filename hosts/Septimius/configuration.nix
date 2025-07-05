@@ -1,7 +1,11 @@
-{ config, pkgs, inputs, ... }: {
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}: {
   imports = [
     ../global.nix
-    ../../modules/config.nix
     ./disk-config.nix
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
@@ -12,5 +16,5 @@
     efiInstallAsRemovable = true;
   };
 
-  boot.kernelParams = [ "acpi_enforce_resources=lax" ];
+  boot.kernelParams = ["acpi_enforce_resources=lax"];
 }

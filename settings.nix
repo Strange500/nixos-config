@@ -16,7 +16,7 @@
       desktop = {
         desktopEnvironment = "hyprland";
         loginManager = "gdm";
-        # monitors = ["HDMI-A-1, 1920x1080, 0x0, 1" "DP-2, 2560x1440@144, 1920x0, 1"];
+        theme = "atelier-cave";
       };
     };
   };
@@ -72,6 +72,16 @@
           type = lib.types.listOf lib.types.str;
           default = [", preferred, auto, 1"];
           description = "List of monitor configurations. (only for Hyprland)";
+        };
+        theme = lib.mkOption {
+          type = lib.types.str;
+          default = "atelier-cave";
+          description = "The base16 theme to use";
+        };
+        background = lib.mkOption {
+          type = lib.types.path;
+          default = ./modules/desktop/stylix/wallpaper/apple-dark.jpg;
+          description = "Path to the wallpaper";
         };
       };
       settings = {
