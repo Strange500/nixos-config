@@ -12,15 +12,19 @@
     inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.1"."com.github.copilot"
   ];
 in {
-  home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (with pkgs; [
-    devbox
-    (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
-    (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
-    libnotify
-    pre-commit
-    alejandra
-    nixd
-  ]);
+  home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (with pkgs;
+    [
+      devbox
+      libnotify
+      pre-commit
+      alejandra
+      nixd
+    ]
+    ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
+      (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
+      (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
+    ]);
+
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     EDITOR = "lvim";
     VISUAL = "lvim";
