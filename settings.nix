@@ -5,7 +5,7 @@
 }: {
   config = {
     qgroget.nixos = {
-      # remote-access = true;
+      remote-access = true;
       apps = {
         basic = true;
         sync = true;
@@ -106,6 +106,11 @@
         type = lib.types.bool;
         default = true;
         description = "Enable gaming apps and configurations.";
+      };
+      remote-access = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable remote access configurations.";
       };
       settings = {
         confDirectory = lib.mkOption {

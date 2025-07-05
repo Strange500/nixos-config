@@ -13,6 +13,7 @@
     ../modules/desktop/stylix/stylix.nix
     ../modules/system/boot/plymouth.nix
     ../modules/game/game.nix
+    ../modules/system/remoteAccess.nix
     ./setting.nix
   ];
 
@@ -33,11 +34,6 @@
       motherboard = "amd";
     };
     gvfs.enable = true;
-
-    openssh = {
-      enable = true;
-      settings = {PermitRootLogin = "no";};
-    };
   };
 
   virtualisation = {
@@ -66,9 +62,6 @@
       "nix-users"
       "libvirtd"
       "kvm"
-    ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy strange@Clovis"
     ];
   };
 
