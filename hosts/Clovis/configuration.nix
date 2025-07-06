@@ -90,36 +90,44 @@
 
           unitConfig.DefaultDependencies = "no";
           serviceConfig.Type = "oneshot";
-            script = ''
-            # Rollback for cryptsystem
-            mkdir -p /btrfs_tmp
-            mount -o subvol=/ /dev/mapper/cryptsystem /btrfs_tmp
+          script = ''
+                        # Rollback for cryptsystem
+                        mkdir -p /btrfs_tmp
+                        mount -o subvol=/ /dev/mapper/cryptsystem /btrfs_tmp
 
-            if [[ -e /btrfs_tmp/root ]]; then
-              mkdir -p /btrfs_tmp/old_roots
-              timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-              mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-            fi
+                        if [[ -e /btrfs_tmp/root ]]; then
+                          mkdir -p /btrfs_tmp/old_roots
+                          timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
+                          mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
+                        fi
 
-            delete_subvolume_recursively() {
-              IFS=$'\n'
-              for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-                delete_subvolume_recursively "/btrfs_tmp/$i"
-              done
-              btrfs subvolume delete "$1"
-            }
+                        delete_subvolume_recursively() {
+                          IFS=$'\n'
+                          for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
+                            delete_subvolume_recursively "/btrfs_tmp/$i"
+                          done
+                          btrfs subvolume delete "$1"
+                        }
 
-            for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
-              delete_subvolume_recursively "$i"
-            done
+                        for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
+                          delete_subvolume_recursively "$i"
+                        done
 
-            btrfs subvolume create /btrfs_tmp/root
-            umount /btrfs_tmp
+                        btrfs subvolume create /btrfs_tmp/root
+                        umount /btrfs_tmp
 
-            # Rollback for cryptdata
+                        # Rollback for cryptdata
             mkdir -p /btrfs_data_tmp
             mount -o subvol=/ /dev/mapper/cryptdata /btrfs_data_tmp
 
+            # Handle /home subvolume (if you want to reset it)
+            if [[ -e /btrfs_data_tmp/home ]]; then
+              mkdir -p /btrfs_data_tmp/old_homes
+              timestamp=$(date --date="@$(stat -c %Y /btrfs_data_tmp/home)" "+%Y-%m-%-d_%H:%M:%S")
+              mv /btrfs_data_tmp/home "/btrfs_data_tmp/old_homes/$timestamp"
+            fi
+
+            # Handle /data subvolume (if you want to reset it)
             if [[ -e /btrfs_data_tmp/data ]]; then
               mkdir -p /btrfs_data_tmp/old_data
               timestamp=$(date --date="@$(stat -c %Y /btrfs_data_tmp/data)" "+%Y-%m-%-d_%H:%M:%S")
@@ -134,11 +142,20 @@
               btrfs subvolume delete "$1"
             }
 
+            # Clean up old homes (if resetting /home)
+            for i in $(find /btrfs_data_tmp/old_homes/ -maxdepth 1 -mtime +30); do
+              delete_data_subvolume_recursively "$i"
+            done
+
+            # Clean up old data (if resetting /data)
             for i in $(find /btrfs_data_tmp/old_data/ -maxdepth 1 -mtime +30); do
               delete_data_subvolume_recursively "$i"
             done
 
+            # Recreate subvolumes
+            btrfs subvolume create /btrfs_data_tmp/home
             btrfs subvolume create /btrfs_data_tmp/data
+
             umount /btrfs_data_tmp
           '';
         };
