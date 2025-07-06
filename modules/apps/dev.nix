@@ -55,6 +55,7 @@ in {
           ms-azuretools.vscode-docker
           ms-vscode.cpptools-extension-pack
           ms-vscode-remote.remote-ssh
+          jnoortheen.nix-ide
         ];
         userSettings = {
           "files.autoSave" = "afterDelay";
