@@ -50,6 +50,10 @@
                       mountpoint = "/persist";
                       mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                     };
+                    "/var-log" = {
+                      mountpoint = "/var/log";
+                      mountOptions = ["subvol=var-log" "compress=zstd" "noatime"];
+                    };
                     "/swap" = {
                       mountpoint = "/swap";
                       swap.swapfile.size = "8G";
@@ -88,7 +92,7 @@
                       mountpoint = "/home";
                       mountOptions = ["subvol=home" "compress=zstd" "noatime"];
                     };
-                    "/home-persist" = {
+                    "/data" = {
                       mountpoint = "/data";
                       mountOptions = ["subvol=data" "compress=zstd" "noatime"];
                     };

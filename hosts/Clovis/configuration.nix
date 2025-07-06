@@ -14,12 +14,12 @@
   users.mutableUsers = false;
 
   fileSystems."/persist".neededForBoot = true;
+  fileSystems."/var/log".neededForBoot = true;
 
   environment.persistence."/persist" = {
     enable = true;
     hideMounts = true;
     directories = [
-      "/var/log"
       "/var/lib/bluetooth"
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
@@ -61,24 +61,31 @@
       luks.devices = {
         cryptsystem = {
           device = lib.mkForce "/dev/nvme0n1p3";
+          allowDiscards = true;
+          bypassWorkqueues = true;
         };
         cryptdata = {
           device = lib.mkForce "/dev/sda1";
+          allowDiscards = true;
+          bypassWorkqueues = true;
         };
       };
       # supportedFilesystems = ["btrfs"];
       systemd = {
         enable = true;
-        services.btrfs-root-wipe = {
-          description = "Wipe btrfs root subvolume";
+        services.rollback = {
+          description = "Rollback BTRFS root subvolume to a pristine state";
           wantedBy = ["initrd.target"];
-          after = ["systemd-cryptsetup@cryptsystem.service"];
+
+          # LUKS/TPM process. If you have named your device mapper something other
+          # than 'enc', then @enc will have a different name. Adjust accordingly.
+          after = ["systemd-cryptsetup@cryptsystem.service" "systemd-cryptsetup@cryptdata.service"];
+
+          # Before mounting the system root (/sysroot) during the early boot process
           before = ["sysroot.mount"];
+
           unitConfig.DefaultDependencies = "no";
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
+          serviceConfig.Type = "oneshot";
           script = ''
             mkdir -p /btrfs_tmp
             mount -o subvol=/ /dev/mapper/cryptsystem /btrfs_tmp
