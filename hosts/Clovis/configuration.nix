@@ -1,6 +1,7 @@
 {
   inputs,
   lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -69,25 +70,9 @@
           allowDiscards = true;
           bypassWorkqueues = true;
         };
-      };
-      # supportedFilesystems = ["btrfs"];
-      systemd = {
-        enable = true;
-        services.rollback = {
-          description = "Rollback BTRFS root subvolume to a pristine state";
-          wantedBy = ["initrd.target"];
 
-          # LUKS/TPM process. If you have named your device mapper something other
-          # than 'enc', then @enc will have a different name. Adjust accordingly.
-          after = ["systemd-cryptsetup@cryptsystem.service" "systemd-cryptsetup@cryptdata.service"];
-
-          # Before mounting the system root (/sysroot) during the early boot process
-          before = ["sysroot.mount"];
-
-          unitConfig.DefaultDependencies = "no";
-          serviceConfig.Type = "oneshot";
-          script = ''
-            mkdir -p /btrfs_tmp
+        postDeviceCommands = pkgs.lib.mkBefore ''
+          mkdir -p /btrfs_tmp
             mount -o subvol=/ /dev/mapper/cryptsystem /btrfs_tmp
 
             if [[ -e /btrfs_tmp/root ]]; then
@@ -111,8 +96,28 @@
             btrfs subvolume create /btrfs_tmp/root
             umount /btrfs_tmp
           '';
-        };
       };
+      # supportedFilesystems = ["btrfs"];
+      # systemd = {
+      #   enable = true;
+      #   services.rollback = {
+      #     description = "Rollback BTRFS root subvolume to a pristine state";
+      #     wantedBy = ["initrd.target"];
+
+      #     # LUKS/TPM process. If you have named your device mapper something other
+      #     # than 'enc', then @enc will have a different name. Adjust accordingly.
+      #     after = ["systemd-cryptsetup@cryptsystem.service" "systemd-cryptsetup@cryptdata.service"];
+
+      #     # Before mounting the system root (/sysroot) during the early boot process
+      #     before = ["sysroot.mount"];
+
+      #     unitConfig.DefaultDependencies = "no";
+      #     serviceConfig.Type = "oneshot";
+      #     script = ''
+            
+      #     '';
+      #   };
+      # };
     };
     loader.grub = {
       efiSupport = true;
