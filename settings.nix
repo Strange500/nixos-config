@@ -8,15 +8,15 @@
       remote-access = true;
       apps = {
         basic = true;
-        sync = true;
+        sync = false;
         dev = {
-          enable = true;
+          enable = false;
           jetbrains.enable = false;
         };
-        media = true;
-        crypto = true;
+        media = false;
+        crypto = false;
       };
-      gaming = true;
+      gaming = false;
       desktop = {
         desktopEnvironment = "hyprland";
         loginManager = "gdm";

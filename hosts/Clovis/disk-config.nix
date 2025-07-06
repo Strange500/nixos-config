@@ -1,6 +1,7 @@
 {lib, ...}: {
   disko.devices = {
     disk = {
+      # System disk (NVMe)
       disk1 = {
         device = lib.mkDefault "/dev/nvme0n1";
         type = "disk";
@@ -49,6 +50,10 @@
                       mountpoint = "/persist";
                       mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                     };
+                    "/var-log" = {
+                      mountpoint = "/var/log";
+                      mountOptions = ["subvol=var-log" "compress=zstd" "noatime"];
+                    };
                     "/swap" = {
                       mountpoint = "/swap";
                       swap.swapfile.size = "8G";
@@ -60,6 +65,8 @@
           };
         };
       };
+      
+      # Data disk (SATA SSD)
       disk2 = {
         device = lib.mkDefault "/dev/sda";
         type = "disk";
@@ -85,6 +92,10 @@
                       mountpoint = "/home";
                       mountOptions = ["subvol=home" "compress=zstd" "noatime"];
                     };
+                    "/data" = {
+                      mountpoint = "/data";
+                      mountOptions = ["subvol=data" "compress=zstd" "noatime"];
+                    };
                   };
                 };
               };
@@ -93,6 +104,5 @@
         };
       };
     };
-    
   };
 }
