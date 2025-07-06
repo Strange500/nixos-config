@@ -70,6 +70,7 @@
           allowDiscards = true;
           bypassWorkqueues = true;
         };
+      };
 
         postDeviceCommands = pkgs.lib.mkBefore ''
           mkdir -p /btrfs_tmp
@@ -96,7 +97,6 @@
             btrfs subvolume create /btrfs_tmp/root
             umount /btrfs_tmp
           '';
-      };
       # supportedFilesystems = ["btrfs"];
       # systemd = {
       #   enable = true;
