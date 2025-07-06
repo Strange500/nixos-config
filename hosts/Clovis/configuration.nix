@@ -64,11 +64,7 @@
           allowDiscards = true;
           bypassWorkqueues = true;
         };
-
-        # postDeviceCommands = pkgs.lib.mkBefore ''
-        #   ''
       };
-      # supportedFilesystems = ["btrfs"];
       systemd = {
         enable = true;
         services.rollback = {
