@@ -48,12 +48,18 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
     disko,
+    impermanence,
     nur,
     ...
   } @ inputs: {
@@ -67,6 +73,7 @@
         modules = [
           ./hosts/Clovis/configuration.nix
           ./hardware-configuration.nix
+          impermanence.nixosModules.impermanence
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
           disko.nixosModules.disko
@@ -87,6 +94,7 @@
         modules = [
           ./hosts/Septimius/configuration.nix
           ./hardware-configuration.nix
+          impermanence.nixosModules.impermanence
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
           disko.nixosModules.disko

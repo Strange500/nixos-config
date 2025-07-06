@@ -1,6 +1,7 @@
 {lib, ...}: {
   disko.devices = {
     disk = {
+      # System disk (NVMe)
       disk1 = {
         device = lib.mkDefault "/dev/nvme0n1";
         type = "disk";
@@ -60,6 +61,8 @@
           };
         };
       };
+      
+      # Data disk (SATA SSD)
       disk2 = {
         device = lib.mkDefault "/dev/sda";
         type = "disk";
@@ -85,6 +88,10 @@
                       mountpoint = "/home";
                       mountOptions = ["subvol=home" "compress=zstd" "noatime"];
                     };
+                    "/home-persist" = {
+                      mountpoint = "/data";
+                      mountOptions = ["subvol=data" "compress=zstd" "noatime"];
+                    };
                   };
                 };
               };
@@ -93,6 +100,5 @@
         };
       };
     };
-    
   };
 }
