@@ -14,6 +14,7 @@
     ../modules/system/bluetooth/bluetooth.nix
     ../modules/desktop/stylix/stylix.nix
     ../modules/system/boot/plymouth.nix
+    ../modules/system/update/update.nix
     ../modules/game/game.nix
     ../modules/system/remoteAccess.nix
     ./setting.nix
@@ -57,6 +58,11 @@
       "kvm"
     ];
   };
+
+  environment.etc."gitconfig".text = ''
+    [safe]
+      directory = /home/strange/nixos
+  '';
 
   i18n = {
     defaultLocale = "fr_FR.UTF-8";

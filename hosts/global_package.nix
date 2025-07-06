@@ -27,6 +27,7 @@
 
   environment.systemPackages =
     [
+      pkgs.git
       pkgs.wget
       pkgs.blueman
       pkgs.nix-prefetch-git
