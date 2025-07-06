@@ -25,6 +25,10 @@
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
       "/etc/NetworkManager/system-connections"
+      "/var/lib/systemd"
+      "/etc/NetworkManager"
+      "/etc/ssh"
+      "/root/.ssh"
       {
         directory = "/var/lib/colord";
         user = "colord";
@@ -34,6 +38,10 @@
     ];
     files = [
       "/etc/machine-id"
+      "/etc/ssh/ssh_host_ed25519_key"
+      "/etc/ssh/ssh_host_ed25519_key.pub"
+      "/etc/ssh/ssh_host_rsa_key"
+      "/etc/ssh/ssh_host_rsa_key.pub"
       {
         file = "/var/keys/secret_file";
         parentDirectory = {mode = "u=rwx,g=,o=";};
@@ -60,6 +68,9 @@
       ];
       files = [
         ".zshrc"
+        ".zprofile"
+        ".zshenv"
+        ".zlogin"
         ".zshhistory"
         ".gtkrc-2.0"
         ".stignore"
