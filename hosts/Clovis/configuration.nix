@@ -43,6 +43,10 @@
       directories = [
         "Downloads"
         "nixos"
+        ".cache"
+        ".config"
+        "wallpaper"
+
         {
           directory = ".ssh";
           mode = "0700";
@@ -52,7 +56,13 @@
           directory = ".local/share/keyrings";
           mode = "0700";
         }
-        ".local/share/direnv"
+        ".local"
+      ];
+      files = [
+        ".zshrc"
+        ".zshhistory"
+        ".gtkrc-2.0"
+        ".stignore"
       ];
     };
   };
