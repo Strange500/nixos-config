@@ -65,7 +65,7 @@
           };
         };
       };
-      
+
       # Data disk (SATA SSD)
       disk2 = {
         device = lib.mkDefault "/dev/sda";

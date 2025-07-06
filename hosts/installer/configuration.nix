@@ -1,8 +1,11 @@
-{ pkgs, modulesPath, ... }: {
-  imports =
-    [ "${modulesPath}/installer/cd-dvd/installation-cd-graphical-gnome.nix" ];
+{
+  pkgs,
+  modulesPath,
+  ...
+}: {
+  imports = ["${modulesPath}/installer/cd-dvd/installation-cd-graphical-gnome.nix"];
 
-  environment.systemPackages = with pkgs; [ vim git gparted ];
+  environment.systemPackages = with pkgs; [vim git gparted];
 
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 
@@ -44,13 +47,13 @@
 
   nix = {
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
       substituters = [
         "https://nix-community.cachix.org"
         "https://cache.nixos.org/"
         "https://hyprland.cachix.org"
       ];
-      trusted-substituters = [ "https://hyprland.cachix.org" ];
+      trusted-substituters = ["https://hyprland.cachix.org"];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="

@@ -8,7 +8,7 @@
       remote-access = true;
       apps = {
         basic = true;
-             };
+      };
       desktop = {
         desktopEnvironment = "hyprland";
         loginManager = "gdm";

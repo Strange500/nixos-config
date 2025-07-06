@@ -1,5 +1,5 @@
 # Btrfs setup with LUKS encryption and subvolumes
-{ lib, ... }: {
+{lib, ...}: {
   disko.devices = {
     disk.disk1 = {
       device = lib.mkDefault "/dev/nvme0n1";

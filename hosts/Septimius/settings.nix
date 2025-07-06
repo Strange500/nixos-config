@@ -14,7 +14,6 @@
         crypto = false;
       };
       gaming = false;
-  
     };
   };
 }
