@@ -27,22 +27,18 @@
 
   environment.systemPackages =
     [
-      pkgs.qemu
-      pkgs.qemu_kvm
       pkgs.wget
       pkgs.blueman
       pkgs.nix-prefetch-git
       pkgs.home-manager
-      pkgs.openrgb-with-all-plugins
-      pkgs.brightnessctl
       pkgs.gparted
       pkgs.cachix
-      pkgs.hypridle
       pkgs.nixd
-      inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
       pkgs.plymouth
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
+      pkgs.hypridle
+      inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
     ];
 }

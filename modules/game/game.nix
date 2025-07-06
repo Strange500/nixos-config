@@ -25,5 +25,11 @@
       enable32Bit = true;
     };
     services.xserver.videoDrivers = ["amdgpu"];
+
+    services.hardware.openrgb = {
+      enable = true;
+      package = pkgs.openrgb-with-all-plugins;
+      motherboard = "amd";
+    };
   };
 }

@@ -2,6 +2,8 @@
   inputs,
   pkgs,
   hostname,
+  lib,
+  config,
   ...
 }: {
   imports = [
@@ -19,24 +21,15 @@
 
   networking.networkmanager = {enable = true;};
   services = {
-    tailscale = {
-      enable = true;
-      useRoutingFeatures = "client";
-    };
     xserver.xkb = {
       layout = "fr";
       variant = "";
     };
     printing.enable = true;
-    hardware.openrgb = {
-      enable = true;
-      package = pkgs.openrgb-with-all-plugins;
-      motherboard = "amd";
-    };
     gvfs.enable = true;
   };
 
-  virtualisation = {
+  virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
     docker.enable = true;
     libvirtd.enable = true;
@@ -82,7 +75,6 @@
 
   hardware = {
     graphics.enable = true;
-    nvidia.modesetting.enable = true;
     ledger.enable = true;
   };
 

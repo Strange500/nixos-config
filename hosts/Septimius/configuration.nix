@@ -1,6 +1,7 @@
 {
   lib,
   inputs,
+  pkgs,
   ...
 }: {
   imports = [
@@ -21,6 +22,10 @@
       device = lib.mkForce "/dev/nvme0n1p3";
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    pkgs.brightnessctl
+  ];
 
   boot.kernelParams = ["acpi_enforce_resources=lax"];
 }

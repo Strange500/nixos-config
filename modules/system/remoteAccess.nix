@@ -28,6 +28,10 @@
           overalljails = true;
         };
       };
+      tailscale = {
+        enable = true;
+        useRoutingFeatures = "client";
+      };
     };
   };
 }

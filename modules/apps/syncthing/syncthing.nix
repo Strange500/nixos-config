@@ -36,4 +36,14 @@
       };
     };
   };
+
+  home.file.".stignore".text = ''
+    .*
+              *.tmp
+              *.log
+              *~
+              *.swp
+              .DS_Store
+              wallpaper
+              nixos'';
 }
