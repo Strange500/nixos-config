@@ -20,9 +20,11 @@ in {
       serviceConfig = {
         Type = "oneshot";
       };
-      path = with pkgs; [
-        git
-        sudo
+      path = [
+        pkgs.git
+        pkgs.sudo
+        pkgs.nix
+        pkgs.nixos-rebuild
       ];
       unitConfig.RequiresMountsFor = "/home/${config.qgroget.user.username}/nixos";
       script = "${import ./auto-upgrade-script.nix {inherit pkgs config;}}/bin/auto-upgrade-script";

@@ -17,15 +17,16 @@ in
     	exit 1
     fi
 
-    cd "${cfg.confDir}"
-    echo "$(sudo -u ${cfg.user} whoami) is running the script in ${cfg.confDir}"
-
+    cd "${cfg.confDir}" || {
+      echo "Failed to change directory to ${cfg.confDir}. Please check the path."
+      exit 1
+    }
     echo "Pulling the latest version of the repository..."
-    /run/wrappers/bin/sudo -u ${cfg.user} git pull
+    /run/wrappers/bin/sudo -u ${cfg.user} ${pkgs.git}/bin/git pull
 
     if [ ${cfg.pushUpdates} = true ]; then
     	echo "Updating flake.lock..."
-    	/run/wrappers/bin/sudo -u ${cfg.user} nix flake update --commit-lock-file && /run/wrappers/bin/sudo -u ${cfg.user} git push
+    	/run/wrappers/bin/sudo -u ${cfg.user} nix flake update --commit-lock-file && /run/wrappers/bin/sudo -u ${cfg.user} ${pkgs.git}/bin/git push
     else
     	echo "Skipping 'nix flake update'..."
     fi
