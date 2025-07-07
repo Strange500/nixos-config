@@ -14,7 +14,6 @@
     persistent = true;
   };
 in {
-
   systemd = {
     services."nixos-upgrade" = {
       serviceConfig = {
@@ -35,10 +34,9 @@ in {
       after = ["network-online.target"];
       wantedBy = ["timers.target"];
       timerConfig = {
-        OnCalendar = cfg.onCalendar;
+        OnUnitActiveSec = "6h";
         Persistent = cfg.persistent;
         Unit = "nixos-upgrade.service";
-        RandomizedDelaySec = "30m";
       };
     };
   };
