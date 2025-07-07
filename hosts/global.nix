@@ -42,11 +42,11 @@
   };
 
   users.users.root.hashedPassword = "$6$13gz85QezPcMpTXb$jalGiNan9u2PYc3jP4zgUYoZqNcu.811AqfVNadcNQhH4kn9uWC0FxO7UPArX5Apm49lhDbQ5elFeBRS76.s.1";
-  users.users.strange = {
+  users.users.${config.qgroget.user.username} = {
     shell = pkgs.zsh;
     isNormalUser = true;
-    home = "/home/strange";
-    description = "strange";
+    home = "/home/${config.qgroget.user.username}";
+    description = "${config.qgroget.user.username}";
     hashedPassword = "$6$tN1HR03Pv6LQFA.w$1byWSM0wWLFn6nQkYebqYLrPzYNf2eyqmGDvTqI8OET9M3y74in7lVGr1KJOHZQys6wWh.ggaRafH6fyrgPmm.";
     extraGroups = [
       "networkmanager"
@@ -61,7 +61,7 @@
 
   environment.etc."gitconfig".text = ''
     [safe]
-      directory = /home/strange/nixos
+      directory = /home/${config.qgroget.user.username}/nixos
   '';
 
   i18n = {
@@ -94,7 +94,7 @@
   home-manager = {
     # also pass inputs to home-manager modules
     extraSpecialArgs = {inherit inputs pkgs hostname;};
-    users = {"strange" = import ../home.nix;};
+    users = {"${config.qgroget.user.username}" = import ../home.nix;};
   };
 
   nixpkgs.config = {
@@ -104,7 +104,7 @@
 
   nix = {
     settings = {
-      trusted-users = ["root" "strange"];
+      trusted-users = ["root" "${config.qgroget.user.username}"];
       experimental-features = ["nix-command" "flakes"];
       substituters = [
         "https://nix-community.cachix.org"

@@ -20,7 +20,7 @@
       BlockAboutConfig = false;
       DefaultDownloadDirectory = "\${home}/Downloads";
     };
-    profiles.strange = {
+    profiles.${config.qgroget.user.username} = {
       settings = {
         # specify profile-specific preferences here; check about:config for options
         "browser.newtabpage.activity-stream.feeds.section.highlights" = false;

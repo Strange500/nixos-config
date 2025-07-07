@@ -6,19 +6,14 @@
 }: let
   cfg = {
     operation = "switch";
-    configDir = /home/strange/nixos;
-    user = "strange";
+    configDir = /home/${config.qgroget.user.username}/nixos;
+    user = "${config.qgroget.user.username}";
     pushUpdates = false;
     extraFlags = "";
     onCalendar = "daily";
     persistent = true;
   };
 in {
-  environment.systemPackages = [
-    (import ./auto-upgrade-script.nix {
-      inherit pkgs;
-    })
-  ];
 
   systemd = {
     services."nixos-upgrade" = {
@@ -29,8 +24,8 @@ in {
         git
         sudo
       ];
-      unitConfig.RequiresMountsFor = "/home/strange/nixos";
-      script = "${import ./auto-upgrade-script.nix {inherit pkgs;}}/bin/auto-upgrade-script";
+      unitConfig.RequiresMountsFor = "/home/${config.qgroget.user.username}/nixos";
+      script = "${import ./auto-upgrade-script.nix {inherit pkgs config;}}/bin/auto-upgrade-script";
       description = "NixOS Upgrade Service";
     };
     timers."nixos-upgrade" = {

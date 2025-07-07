@@ -59,7 +59,7 @@ in {
         ];
         userSettings = {
           "files.autoSave" = "afterDelay";
-          "remote.SSH.configFile" = "/home/strange/ssh-config";
+          "remote.SSH.configFile" = "/home/${config.qgroget.user.username}/ssh-config";
           "github.copilot.enable" = {
             "*" = true;
             "plaintext" = true;

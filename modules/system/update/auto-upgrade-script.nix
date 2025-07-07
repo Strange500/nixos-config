@@ -1,8 +1,8 @@
-{pkgs, ...}: let
+{pkgs,config, ...}: let
   cfg = {
     operation = "switch";
-    confDir = "/home/strange/nixos";
-    user = "strange";
+    confDir = "/home/${config.qgroget.user.username}/nixos";
+    user = "${config.qgroget.user.username}";
     pushUpdates = "true";
     extraFlags = "";
     onCalendar = "daily";

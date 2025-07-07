@@ -113,7 +113,7 @@
       image = [
         {
           # monitor =
-          path = "/home/strange/.local/share/user/profile.png";
+          path = "/home/${config.qgroget.user.username}/.local/share/user/profile.png";
           size = 100;
           border_size = 2;
           #    border_color = "$foreground";

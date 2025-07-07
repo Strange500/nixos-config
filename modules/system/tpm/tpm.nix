@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: {
   boot.kernelParams = ["acpi_enforce_resources=lax"];
@@ -10,7 +11,7 @@
     pkcs11.enable = true;
     tctiEnvironment.enable = true;
   };
-  users.users.strange.extraGroups = ["tss"];
+  users.users.${config.qgroget.user.username}.extraGroups = ["tss"];
 
   environment.systemPackages = with pkgs; [
     tpm2-tools

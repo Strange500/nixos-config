@@ -221,7 +221,7 @@
 
   programs.rofi = {
     enable = true;
-    theme = lib.mkForce "/home/strange/.local/share/rofi/themes/theme.rasi";
+    theme = lib.mkForce "/home/${config.qgroget.user.username}/.local/share/rofi/themes/theme.rasi";
   };
 
   systemd.user.services.wallapaper-cycle = {
@@ -270,7 +270,7 @@
               done
           done
         ''
-      } /home/strange/wallpaper/current";
+      } /home/${config.qgroget.user.username}/wallpaper/current";
     };
   };
 }

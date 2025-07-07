@@ -1,6 +1,7 @@
 {
   pkgs,
   modulesPath,
+  config,
   ...
 }: {
   imports = ["${modulesPath}/installer/cd-dvd/installation-cd-graphical-gnome.nix"];
@@ -32,7 +33,7 @@
   # Allow root login (optional, insecure unless you add a key)
   services.openssh.settings.PermitRootLogin = "yes";
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy strange@Clovis"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
   ];
 
   # Set a root password

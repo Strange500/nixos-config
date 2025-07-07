@@ -14,8 +14,8 @@
   ];
 
   home = {
-    username = "strange";
-    homeDirectory = "/home/strange";
+    username = "${config.qgroget.user.username}";
+    homeDirectory = "/home/${config.qgroget.user.username}";
     stateVersion = "25.11";
     packages = [
       pkgs.discord
@@ -34,14 +34,14 @@
         source = ./home/wallpapers/current;
         recursive = true;
       };
-      ".ssh/config".text = "Host *\n          User strange\n          IdentityFile '${
+      ".ssh/config".text = "Host *\n          User ${config.qgroget.user.username}\n          IdentityFile '${
         config.sops.secrets."git/ssh/private".path
       }'\n          ";
     };
   };
 
   sops = {
-    age.keyFile = "/home/strange/.config/sops/age/keys.txt";
+    age.keyFile = "/home/${config.qgroget.user.username}/.config/sops/age/keys.txt";
     defaultSopsFile = ./secrets/secrets.yaml;
 
     defaultSymlinkPath = "/run/user/1000/secrets";
