@@ -14,10 +14,6 @@
       portalPackage =
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
-    thunar = {
-      enable = true;
-      plugins = with pkgs.xfce; [thunar-archive-plugin thunar-volman];
-    };
     virt-manager.enable = true;
     zsh.enable = true;
     dconf.enable = true;

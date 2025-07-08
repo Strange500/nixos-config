@@ -20,6 +20,7 @@
     packages = [
       pkgs.discord
       pkgs.moonlight-qt
+      pkgs.nautilus
     ];
     file = {
       ".config" = {
