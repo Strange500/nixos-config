@@ -16,6 +16,7 @@
 in {
   systemd = {
     services."nixos-upgrade" = {
+      enable = true;
       serviceConfig = {
         Type = "oneshot";
       };
@@ -30,10 +31,12 @@ in {
       description = "NixOS Upgrade Service";
     };
     timers."nixos-upgrade" = {
+      enable = true;
       wants = ["network-online.target"];
       after = ["network-online.target"];
       wantedBy = ["timers.target"];
       timerConfig = {
+        OnBootSec = "5min";
         OnUnitActiveSec = "6h";
         Persistent = cfg.persistent;
         Unit = "nixos-upgrade.service";
