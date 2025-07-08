@@ -41,7 +41,7 @@
   };
 
   sops = {
-    age.keyFile = "/home/${config.qgroget.user.username}/.config/sops/age/keys.txt";
+    age.keyFile = "${config.qgroget.secretAgeKeyPath}";
     defaultSopsFile = ./secrets/secrets.yaml;
 
     defaultSymlinkPath = "/run/user/1000/secrets";

@@ -61,6 +61,7 @@
     disko,
     impermanence,
     nur,
+    sops-nix,
     ...
   } @ inputs: {
     nixosConfigurations = {
@@ -77,6 +78,7 @@
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
           nur.modules.nixos.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {
@@ -98,6 +100,7 @@
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
           nur.modules.nixos.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {

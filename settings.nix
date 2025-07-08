@@ -5,6 +5,7 @@
 }: {
   config = {
     qgroget = {
+      secretAgeKeyPath = "/var/lib/sops/age/keys.txt";
       user.username = "strange";
       nixos = {
         remote-access = true;
@@ -36,6 +37,11 @@
 
   options = {
     qgroget = {
+      secretAgeKeyPath = lib.mkOption {
+        type = lib.types.string;
+        default = "/var/lib/sops/age/keys.txt";
+        description = "Path to the age key file for sops.";
+      };
       user.username = lib.mkOption {
         type = lib.types.str;
         default = "strange";

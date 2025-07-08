@@ -16,12 +16,14 @@
 
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;
+  fileSystems."/var/lib/sops".neededForBoot = true;
 
   environment.persistence = {
     "/persist" = {
       enable = true;
       hideMounts = true;
       directories = [
+        "/var/lib/sops"
         "/var/lib/nixos"
         "/var/lib/bluetooth"
         "/var/lib/systemd/coredump"
