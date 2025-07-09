@@ -3,6 +3,7 @@
   lib,
   pkgs,
   inputs,
+  hostname,
   ...
 }: {
   config = lib.mkMerge [
@@ -15,7 +16,7 @@
       ])
     )
     (lib.mkIf config.qgroget.nixos.apps.sync (import ./syncthing/syncthing.nix {
-      inherit config lib pkgs inputs;
+      inherit config lib pkgs inputs hostname;
     }))
     (lib.mkIf config.qgroget.nixos.apps.dev.enable (import ./dev.nix {
       inherit config lib pkgs inputs;
