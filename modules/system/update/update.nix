@@ -8,7 +8,7 @@
     operation = "switch";
     configDir = /home/${config.qgroget.user.username}/nixos;
     user = "${config.qgroget.user.username}";
-    pushUpdates = false;
+    pushUpdates = true;
     extraFlags = "";
     onCalendar = "daily";
     persistent = true;
@@ -25,6 +25,7 @@ in {
         pkgs.sudo
         pkgs.nix
         pkgs.nixos-rebuild
+        pkgs.openssh
       ];
       unitConfig.RequiresMountsFor = "/home/${config.qgroget.user.username}/nixos";
       script = "${import ./auto-upgrade-script.nix {inherit pkgs config;}}/bin/auto-upgrade-script";

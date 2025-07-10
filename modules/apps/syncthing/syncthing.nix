@@ -1,10 +1,20 @@
 {
-  pkgs,
   config,
+  hostname,
   ...
 }: {
+  sops.secrets = {
+    "syncthing/${hostname}/cert" = {
+    };
+    "syncthing/${hostname}/key" = {
+    };
+  };
+
   services.syncthing = {
     enable = true;
+
+    cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
+    key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
 
     settings = {
       folders = {
