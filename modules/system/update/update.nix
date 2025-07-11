@@ -26,6 +26,7 @@ in {
         pkgs.nix
         pkgs.nixos-rebuild
         pkgs.openssh
+        pkgs.gawk
       ];
       unitConfig.RequiresMountsFor = "/home/${config.qgroget.user.username}/nixos";
       script = "${import ./auto-upgrade-script.nix {inherit pkgs config;}}/bin/auto-upgrade-script";
