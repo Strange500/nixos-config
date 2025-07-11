@@ -3,7 +3,93 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  # Tailscale reconnection script
+  tailscaleReconnectScript = pkgs.writeShellScript "tailscale-reconnect" ''
+    #!/bin/bash
+
+    # Logging function
+    log() {
+        echo "$(date '+%Y-%m-%d %H:%M:%S') [tailscale-dispatcher] $1" | ${pkgs.systemd}/bin/systemd-cat -t tailscale-dispatcher
+    }
+
+    # Wait a bit for network to stabilize
+    sleep 2
+
+    log "Network change detected, checking Tailscale status..."
+
+    # Check if tailscaled is running
+    if ! ${pkgs.systemd}/bin/systemctl is-active --quiet tailscale.service; then
+        log "Tailscale service not running, starting..."
+        ${pkgs.systemd}/bin/systemctl start tailscale.service
+        sleep 3
+    fi
+
+    # Check current status
+    status="$(${pkgs.tailscale}/bin/tailscale status -json 2>/dev/null | ${pkgs.jq}/bin/jq -r .BackendState 2>/dev/null || echo "Unknown")"
+    log "Current Tailscale status: $status"
+
+    # If already running, test connectivity
+    if [ "$status" = "Running" ]; then
+        log "Testing Tailscale connectivity..."
+        if timeout 10 ${pkgs.tailscale}/bin/tailscale status --peers=false >/dev/null 2>&1; then
+            log "Tailscale connection verified, no action needed."
+            exit 0
+        else
+            log "Tailscale connectivity test failed, will reconnect..."
+        fi
+    fi
+
+    # Reconnect to Tailscale
+    log "Reconnecting to Tailscale..."
+
+    # Load OAuth credentials
+    if [ -f "${config.sops.secrets."tailscale/oauth/client".path}" ] && [ -f "${config.sops.secrets."tailscale/oauth/key".path}" ]; then
+        export TS_API_CLIENT_ID=$(cat ${config.sops.secrets."tailscale/oauth/client".path})
+        export TS_API_CLIENT_SECRET=$(cat ${config.sops.secrets."tailscale/oauth/key".path})
+
+        # Generate new auth key and connect
+        if auth_key=$(${pkgs.tailscale}/bin/get-authkey -ephemeral -tags tag:oauth 2>/dev/null); then
+            if ${pkgs.tailscale}/bin/tailscale up --auth-key "$auth_key" --accept-routes --accept-dns; then
+                log "Successfully reconnected to Tailscale"
+            else
+                log "Failed to reconnect to Tailscale"
+            fi
+        else
+            log "Failed to generate auth key"
+        fi
+    else
+        log "OAuth credentials not found, skipping reconnection"
+    fi
+  '';
+
+  # NetworkManager dispatcher script
+  networkManagerDispatcher = pkgs.writeShellScript "99-tailscale-reconnect" ''
+    #!/bin/bash
+
+    # NetworkManager dispatcher script for Tailscale
+    # Arguments: interface action
+    INTERFACE="$1"
+    ACTION="$2"
+
+    # Only act on specific actions and ignore loopback/tailscale interfaces
+    case "$ACTION" in
+        "up"|"connectivity-change")
+            # Ignore tailscale and loopback interfaces
+            if [[ "$INTERFACE" =~ ^(tailscale|lo) ]]; then
+                exit 0
+            fi
+
+            # Run reconnection script in background to avoid blocking NetworkManager
+            nohup ${tailscaleReconnectScript} >/dev/null 2>&1 &
+            ;;
+        *)
+            # No action needed for other events
+            exit 0
+            ;;
+    esac
+  '';
+in {
   config = lib.mkIf (config.qgroget.nixos.remote-access) {
     users.users.${config.qgroget.user.username}.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
@@ -43,42 +129,27 @@
       };
     };
 
-    systemd = {
-      services.tailscale-autoconnect = {
-        description = "Automatic connection to Tailscale";
+    networking.networkmanager.dispatcherScripts = [
+      {
+        source = networkManagerDispatcher;
+        type = "basic";
+      }
+    ];
 
-        # make sure tailscale is running before trying to connect to tailscale
-        after = ["network-pre.target" "tailscale.service"];
-        wants = ["network-pre.target" "tailscale.service"];
-        wantedBy = ["multi-user.target"];
-
-        # set this service as a oneshot job
-        serviceConfig.Type = "oneshot";
-
-        # have the job run this shell script
-        script = ''
-
-          # wait for tailscaled to settle
-          echo "Waiting for tailscale.service start completion ..."
-          sleep 5
-          # (as of tailscale 1.4 this should no longer be necessary, but I find it still is)
-
-          # check if already authenticated
-          echo "Checking if already authenticated to Tailscale ..."
-          status="$(${pkgs.tailscale}/bin/tailscale status -json | ${pkgs.jq}/bin/jq -r .BackendState)"
-          if [ $status = "Running" ]; then  # do nothing
-          	echo "Already authenticated to Tailscale, exiting."
-            exit 0
-          fi
-
-          # otherwise authenticate with tailscale
-          echo "Authenticating with Tailscale ..."
-          # old: ${pkgs.tailscale}/bin/tailscale up --authkey $(cat /etc/tailscale/tskey-reusable)
-          export TS_API_CLIENT_ID=$(cat ${config.sops.secrets."tailscale/oauth/client".path})
-          export TS_API_CLIENT_SECRET=$(cat ${config.sops.secrets."tailscale/oauth/key".path})
-          ${pkgs.tailscale}/bin/tailscale up --auth-key $(${pkgs.tailscale}/bin/get-authkey -ephemeral -tags tag:oauth)
-        '';
+    systemd.services.tailscale-autoconnect = {
+      description = "Automatic connection to Tailscale";
+      after = ["network-pre.target" "tailscale.service"];
+      wants = ["network-pre.target" "tailscale.service"];
+      wantedBy = ["multi-user.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
       };
+      script = ''
+        # Initial connection on boot
+        sleep 5
+        ${tailscaleReconnectScript}
+      '';
     };
   };
 }
