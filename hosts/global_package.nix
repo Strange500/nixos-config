@@ -19,6 +19,10 @@
     dconf.enable = true;
   };
 
+  services = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde") {
+    desktopManager.plasma6.enable = true;
+  };
+
   xdg.portal.enable = true;
 
   environment.systemPackages =
@@ -32,10 +36,15 @@
       pkgs.cachix
       pkgs.nixd
       pkgs.plymouth
+      pkgs.wl-clipboard
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
       pkgs.hypridle
       inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
+    ]
+    ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "kde") [
+      pkgs.kdePackages.ksystemlog
+      pkgs.wayland-utils
     ];
 }

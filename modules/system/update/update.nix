@@ -16,7 +16,7 @@
 in {
   systemd = {
     services."nixos-upgrade" = {
-      enable = true;
+      enable = config.qgroget.nixos.auto-update;
       serviceConfig = {
         Type = "oneshot";
       };

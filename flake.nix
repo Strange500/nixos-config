@@ -53,6 +53,8 @@
       url = "github:nix-community/impermanence";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
   };
 
   outputs = {
@@ -62,6 +64,7 @@
     impermanence,
     nur,
     sops-nix,
+    jovian-nixos,
     ...
   } @ inputs: {
     nixosConfigurations = {
@@ -78,6 +81,29 @@
           inputs.home-manager.nixosModules.default
           inputs.stylix.nixosModules.stylix
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
+          nur.modules.nixos.default
+          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+          ({pkgs, ...}: {
+            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
+          })
+        ];
+      };
+
+      Cube = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "Cube";
+        };
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/Cube/configuration.nix
+          ./hardware-configuration.nix
+          #impermanence.nixosModules.impermanence
+          inputs.home-manager.nixosModules.default
+          inputs.stylix.nixosModules.stylix
+          disko.nixosModules.disko
+          jovian-nixos.nixosModules.default
           sops-nix.nixosModules.sops
           nur.modules.nixos.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya

@@ -22,14 +22,18 @@
 
     assertions = [
       {
-        assertion = config.qgroget.nixos.desktop.desktopEnvironment == "hyprland";
-        message = "Hyprland is the only supported desktop environment.";
+        assertion =
+          config.qgroget.nixos.desktop.desktopEnvironment
+          == "hyprland"
+          || config.qgroget.nixos.desktop.desktopEnvironment == "kde";
+        message = "Only Hyprland and KDE are supported as desktop environments.";
       }
       {
         assertion =
           config.qgroget.nixos.desktop.loginManager
           == "gdm"
-          || config.qgroget.nixos.desktop.loginManager == "ly";
+          || config.qgroget.nixos.desktop.loginManager == "ly"
+          || config.qgroget.nixos.desktop.loginManager == "none";
         message = "Only gdm and ly are supported as login managers.";
       }
     ];
@@ -48,6 +52,11 @@
         description = "The username for the qgroget user.";
       };
       nixos = {
+        auto-update = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable automatic updates for NixOS.";
+        };
         apps = {
           basic = lib.mkOption {
             type = lib.types.bool;
