@@ -19,6 +19,7 @@
     };
     environment.systemPackages = with pkgs; [
       protontricks
+      steam-rom-manager
     ];
     hardware.graphics = {
       enable = true;
