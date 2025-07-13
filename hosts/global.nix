@@ -94,7 +94,6 @@
   home-manager.backupFileExtension = "backup";
 
   home-manager = {
-    # also pass inputs to home-manager modules
     extraSpecialArgs = {inherit inputs pkgs hostname;};
     users = {"${config.qgroget.user.username}" = import ../home.nix;};
   };

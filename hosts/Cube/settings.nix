@@ -6,7 +6,10 @@
       };
       auto-update = false;
       apps = {
-        sync = false;
+        sync = {
+          desktop.enable = false;
+          game.enable = true;
+        };
         dev = {
           enable = true;
           jetbrains.enable = false;

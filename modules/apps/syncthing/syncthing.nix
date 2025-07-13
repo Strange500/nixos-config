@@ -1,6 +1,7 @@
 {
   config,
   hostname,
+  lib,
   ...
 }: {
   sops.secrets = {
@@ -18,7 +19,7 @@
 
     settings = {
       folders = {
-        "computer" = {
+        "computer" = lib.mkIf config.qgroget.nixos.apps.sync.desktop.enable {
           id = "rglxv-6cyvw";
           path = "${config.home.homeDirectory}";
           devices = [
@@ -26,6 +27,15 @@
           ];
           ignorePerms = false;
           type = "sendreceive";
+        };
+        "QGCube" = lib.mkIf config.qgroget.nixos.apps.sync.game.enable {
+          id = "pqmdn-esnyq";
+          path = "${config.home.homeDirectory}/gameSync";
+          devices = [
+            "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY"
+          ];
+          ignorePerms = false;
+          type = "receive";
         };
       };
 
@@ -39,7 +49,7 @@
 
       options = {
         upnpEnabled = true;
-        localAnnounceEnabled = true;
+        localAnnounceEnabled = false;
         globalAnnounceEnabled = true;
         relaysEnabled = true;
         urAccepted = -1;

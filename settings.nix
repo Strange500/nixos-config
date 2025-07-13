@@ -63,10 +63,17 @@
             default = true;
             description = "Enable basic apps (terminal, browser, file manager, etc.).";
           };
-          sync = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-            description = "Enable file synchronization with other nixos systems via qgroget.";
+          sync = {
+            desktop.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+              description = "Enable file synchronization with other nixos systems via qgroget.";
+            };
+            game.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Enable game synchronization with other nixos systems via qgroget.";
+            };
           };
           dev = {
             enable = lib.mkOption {
