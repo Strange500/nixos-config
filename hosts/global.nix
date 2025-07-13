@@ -36,6 +36,13 @@
     libvirtd.enable = true;
   };
 
+  security.wrappers.sunshine = lib.mkIf config.qgroget.nixos.remote-access.sunshine.enable {
+    owner = "root";
+    group = "root";
+    capabilities = "cap_sys_admin+p";
+    source = "${pkgs.sunshine}/bin/sunshine";
+  };
+
   xdg.portal = {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
