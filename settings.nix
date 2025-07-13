@@ -141,6 +141,11 @@
             default = "/home/strange/nixos";
             description = "Path to the NixOS configuration directory.";
           };
+          bluetooth.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Enable Bluetooth support.";
+          };
         };
       };
     };

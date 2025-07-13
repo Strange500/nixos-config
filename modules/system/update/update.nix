@@ -14,7 +14,8 @@
     persistent = true;
   };
 in {
-  systemd = {
+  config = lib.mkIf config.qgroget.nixos.auto-update {
+    systemd = {
     services."nixos-upgrade" = {
       enable = config.qgroget.nixos.auto-update;
       serviceConfig = {
@@ -44,5 +45,6 @@ in {
         Unit = "nixos-upgrade.service";
       };
     };
+  };
   };
 }
