@@ -6,6 +6,7 @@
       };
       remote-access = {
         enable = true;
+        tailscale.enable = true;
         sunshine.enable = false;
       };
       apps = {

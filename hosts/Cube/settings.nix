@@ -7,6 +7,7 @@
       auto-update = true;
       remote-access = {
         enable = true;
+        tailscale.enable = false;
         sunshine.enable = true;
       };
       apps = {

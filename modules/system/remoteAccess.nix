@@ -94,7 +94,7 @@ in {
     users.users.${config.qgroget.user.username}.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
     ];
-    sops = {
+    sops = lib.mkIf (config.qgroget.nixos.remote-access.tailscale.enable) {
       age.keyFile = "${config.qgroget.secretAgeKeyPath}";
       defaultSopsFile = ../../secrets/secrets.yaml;
       secrets."tailscale/oauth/client" = {
@@ -123,7 +123,7 @@ in {
           overalljails = true;
         };
       };
-      tailscale = {
+      tailscale = lib.mkIf config.qgroget.nixos.remote-access.tailscale.enable {
         enable = true;
         useRoutingFeatures = "client";
       };
@@ -136,14 +136,14 @@ in {
       };
     };
 
-    networking.networkmanager.dispatcherScripts = [
+    networking.networkmanager.dispatcherScripts = lib.mkIf config.qgroget.nixos.remote-access.tailscale.enable [
       {
         source = networkManagerDispatcher;
         type = "basic";
       }
     ];
 
-    systemd.services.tailscale-autoconnect = {
+    systemd.services.tailscale-autoconnect = lib.mkIf config.qgroget.nixos.remote-access.tailscale.enable {
       description = "Automatic connection to Tailscale";
       after = ["network-pre.target" "tailscale.service"];
       wants = ["network-pre.target" "tailscale.service"];

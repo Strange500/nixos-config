@@ -135,6 +135,11 @@
             default = false;
             description = "Enable remote access configurations.";
           };
+          tailscale.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable Tailscale for remote access.";
+          };
           sunshine.enable = lib.mkOption {
             type = lib.types.bool;
             default = false;
