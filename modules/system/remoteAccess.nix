@@ -131,7 +131,7 @@ in {
       sunshine = lib.mkIf config.qgroget.nixos.remote-access.sunshine.enable {
         enable = true;
         autoStart = true;
-        capSysAdmin = true;
+        capSysAdmin = false;
         openFirewall = true;
       };
     };
