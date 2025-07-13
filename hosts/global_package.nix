@@ -46,5 +46,8 @@
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "kde") [
       pkgs.kdePackages.ksystemlog
       pkgs.wayland-utils
+    ]
+    ++ lib.optionals (config.qgroget.nixos.remote-access.sunshine.enable) [
+      pkgs.sunshine
     ];
 }
