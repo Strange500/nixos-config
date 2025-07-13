@@ -90,7 +90,7 @@
     esac
   '';
 in {
-  config = lib.mkIf (config.qgroget.nixos.remote-access) {
+  config = lib.mkIf (config.qgroget.nixos.remote-access.enable) {
     users.users.${config.qgroget.user.username}.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
     ];
@@ -126,6 +126,13 @@ in {
       tailscale = {
         enable = true;
         useRoutingFeatures = "client";
+      };
+
+      sunshine = lib.mkIf config.qgroget.nixos.remote-access.sunshine.enable {
+        enable = true;
+        autoStart = true;
+        capSysAdmin = true;
+        openFirewall = true;
       };
     };
 

@@ -8,7 +8,6 @@
       secretAgeKeyPath = "/var/lib/sops/age/keys.txt";
       user.username = "strange";
       nixos = {
-        remote-access = true;
         apps = {
           basic = true;
         };
@@ -130,10 +129,17 @@
           default = true;
           description = "Enable gaming apps and configurations.";
         };
-        remote-access = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Enable remote access configurations.";
+        remote-access = {
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable remote access configurations.";
+          };
+          sunshine.enable = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable Sunshine for game streaming.";
+          };
         };
         settings = {
           confDirectory = lib.mkOption {
