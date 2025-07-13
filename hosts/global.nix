@@ -91,6 +91,8 @@
 
   fonts.packages = with pkgs; [pkgs.nerd-fonts.jetbrains-mono font-awesome];
 
+  home-manager.backupFileExtension = "backup";
+
   home-manager = {
     # also pass inputs to home-manager modules
     extraSpecialArgs = {inherit inputs pkgs hostname;};
