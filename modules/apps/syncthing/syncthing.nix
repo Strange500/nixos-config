@@ -35,7 +35,7 @@
             "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY"
           ];
           ignorePerms = false;
-          type = "receive";
+          type = "receiveonly";
         };
       };
 

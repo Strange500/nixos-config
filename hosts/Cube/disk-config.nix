@@ -22,41 +22,32 @@
                 mountpoint = "/boot";
               };
             };
-            luks = {
-              name = "luks-system";
+            system = {
+              name = "system";
               size = "100%";
               content = {
-                type = "luks";
-                name = "cryptsystem";
-                extraOpenArgs = [
-                  "--allow-discards"
-                  "--perf-no_read_workqueue"
-                  "--perf-no_write_workqueue"
-                ];
-                content = {
-                  type = "btrfs";
-                  extraArgs = ["-L" "nixos-system" "-f"];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions = ["subvol=root" "compress=zstd" "noatime"];
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
-                    };
-                    "/persist" = {
-                      mountpoint = "/persist";
-                      mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
-                    };
-                    "/var-log" = {
-                      mountpoint = "/var/log";
-                      mountOptions = ["subvol=var-log" "compress=zstd" "noatime"];
-                    };
-                    "/swap" = {
-                      mountpoint = "/swap";
-                      swap.swapfile.size = "8G";
-                    };
+                type = "btrfs";
+                extraArgs = ["-L" "nixos-system" "-f"];
+                subvolumes = {
+                  "/root" = {
+                    mountpoint = "/";
+                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
+                  };
+                  "/nix" = {
+                    mountpoint = "/nix";
+                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
+                  };
+                  "/persist" = {
+                    mountpoint = "/persist";
+                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                  };
+                  "/var-log" = {
+                    mountpoint = "/var/log";
+                    mountOptions = ["subvol=var-log" "compress=zstd" "noatime"];
+                  };
+                  "/swap" = {
+                    mountpoint = "/swap";
+                    swap.swapfile.size = "8G";
                   };
                 };
               };
@@ -64,36 +55,26 @@
           };
         };
       };
-
       disk2 = {
         device = lib.mkDefault "/dev/sdb";
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
-            luks = {
-              name = "luks-data";
+            data = {
+              name = "data";
               size = "100%";
               content = {
-                type = "luks";
-                name = "cryptdata";
-                extraOpenArgs = [
-                  "--allow-discards"
-                  "--perf-no_read_workqueue"
-                  "--perf-no_write_workqueue"
-                ];
-                content = {
-                  type = "btrfs";
-                  extraArgs = ["-L" "nixos-data" "-f"];
-                  subvolumes = {
-                    "/home" = {
-                      mountpoint = "/home";
-                      mountOptions = ["subvol=home" "compress=zstd" "noatime"];
-                    };
-                    "/data" = {
-                      mountpoint = "/data";
-                      mountOptions = ["subvol=data" "compress=zstd" "noatime"];
-                    };
+                type = "btrfs";
+                extraArgs = ["-L" "nixos-data" "-f"];
+                subvolumes = {
+                  "/home" = {
+                    mountpoint = "/home";
+                    mountOptions = ["subvol=home" "compress=zstd" "noatime"];
+                  };
+                  "/data" = {
+                    mountpoint = "/data";
+                    mountOptions = ["subvol=data" "compress=zstd" "noatime"];
                   };
                 };
               };
