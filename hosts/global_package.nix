@@ -19,8 +19,9 @@
     dconf.enable = true;
   };
 
-  services = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde") {
-    desktopManager.plasma6.enable = true;
+  services = {
+    desktopManager.plasma6.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde";
+    desktopManager.gnome.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome";
   };
 
   xdg.portal.enable = true;

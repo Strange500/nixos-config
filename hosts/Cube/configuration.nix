@@ -22,7 +22,7 @@
       enable = true;
       user = config.qgroget.user.username;
       autoStart = true;
-      desktopSession = "plasma";
+      desktopSession = "gnome";
       updater.splash = "bgrt";
     };
     decky-loader = {
