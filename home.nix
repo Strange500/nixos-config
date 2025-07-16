@@ -31,8 +31,8 @@
         source = ./home/.local;
         recursive = true;
       };
-      "wallpaper/current" = {
-        source = ./home/wallpapers/current;
+      "wallpaper/${config.qgroget.nixos.theme}" = {
+        source = ./home/wallpapers/${config.qgroget.nixos.theme};
         recursive = true;
       };
       ".ssh/config".text = "Host *\n          User ${config.qgroget.user.username}\n          IdentityFile '${
