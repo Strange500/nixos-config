@@ -90,6 +90,28 @@
         ];
       };
 
+      Server = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "Server";
+        };
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/Server/configuration.nix
+          ./hardware-configuration.nix
+          impermanence.nixosModules.impermanence
+          inputs.home-manager.nixosModules.default
+          inputs.stylix.nixosModules.stylix
+          disko.nixosModules.disko
+          sops-nix.nixosModules.sops
+          nur.modules.nixos.default
+          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
+          ({pkgs, ...}: {
+            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
+          })
+        ];
+      };
+
       Cube = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs;

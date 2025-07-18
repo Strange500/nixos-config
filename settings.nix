@@ -25,7 +25,8 @@
           config.qgroget.nixos.desktop.desktopEnvironment
           == "hyprland"
           || config.qgroget.nixos.desktop.desktopEnvironment == "kde"
-          || config.qgroget.nixos.desktop.desktopEnvironment == "gnome";
+          || config.qgroget.nixos.desktop.desktopEnvironment == "gnome"
+          || config.qgroget.nixos.desktop.desktopEnvironment == "none";
         message = "Only Hyprland, KDE, and GNOME are supported as desktop environments.";
       }
       {

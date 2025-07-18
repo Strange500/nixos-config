@@ -6,7 +6,7 @@
 }: {
   imports = [
     ../../settings.nix
-    "${modulesPath}/installer/cd-dvd/installation-cd-graphical-gnome.nix"
+    "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
     ];
 
   environment.systemPackages = with pkgs; [vim git gparted];
