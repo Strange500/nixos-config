@@ -13,7 +13,7 @@
         };
         desktop = {
           desktopEnvironment = "hyprland";
-          loginManager = "gdm";
+          loginManager = "ly";
           theme = "atelier-cave";
         };
       };

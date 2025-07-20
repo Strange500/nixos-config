@@ -55,6 +55,8 @@
     };
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
+    jovian.follows = "chaotic/jovian";
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # IMPORTANT
   };
 
   outputs = {
@@ -65,6 +67,7 @@
     nur,
     sops-nix,
     jovian-nixos,
+    chaotic,
     ...
   } @ inputs: {
     nixosConfigurations = {
@@ -83,6 +86,7 @@
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
           nur.modules.nixos.default
+          chaotic.nixosModules.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {
             environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
@@ -105,6 +109,7 @@
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
           nur.modules.nixos.default
+          chaotic.nixosModules.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {
             environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
@@ -128,6 +133,7 @@
           jovian-nixos.nixosModules.default
           sops-nix.nixosModules.sops
           nur.modules.nixos.default
+          chaotic.nixosModules.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {
             environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
@@ -150,6 +156,7 @@
           disko.nixosModules.disko
           sops-nix.nixosModules.sops
           nur.modules.nixos.default
+          chaotic.nixosModules.default
           nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
           ({pkgs, ...}: {
             environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];

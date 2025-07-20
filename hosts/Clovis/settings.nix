@@ -3,7 +3,7 @@
     qgroget.nixos = {
       theme = "wide";
       desktop = {
-        monitors = ["HDMI-A-1, 1920x1080, 0x0, 1" "DP-2, preferred, 1920x0, 1"];
+        monitors = [", preferred, auto, 1"];
       };
       remote-access = {
         enable = true;
