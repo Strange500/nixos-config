@@ -14,11 +14,39 @@
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
 
+    system = {
+      UICulture = "fr-FR";
+      activityLogRetentionDays = 30;
+      allowClientLogUpload = true;
+      cachePath = "/var/cache/jellyfin";
+      serverName = "QGRoget";
+      trickplayOptions = {
+        enableHwAcceleration = true;
+        enableHwEncoding = true;
+      };
+    };
+
+    encoding = {
+      enableHardwareEncoding = true;
+      hardwareAccelerationType = "vaapi";
+      hardwareDecodingCodecs = [
+        "h264"
+        "hevc"
+        "mpeg2"
+        "vc1"
+      ];
+      enableTonemapping = true;
+      enableThrottling = true;
+    };
+
     libraries = {
       Movies = {
         enabled = true;
         contentType = "movies";
-        pathInfos = [ "/mnt/media/media/movies" ];
+        pathInfos = ["/mnt/media/media/movies"];
+        enableTrickplayImageExtraction = true;
+        preferredMetadataLanguage = "fr";
+        saveTrickplayWithMedia = true;
         typeOptions.Movies = {
           metadataFetchers = [
             "The Open Movie Database"
