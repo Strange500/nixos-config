@@ -32,7 +32,7 @@
       hardwareDecodingCodecs = [
         "h264"
         "hevc"
-        "mpeg2"
+        "mpeg2video"
         "vc1"
       ];
       enableTonemapping = true;
