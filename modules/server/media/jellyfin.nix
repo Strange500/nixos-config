@@ -78,13 +78,6 @@
           # ];
         };
       };
-      Bob = {
-        mutable = false;
-        hashedPasswordFile = ../tests/example_hash.txt;
-        permissions = {
-          isAdministrator = false;
-        };
-      };
     };
 
     apikeys = {
