@@ -58,6 +58,11 @@
           default = true;
           description = "Enable automatic updates for NixOS.";
         };
+        isDesktop = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable basic apps (terminal, browser, file manager, etc.).";
+        };
         apps = {
           basic = lib.mkOption {
             type = lib.types.bool;

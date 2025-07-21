@@ -14,9 +14,9 @@
       portalPackage =
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
-    virt-manager.enable = true;
+    virt-manager.enable = config.qgroget.nixos.isDesktop;
     zsh.enable = true;
-    dconf.enable = true;
+    dconf.enable = config.qgroget.nixos.isDesktop;
   };
 
   services = {
@@ -24,9 +24,9 @@
     desktopManager.gnome.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome";
   };
 
-  xdg.portal.enable = true;
+  xdg.portal.enable = config.qgroget.nixos.isDesktop;
 
-  environment.systemPackages =
+  environment.systemPackages = lib.mkIf config.qgroget.nixos.isDesktop (
     [
       pkgs.git
       pkgs.wget
@@ -50,5 +50,6 @@
     ]
     ++ lib.optionals (config.qgroget.nixos.remote-access.sunshine.enable) [
       pkgs.sunshine
-    ];
+    ]
+  );
 }

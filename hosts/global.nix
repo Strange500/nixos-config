@@ -20,7 +20,7 @@
     ./setting.nix
   ];
 
-  networking.networkmanager = {enable = true;};
+  networking.networkmanager =  lib.mkIf (config.qgroget.nixos.isDesktop) {enable = true;};
   services = {
     xserver.xkb = {
       layout = "fr";
@@ -37,7 +37,7 @@
   };
 
 
-  xdg.portal = {
+  xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
@@ -82,7 +82,7 @@
 
   hardware = {
     graphics.enable = true;
-    ledger.enable = true;
+    ledger.enable = config.qgroget.nixos.apps.crypto;
   };
 
   environment.sessionVariables = {
