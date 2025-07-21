@@ -27,7 +27,7 @@
     };
     decky-loader = {
       enable = true;
-      user = config.qgroget.user.username;
+      user = "${config.qgroget.user.username}";
     };
     hardware = {
       amd.gpu = {

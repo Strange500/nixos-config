@@ -44,6 +44,7 @@
       url = "github:nix-community/disko/latest";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nur = {
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,122 +55,86 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    declarative-jellyfin = {
+      url = "github:Sveske-Juice/declarative-jellyfin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
-    jovian.follows = "chaotic/jovian";
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # IMPORTANT
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs = {
     self,
     nixpkgs,
-    disko,
-    impermanence,
-    nur,
-    sops-nix,
-    jovian-nixos,
-    chaotic,
     ...
-  } @ inputs: {
+  } @ inputs: let
+    system = "x86_64-linux";
+    
+    # Common modules used by most hosts
+    commonModules = [
+      ./hardware-configuration.nix
+      inputs.home-manager.nixosModules.default
+      inputs.stylix.nixosModules.stylix
+      inputs.disko.nixosModules.disko
+      inputs.sops-nix.nixosModules.sops
+      inputs.nur.modules.nixos.default
+      inputs.chaotic.nixosModules.default
+      inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
+      ({pkgs, ...}: {
+        environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
+      })
+    ];
+    
+    # Desktop-specific modules
+    desktopModules = [
+      inputs.impermanence.nixosModules.impermanence
+    ];
+    
+    # Server-specific modules  
+    serverModules = [
+      inputs.impermanence.nixosModules.impermanence
+      inputs.declarative-jellyfin.nixosModules.default
+    ];
+    
+    # Gaming-specific modules (for Steam Deck-like devices)
+    gamingModules = [
+      inputs.jovian-nixos.nixosModules.default
+    ];
+    
+    # Helper function to create a NixOS system configuration
+    mkSystem = hostname: extraModules: nixpkgs.lib.nixosSystem {
+      specialArgs = {
+        inherit inputs;
+        hostname = hostname;
+      };
+      inherit system;
+      modules = [
+        ./hosts/${hostname}/configuration.nix
+      ] ++ commonModules ++ extraModules;
+    };
+    
+  in {
     nixosConfigurations = {
-      Clovis = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          hostname = "Clovis";
-        };
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/Clovis/configuration.nix
-          ./hardware-configuration.nix
-          impermanence.nixosModules.impermanence
-          inputs.home-manager.nixosModules.default
-          inputs.stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          sops-nix.nixosModules.sops
-          nur.modules.nixos.default
-          chaotic.nixosModules.default
-          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-          ({pkgs, ...}: {
-            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-          })
-        ];
-      };
-
-      Server = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          hostname = "Server";
-        };
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/Server/configuration.nix
-          ./hardware-configuration.nix
-          impermanence.nixosModules.impermanence
-          inputs.home-manager.nixosModules.default
-          inputs.stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          sops-nix.nixosModules.sops
-          nur.modules.nixos.default
-          chaotic.nixosModules.default
-          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-          ({pkgs, ...}: {
-            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-          })
-        ];
-      };
-
-      Cube = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          hostname = "Cube";
-        };
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/Cube/configuration.nix
-          ./hardware-configuration.nix
-          #impermanence.nixosModules.impermanence
-          inputs.home-manager.nixosModules.default
-          inputs.stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          jovian-nixos.nixosModules.default
-          sops-nix.nixosModules.sops
-          nur.modules.nixos.default
-          chaotic.nixosModules.default
-          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-          ({pkgs, ...}: {
-            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-          })
-        ];
-      };
-
-      Septimius = nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          hostname = "Septimius";
-        };
-        system = "x86_64-linux";
-        modules = [
-          ./hosts/Septimius/configuration.nix
-          ./hardware-configuration.nix
-          impermanence.nixosModules.impermanence
-          inputs.home-manager.nixosModules.default
-          inputs.stylix.nixosModules.stylix
-          disko.nixosModules.disko
-          sops-nix.nixosModules.sops
-          nur.modules.nixos.default
-          chaotic.nixosModules.default
-          nur.legacyPackages."x86_64-linux".repos.iopq.modules.xraya
-          ({pkgs, ...}: {
-            environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-          })
-        ];
-      };
-
+      # Desktop workstation
+      Clovis = mkSystem "Clovis" desktopModules;
+      
+      # Server configuration
+      Server = mkSystem "Server" serverModules;
+      
+      # Gaming device (Steam Deck-like)
+      Cube = mkSystem "Cube" gamingModules;
+      
+      # Another desktop/workstation
+      Septimius = mkSystem "Septimius" desktopModules;
+      
+      # Installer ISO
       installer = nixpkgs.lib.nixosSystem {
         specialArgs = {
           inherit inputs;
           hostname = "installer";
         };
-        system = "x86_64-linux";
+        inherit system;
         modules = [
           ./hosts/installer/configuration.nix
         ];
