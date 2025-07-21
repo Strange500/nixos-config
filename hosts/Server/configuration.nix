@@ -103,6 +103,10 @@
     # TODO: add more
   };
 
+  # firewall
+  networking.firewall = {
+    enable = false;
+  };
  
   boot = {
     loader.grub = {
