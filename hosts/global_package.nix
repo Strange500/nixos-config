@@ -16,7 +16,7 @@
     };
     virt-manager.enable = config.qgroget.nixos.isDesktop;
     zsh.enable = true;
-    dconf.enable = config.qgroget.nixos.isDesktop;
+    dconf.enable = lib.mkDefault config.qgroget.nixos.isDesktop;
   };
 
   services = {
