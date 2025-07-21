@@ -18,7 +18,7 @@
     username = "${config.qgroget.user.username}";
     homeDirectory = "/home/${config.qgroget.user.username}";
     stateVersion = "25.11";
-    packages = [
+    packages = lib.mkIf (config.qgroget.nixos.isDesktop) [
       pkgs.discord
       pkgs.moonlight-qt
       pkgs.nautilus

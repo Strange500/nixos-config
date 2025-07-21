@@ -1,6 +1,7 @@
 {lib, ...}: {
   config = {
     qgroget.nixos = {
+      isDesktop = false;
       theme = "wide";
       desktop = {
         desktopEnvironment = lib.mkForce "none";
