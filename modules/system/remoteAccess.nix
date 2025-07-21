@@ -96,8 +96,6 @@ in {
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
     ];
     sops = lib.mkIf (config.qgroget.nixos.remote-access.tailscale.enable) {
-      age.keyFile = "${config.qgroget.secretAgeKeyPath}";
-      defaultSopsFile = ../../secrets/secrets.yaml;
       secrets."tailscale/oauth/client" = {
       };
       secrets."tailscale/oauth/key" = {

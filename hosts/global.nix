@@ -20,7 +20,7 @@
     ./setting.nix
   ];
 
-  networking.networkmanager =  lib.mkIf (config.qgroget.nixos.isDesktop) {enable = true;};
+  networking.networkmanager = lib.mkIf (config.qgroget.nixos.isDesktop) {enable = true;};
   services = {
     xserver.xkb = {
       layout = "fr";
@@ -36,10 +36,14 @@
     libvirtd.enable = true;
   };
 
-
   xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
+  };
+
+  sops = {
+    age.keyFile = "${config.qgroget.secretAgeKeyPath}";
+    defaultSopsFile = ../secrets/secrets.yaml;
   };
 
   users.users.root.hashedPassword = "$6$13gz85QezPcMpTXb$jalGiNan9u2PYc3jP4zgUYoZqNcu.811AqfVNadcNQhH4kn9uWC0FxO7UPArX5Apm49lhDbQ5elFeBRS76.s.1";
