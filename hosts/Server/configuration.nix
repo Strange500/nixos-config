@@ -94,10 +94,11 @@
       Jellyseerr = {
         key = "78878bf9fc654ff78ae332c63de5aeb6";
       };
-      Homarr = {
-        keyPath = ../tests/example_apikey.txt;
-      };
+      # Homarr = {
+      #   keyPath = ../tests/example_apikey.txt;
+      # };
     };
+    openFirewall = true;
 
     # TODO: add more
   };
