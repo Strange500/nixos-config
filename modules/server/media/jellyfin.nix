@@ -15,21 +15,21 @@
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
 
     libraries = {
-      # Movies = {
-      #   enabled = true;
-      #   contentType = "movies";
-      #   pathInfos = [ "/data/Movies" ];
-      #   typeOptions.Movies = {
-      #     metadataFetchers = [
-      #       "The Open Movie Database"
-      #       "TheMovieDb"
-      #     ];
-      #     imageFetchers = [
-      #       "The Open Movie Database"
-      #       "TheMovieDb"
-      #     ];
-      #   };
-      # };
+      Movies = {
+        enabled = true;
+        contentType = "movies";
+        pathInfos = [ "/mnt/media/media/movies" ];
+        typeOptions.Movies = {
+          metadataFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+          imageFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+        };
+      };
       # Shows = {
       #   enabled = true;
       #   contentType = "tvshows";
