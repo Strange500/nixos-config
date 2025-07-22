@@ -20,7 +20,7 @@
     ./setting.nix
   ];
 
-  networking.networkmanager = lib.mkIf (config.qgroget.nixos.isDesktop) {enable = true;};
+  networking.networkmanager = {enable = true;};
   services = {
     xserver.xkb = {
       layout = "fr";
@@ -36,7 +36,7 @@
     libvirtd.enable = true;
   };
 
-  xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
+  xdg.portal = {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
