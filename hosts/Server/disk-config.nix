@@ -58,7 +58,7 @@
         fsType = "tmpfs";
         mountOptions = [
           "defaults"
-          "size=2G" # Adjust tmpfs size as needed
+          "size=4G" # Adjust tmpfs size as needed
           "mode=755"
         ];
       };
