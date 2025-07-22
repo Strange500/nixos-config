@@ -1,6 +1,7 @@
 {lib, ...}: {
   config = {
     qgroget.nixos = {
+      auto-update = false;
       isDesktop = false;
       theme = "wide";
       desktop = {
