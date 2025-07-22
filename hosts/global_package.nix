@@ -16,7 +16,7 @@
     };
     virt-manager.enable = config.qgroget.nixos.isDesktop;
     zsh.enable = true;
-    dconf.enable = lib.mkDefault config.qgroget.nixos.isDesktop;
+    dconf.enable = true;
   };
 
   services = {
@@ -24,9 +24,9 @@
     desktopManager.gnome.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome";
   };
 
-  xdg.portal.enable = config.qgroget.nixos.isDesktop;
+  xdg.portal.enable = true;
 
-  environment.systemPackages = lib.mkIf config.qgroget.nixos.isDesktop (
+  environment.systemPackages = (
     [
       pkgs.git
       pkgs.wget
