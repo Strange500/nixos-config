@@ -10,6 +10,11 @@
     };
   };
 
+  environment.persistence."/persist".directories = [ 
+    "/var/cache/jellyfin"
+    "/var/lib/jellyfin"
+  ];
+
   services.declarative-jellyfin = {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
@@ -18,7 +23,6 @@
       UICulture = "fr-FR";
       activityLogRetentionDays = 30;
       allowClientLogUpload = true;
-      cachePath = "/var/cache/jellyfin";
       serverName = "QGRoget";
       trickplayOptions = {
         enableHwAcceleration = true;
