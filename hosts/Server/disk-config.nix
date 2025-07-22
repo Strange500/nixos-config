@@ -22,34 +22,45 @@
                 mountpoint = "/boot";
               };
             };
-            system = {
-              name = "system";
+            nix = {
+              name = "nix";
+              size = "40G";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/nix";
+              };
+            };
+            persist = {
+              name = "persist";
+              size = "20G";
+              content = {
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/persist";
+              };
+            };
+            home = {
+              name = "home";
               size = "100%";
               content = {
-                type = "btrfs";
-                extraArgs = ["-L" "nixos-system" "-f"];
-                subvolumes = {
-                  "/root" = {
-                    mountpoint = "/";
-                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
-                  };
-                  "/nix" = {
-                    mountpoint = "/nix";
-                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
-                  };
-                  "/persist" = {
-                    mountpoint = "/persist";
-                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
-                  };
-                  "/var-log" = {
-                    mountpoint = "/var/log";
-                    mountOptions = ["subvol=var-log" "compress=zstd" "noatime"];
-                  };
-                };
+                type = "filesystem";
+                format = "ext4";
+                mountpoint = "/home";
               };
             };
           };
         };
+      };
+    };
+    nodev = {
+      "/" = {
+        fsType = "tmpfs";
+        mountOptions = [
+          "defaults"
+          "size=2G" # Adjust tmpfs size as needed
+          "mode=755"
+        ];
       };
     };
   };
