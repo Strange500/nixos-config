@@ -22,6 +22,15 @@
       "user"
     ];
   };
+  fileSystems."/mnt/appdata" = {
+    device = "appdata";  # Match the tag from libvirt XML
+    fsType = "virtiofs";
+    options = [ 
+      "ro" 
+      "relatime"
+      "user"
+    ];
+  };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
