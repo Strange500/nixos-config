@@ -1,6 +1,5 @@
 {
   inputs,
-  lib,
   ...
 }: {
   imports = [
@@ -14,20 +13,19 @@
 
   users.mutableUsers = false;
 
-  # fileSystems."/mnt/media" = {
-  #   device = "media";  # Match the tag from libvirt XML
-  #   fsType = "virtiofs";
-  #   options = [ 
-  #     "rw" 
-  #     "relatime"
-  #     "user"
-  #   ];
-  # };
+  fileSystems."/mnt/media" = {
+    device = "media";  # Match the tag from libvirt XML
+    fsType = "virtiofs";
+    options = [ 
+      "rw" 
+      "relatime"
+      "user"
+    ];
+  };
 
   networking.firewall.allowedTCPPorts = [ 22 ];
 
   fileSystems."/persist".neededForBoot = true;
-  #fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
 
 
