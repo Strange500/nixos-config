@@ -50,6 +50,7 @@
   users.users.${config.qgroget.user.username} = {
     shell = pkgs.zsh;
     isNormalUser = true;
+    uid = 1000;
     home = "/home/${config.qgroget.user.username}";
     description = "${config.qgroget.user.username}";
     hashedPassword = "$6$tN1HR03Pv6LQFA.w$1byWSM0wWLFn6nQkYebqYLrPzYNf2eyqmGDvTqI8OET9M3y74in7lVGr1KJOHZQys6wWh.ggaRafH6fyrgPmm.";
