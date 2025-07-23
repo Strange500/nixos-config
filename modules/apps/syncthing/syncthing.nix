@@ -14,8 +14,8 @@
   services.syncthing = {
     enable = true;
 
-    cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
-    key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
+    # cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
+    # key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
 
     settings = {
       folders = {
