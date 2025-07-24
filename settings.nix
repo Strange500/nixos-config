@@ -8,9 +8,6 @@
       secretAgeKeyPath = "/var/lib/sops/age/keys.txt";
       user.username = "strange";
       nixos = {
-        apps = {
-          basic = true;
-        };
         desktop = {
           desktopEnvironment = "hyprland";
           loginManager = "ly";
