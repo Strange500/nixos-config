@@ -109,7 +109,7 @@ in {
           PasswordAuthentication = false;
           AllowUsers = ["${config.qgroget.user.username}"];
           UseDns = true;
-          PermitRootLogin = "no";
+          PermitRootLogin = "yes";
         };
       };
       fail2ban = {

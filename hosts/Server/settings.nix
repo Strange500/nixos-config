@@ -14,6 +14,7 @@
         sunshine.enable = false;
       };
       apps = {
+        basic = false;
         sync = {
           desktop.enable = false;
           game.enable = false;

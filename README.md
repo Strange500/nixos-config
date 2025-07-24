@@ -151,6 +151,11 @@ mkdir -p ~/.config/sops/age
 echo "your-age-key" > ~/.config/sops/age/keys.txt
 ```
 
+to rebuil host remotely use:
+```bash
+nixos-rebuild --target-host user@example.com switch -- flake .#nixosconfig 
+```
+
 
 
 ## 🔧 Customization
