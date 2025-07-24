@@ -163,7 +163,6 @@
         "/etc/NetworkManager/system-connections"
         "/var/lib/systemd"
         "/etc/NetworkManager"
-        "/etc/ssh"
         "/root/.ssh"
         {
           directory = "/var/lib/colord";

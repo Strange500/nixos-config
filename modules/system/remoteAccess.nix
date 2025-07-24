@@ -91,7 +91,6 @@
   '';
 in {
   config = lib.mkIf (config.qgroget.nixos.remote-access.enable) {
-
     users.users.${config.qgroget.user.username}.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
     ];
@@ -111,6 +110,18 @@ in {
           UseDns = true;
           PermitRootLogin = "yes";
         };
+
+        hostKeys = [
+          {
+            type = "ed25519";
+            path = "/persist/etc/ssh/ssh_host_ed25519_key";
+          }
+          {
+            type = "rsa";
+            bits = 4096;
+            path = "/persist/etc/ssh/ssh_host_rsa_key";
+          }
+        ];
       };
       fail2ban = {
         enable = true;
