@@ -22,21 +22,20 @@
     options = [
       "rw"
       "relatime"
-      "user"
-      "uid=1000"
     ];
-    neededForBoot = false;
   };
-  fileSystems."/mnt/appdata" = {
-    device = "appdata";
-    fsType = "virtiofs";
-    options = [
-      "ro"
-      "relatime"
-      "user"
-    ];
-    neededForBoot = false;
-  };
+  systemd.tmpfiles.rules = [
+    "d /mnt/media 0755 strange users -"
+  ];
+  # fileSystems."/mnt/appdata" = {
+  #   device = "appdata";
+  #   fsType = "virtiofs";
+  #   options = [
+  #     "ro"
+  #     "relatime"
+  #     "user"
+  #   ];
+  # };
 
   networking.firewall.allowedTCPPorts = [
     22
@@ -45,35 +44,10 @@
   ];
 
   fileSystems."/persist".neededForBoot = true;
+  fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
 
-  environment.persistence = {
-    "/persist" = {
-      enable = true;
-      hideMounts = true;
-      directories = [
-        "/var/lib/sops"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-        "/var/lib/systemd"
-        "/etc/ssh"
-        "/root/.ssh"
-        {
-          directory = "/var/lib/colord";
-          user = "colord";
-          group = "colord";
-          mode = "u=rwx,g=rx,o=";
-        }
-      ];
-      files = [
-        "/etc/machine-id"
-        "/etc/ssh/ssh_host_ed25519_key"
-        "/etc/ssh/ssh_host_ed25519_key.pub"
-        "/etc/ssh/ssh_host_rsa_key"
-        "/etc/ssh/ssh_host_rsa_key.pub"
-      ];
-    };
-  };
+  
 
   sops.secrets = {
     "syncthing/${hostname}/cert" = {
@@ -81,7 +55,6 @@
     "syncthing/${hostname}/key" = {
     };
   };
-
 
   services.syncthing = {
     enable = true;
@@ -123,6 +96,8 @@
     };
   };
 
+  
+
   # firewall
   networking.firewall = {
     enable = false;
@@ -134,4 +109,6 @@
       efiInstallAsRemovable = true;
     };
   };
+
+  
 }
