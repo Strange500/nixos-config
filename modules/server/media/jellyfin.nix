@@ -133,13 +133,7 @@
           isAdministrator = false;
           enableAllFolders = false;
         };
-        preferences = {
-          # Only allow access to photos and music
-          # enabledLibraries = [
-          #   "Photos and Videos"
-          #   "Music"
-          # ];
-        };
+
       };
     };
 
