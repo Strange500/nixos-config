@@ -29,7 +29,7 @@
         bufferingSize = 50;
       };
 
-      api = {
+      api = lib.mkIf (config.qgroget.server.test.enable) {
         dashboard = true;
         insecure = true;
       };
@@ -132,6 +132,6 @@
   };
 
   networking.firewall = {
-    allowedTCPPorts = [80 443 8080];
+    allowedTCPPorts = [80 443 ] ++ lib.optional (config.qgroget.server.test.enable) 8080;
   };
 }
