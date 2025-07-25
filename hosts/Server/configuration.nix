@@ -1,16 +1,9 @@
-{
-  inputs,
-  hostname,
-  lib,
-  config,
-  ...
-}: {
+{inputs, ...}: {
   imports = [
     ../global.nix
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
     ../../modules/server/media/jellyfin.nix
-    #../../modules/system/tpm/tpm.nix
     ./disk-config.nix
   ];
 
@@ -24,91 +17,32 @@
       "relatime"
     ];
   };
-  systemd.tmpfiles.rules = [
-    "d /mnt/media 0755 strange users -"
-  ];
-  # fileSystems."/mnt/appdata" = {
-  #   device = "appdata";
-  #   fsType = "virtiofs";
-  #   options = [
-  #     "ro"
-  #     "relatime"
-  #     "user"
-  #   ];
-  # };
+  fileSystems."/persist" = {
+    neededForBoot = true;
+    device = "persist";
+    fsType = "virtiofs";
+    options = [
+      "rw"
+      "relatime"
+    ];
+  };
 
   networking.firewall.allowedTCPPorts = [
     22
-    8384 # Syncthing GUI
-    22000 # Syncthing sync port
   ];
 
-  fileSystems."/persist".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
 
-  
-
-  sops.secrets = {
-    "syncthing/${hostname}/cert" = {
-    };
-    "syncthing/${hostname}/key" = {
-    };
-  };
-
-  services.syncthing = {
-    enable = true;
-
-    guiAddress = "0.0.0.0:8384";
-    user = "${config.qgroget.user.username}";
-
-    cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
-    key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
-
-    settings = {
-      folders = {
-        "Persist" = {
-          id = "r4pf2-m7vwn";
-          path = "/persist";
-          devices = [
-            "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY"
-          ];
-          ignorePerms = false;
-          type = "sendreceive";
-        };
-      };
-
-      devices = {
-        "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY" = {
-          id = "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY";
-          name = "Server";
-          addresses = ["dynamic"];
-        };
-      };
-
-      options = {
-        upnpEnabled = true;
-        localAnnounceEnabled = false;
-        globalAnnounceEnabled = true;
-        relaysEnabled = true;
-        urAccepted = -1;
-      };
-    };
-  };
-
-  
-
-  # firewall
   networking.firewall = {
     enable = false;
   };
 
   boot = {
+    initrd.availableKernelModules = ["virtiofs"];
     loader.grub = {
       efiSupport = true;
       efiInstallAsRemovable = true;
     };
   };
-
-  
 }

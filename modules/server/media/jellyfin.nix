@@ -10,7 +10,7 @@
     };
   };
 
-  environment.persistence."/persist".directories = [ 
+  environment.persistence."/persist".directories = [
     "/var/cache/jellyfin"
     "/var/lib/jellyfin"
   ];
@@ -62,29 +62,60 @@
           ];
         };
       };
-      # Shows = {
-      #   enabled = true;
-      #   contentType = "tvshows";
-      #   pathInfos = [ "/data/Shows" ];
-      # };
-      # "Photos and videos" = {
-      #   enabled = true;
-      #   contentType = "homevideos";
-      #   pathInfos = [
-      #     "/data/Pictures"
-      #     "/data/Videos"
-      #   ];
-      # };
-      # Books = {
-      #   enabled = true;
-      #   contentType = "books";
-      #   pathInfos = [ "/data/Books" ];
-      # };
-      # Music = {
-      #   enabled = true;
-      #   contentType = "music";
-      #   pathInfos = [ "/data/Music" ];
-      # };
+      Anime_Movies = {
+        enabled = true;
+        contentType = "movies";
+        pathInfos = ["/mnt/media/media/anime_movies"];
+        enableTrickplayImageExtraction = true;
+        preferredMetadataLanguage = "fr";
+        saveTrickplayWithMedia = true;
+        typeOptions.Movies = {
+          metadataFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+          imageFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+        };
+      };
+      tv = {
+        enabled = true;
+        contentType = "tvshows";
+        pathInfos = ["/mnt/media/media/tv"];
+        enableTrickplayImageExtraction = true;
+        preferredMetadataLanguage = "fr";
+        saveTrickplayWithMedia = true;
+        typeOptions.TvShows = {
+          metadataFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+          imageFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+        };
+      };
+      anime = {
+        enabled = true;
+        contentType = "tvshows";
+        pathInfos = ["/mnt/media/media/anime"];
+        enableTrickplayImageExtraction = true;
+        preferredMetadataLanguage = "fr";
+        saveTrickplayWithMedia = true;
+        typeOptions.TvShows = {
+          metadataFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+          imageFetchers = [
+            "The Open Movie Database"
+            "TheMovieDb"
+          ];
+        };
+      };
     };
 
     users = {
