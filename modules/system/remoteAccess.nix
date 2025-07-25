@@ -108,7 +108,7 @@ in {
           PasswordAuthentication = false;
           AllowUsers = ["${config.qgroget.user.username}"];
           UseDns = true;
-          PermitRootLogin = "yes";
+          PermitRootLogin = "no";
         };
 
         hostKeys = [
