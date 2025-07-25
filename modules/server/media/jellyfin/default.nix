@@ -15,6 +15,31 @@
     "/var/lib/jellyfin"
   ];
 
+  services.traefik.dynamicConfigOptions = {
+    http = {
+      routers = {
+        jellyfin = {
+          rule = "Host(`jellyfin.test.com`)";
+          entryPoints = ["websecure"];
+          service = "jellyfin";
+          tls = {
+            certResolver = "staging";
+          };
+        };
+      };
+
+      services = {
+        jellyfin = {
+          loadBalancer = {
+            servers = [
+              {url = "http://127.0.0.1:8096";}
+            ];
+          };
+        };
+      };
+    };
+  };
+
   services.declarative-jellyfin = {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
@@ -133,20 +158,7 @@
           isAdministrator = false;
           enableAllFolders = false;
         };
-
       };
     };
-
-    apikeys = {
-      Jellyseerr = {
-        key = "78878bf9fc654ff78ae332c63de5aeb6";
-      };
-      # Homarr = {
-      #   keyPath = ../tests/example_apikey.txt;
-      # };
-    };
-    openFirewall = true;
-
-    # TODO: add more
   };
 }
