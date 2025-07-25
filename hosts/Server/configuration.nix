@@ -3,8 +3,7 @@
     ../global.nix
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
-    ../../modules/server/media/jellyfin
-    ../../modules/server/traefik
+    ../../modules/server
     ./disk-config.nix
   ];
 

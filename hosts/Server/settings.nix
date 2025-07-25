@@ -1,32 +1,38 @@
 {lib, ...}: {
   config = {
-    qgroget.nixos = {
-      auto-update = false;
-      isDesktop = false;
-      theme = "wide";
-      desktop = {
-        desktopEnvironment = lib.mkForce "none";
-        loginManager = lib.mkForce "none";
+    qgroget = {
+      server = {
+        domain = "test.com";
+        test.enable = true;
       };
-      remote-access = {
-        enable = true;
-        tailscale.enable = false;
-        sunshine.enable = false;
-      };
-      apps = {
-        basic = false;
-        sync = {
-          desktop.enable = false;
-          game.enable = false;
+      nixos = {
+        auto-update = false;
+        isDesktop = false;
+        theme = "wide";
+        desktop = {
+          desktopEnvironment = lib.mkForce "none";
+          loginManager = lib.mkForce "none";
         };
-        dev = {
-          enable = false;
-          jetbrains.enable = false;
+        remote-access = {
+          enable = true;
+          tailscale.enable = false;
+          sunshine.enable = false;
         };
-        media = false;
-        crypto = false;
+        apps = {
+          basic = false;
+          sync = {
+            desktop.enable = false;
+            game.enable = false;
+          };
+          dev = {
+            enable = false;
+            jetbrains.enable = false;
+          };
+          media = false;
+          crypto = false;
+        };
+        gaming = false;
       };
-      gaming = false;
     };
   };
 }

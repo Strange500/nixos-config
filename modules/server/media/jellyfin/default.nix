@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: {
   sops = {
@@ -19,11 +20,11 @@
     http = {
       routers = {
         jellyfin = {
-          rule = "Host(`jellyfin.test.com`)";
+          rule = "Host(`jellyfin.${config.qgroget.server.domain}`)";
           entryPoints = ["websecure"];
           service = "jellyfin";
           tls = {
-            certResolver = "staging";
+            certResolver = if config.qgroget.server.test.enable then "staging" else "production";
           };
         };
       };

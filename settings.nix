@@ -49,6 +49,18 @@
         default = "strange";
         description = "The username for the qgroget user.";
       };
+      server = {
+        domain = lib.mkOption {
+          type = lib.types.str;
+          default = "qgroget.com";
+          description = "The domain for the qgroget server.";
+        };
+        test.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable test configurations for the qgroget server.";
+        };
+      };
       nixos = {
         auto-update = lib.mkOption {
           type = lib.types.bool;
