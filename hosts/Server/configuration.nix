@@ -5,6 +5,7 @@
     inputs.sops-nix.nixosModules.sops
     ../../modules/server
     ./disk-config.nix
+    ./hardware-configuration.nix
   ];
 
   users.mutableUsers = false;
