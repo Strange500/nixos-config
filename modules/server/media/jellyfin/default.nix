@@ -16,28 +16,10 @@
     "/var/lib/jellyfin"
   ];
 
-  services.traefik.dynamicConfigOptions = {
-    http = {
-      routers = {
-        jellyfin = {
-          rule = "Host(`jellyfin.${config.qgroget.server.domain}`)";
-          entryPoints = ["websecure"];
-          service = "jellyfin";
-          tls = {
-            certResolver = if config.qgroget.server.test.enable then "staging" else "production";
-          };
-        };
-      };
-
-      services = {
-        jellyfin = {
-          loadBalancer = {
-            servers = [
-              {url = "http://127.0.0.1:8096";}
-            ];
-          };
-        };
-      };
+  traefik.services = {
+    jellyfin = {
+      name = "jellyfin";
+      url = "http://127.0.0.1:8096";
     };
   };
 
