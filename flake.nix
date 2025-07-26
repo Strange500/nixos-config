@@ -73,7 +73,6 @@
     
     # Common modules used by most hosts
     commonModules = [
-      ./hardware-configuration.nix
       inputs.home-manager.nixosModules.default
       inputs.stylix.nixosModules.stylix
       inputs.disko.nixosModules.disko

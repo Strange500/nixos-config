@@ -9,6 +9,7 @@
     inputs.sops-nix.nixosModules.sops
     ../../modules/system/tpm/tpm.nix
     ./disk-config.nix
+    ./hardware-configuration.nix
   ];
 
   # add kernel modules

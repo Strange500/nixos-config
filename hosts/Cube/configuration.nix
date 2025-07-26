@@ -11,6 +11,7 @@
     inputs.jovian-nixos.nixosModules.default
     ../../modules/system/tpm/tpm.nix
     ./disk-config.nix
+    ./hardware-configuration.nix
   ];
 
   users.mutableUsers = false;
