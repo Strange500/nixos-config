@@ -25,7 +25,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    pkgs.brightnessctl
+    brightnessctl
   ];
 
   boot.kernelParams = ["acpi_enforce_resources=lax"];
