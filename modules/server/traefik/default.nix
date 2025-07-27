@@ -14,16 +14,16 @@
         then "staging"
         else "production";
     };
+    tls.options = lib.mkIf (service.type == "private") "mtls";
   };
 
   generateService = service: {
     loadBalancer = {
       servers = [
-        {url = "http://${service.url}";}
+        {url = "${service.url}";}
       ];
     };
   };
-
 in {
   options.traefik.services = lib.mkOption {
     type = lib.types.attrsOf (lib.types.submodule {
@@ -36,6 +36,11 @@ in {
           type = lib.types.str;
           description = "Backend URL";
         };
+        type = lib.mkOption {
+          type = lib.types.enum ["private" "public"];
+          default = "private";
+          description = "either 'private' or 'public'. 'private' means that the service is only accessible from the local network, while 'public' means it is accessible from the internet.";
+        };
       };
     });
     default = {};
@@ -46,6 +51,13 @@ in {
     environment.persistence."/persist".directories = [
       "${config.services.traefik.dataDir}"
     ];
+
+    sops = {
+      secrets."server/traefik/clientCaCert" = {
+        owner = "traefik";
+        group = "traefik";
+      };
+    };
 
     services.traefik = {
       enable = true;
@@ -165,6 +177,20 @@ in {
                 customResponseHeaders = {
                   X-Robots-Tag = "noindex";
                 };
+              };
+            };
+          };
+        };
+
+        tls = {
+          options = {
+            mtls = {
+              minVersion = "VersionTLS12";
+              clientAuth = {
+                CAFiles = [
+                  "${config.sops.secrets."server/traefik/clientCaCert".path}"
+                ];
+                clientAuthType = "RequireAndVerifyClientCert";
               };
             };
           };
