@@ -20,6 +20,7 @@
     jellyfin = {
       name = "jellyfin";
       url = "http://127.0.0.1:8096";
+      type = "public";
     };
   };
 
