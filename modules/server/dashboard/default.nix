@@ -1,4 +1,4 @@
-{config,...}: {
+{...}: {
   traefik.services = {
     unraid = {
       name = "unraid";
