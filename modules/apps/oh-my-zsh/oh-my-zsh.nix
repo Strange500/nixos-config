@@ -120,7 +120,7 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    sessionVariables = {EDITOR = "lvim";};
+    sessionVariables = {EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";};
     initContent = ''
       fastfetch
       function y() {
@@ -135,7 +135,7 @@
       y = "yazi";
       cat = "bat";
       lg = "lazygit";
-      nano = "lvim";
+      nano = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
       vim = "lvim";
       ls = "eza";
       update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";

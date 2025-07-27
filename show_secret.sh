@@ -8,4 +8,4 @@ else
     echo "File not exist"
     exist 1
 fi
-nix-shell -p sops --run "sops secrets/secrets.yaml"
+nix-shell -p sops --run 'EDITOR="code --wait --new-window --disable-workspace-trust --disable-extensions --disable-telemetry" sops secrets/secrets.yaml'

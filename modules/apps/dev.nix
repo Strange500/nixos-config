@@ -26,8 +26,8 @@ in {
     ]);
 
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
-    EDITOR = "lvim";
-    VISUAL = "lvim";
+    EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
+    VISUAL = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
     BROWSER = "firefox";
     TERMINAL = "kitty";
     FILE_MANAGER = "thunar";
