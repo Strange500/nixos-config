@@ -6,8 +6,12 @@
     };
   };
 
+  networking.firewall.allowedTCPPorts = [ 53 ];
+  networking.firewall.allowedUDPPorts = [ 53 ]; 
+
   services.adguardhome = {
     enable = true;
+    #mutableSettings = false;
     settings = {
       dns = {
         upstream_dns = [
@@ -21,6 +25,12 @@
         safe_search = {
           enabled = false; 
         };
+        rewrites = [
+          {
+            domain = "*.${config.qgroget.server.domain}";
+            answer = "192.168.0.34";
+          }
+        ];
       };
       # to not have to manually create {enabled = true; url = "";} for every filter
       filters =
