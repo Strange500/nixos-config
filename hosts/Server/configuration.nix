@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  config,
+  ...
+}: {
   imports = [
     ../global.nix
     inputs.home-manager.nixosModules.default
@@ -9,6 +13,23 @@
   ];
 
   users.mutableUsers = false;
+  users.users.${config.qgroget.user.username} = {
+    # required for auto start containers auto start
+    linger = true;
+    # required for rootless container with multiple users
+    autoSubUidGidRange = true;
+  };
+
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+    quadlet = {
+      enable = true;
+      autoEscape = true;
+    };
+  };
 
   fileSystems."/mnt/media" = {
     device = "media";
