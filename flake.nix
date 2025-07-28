@@ -62,6 +62,8 @@
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
+    quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 
   outputs = {
@@ -70,7 +72,7 @@
     ...
   } @ inputs: let
     system = "x86_64-linux";
-    
+
     # Common modules used by most hosts
     commonModules = [
       inputs.home-manager.nixosModules.default
@@ -84,49 +86,52 @@
         environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
       })
     ];
-    
+
     # Desktop-specific modules
     desktopModules = [
       inputs.impermanence.nixosModules.impermanence
     ];
-    
-    # Server-specific modules  
+
+    # Server-specific modules
     serverModules = [
       inputs.impermanence.nixosModules.impermanence
       inputs.declarative-jellyfin.nixosModules.default
+      inputs.quadlet-nix.nixosModules.quadlet
     ];
-    
+
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       inputs.jovian-nixos.nixosModules.default
     ];
-    
+
     # Helper function to create a NixOS system configuration
-    mkSystem = hostname: extraModules: nixpkgs.lib.nixosSystem {
-      specialArgs = {
-        inherit inputs;
-        hostname = hostname;
+    mkSystem = hostname: extraModules:
+      nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = hostname;
+        };
+        inherit system;
+        modules =
+          [
+            ./hosts/${hostname}/configuration.nix
+          ]
+          ++ commonModules ++ extraModules;
       };
-      inherit system;
-      modules = [
-        ./hosts/${hostname}/configuration.nix
-      ] ++ commonModules ++ extraModules;
-    };
-    
   in {
     nixosConfigurations = {
       # Desktop workstation
       Clovis = mkSystem "Clovis" desktopModules;
-      
+
       # Server configuration
       Server = mkSystem "Server" serverModules;
-      
+
       # Gaming device (Steam Deck-like)
       Cube = mkSystem "Cube" gamingModules;
-      
+
       # Another desktop/workstation
       Septimius = mkSystem "Septimius" desktopModules;
-      
+
       # Installer ISO
       installer = nixpkgs.lib.nixosSystem {
         specialArgs = {

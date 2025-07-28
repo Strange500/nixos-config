@@ -14,6 +14,10 @@
     #mutableSettings = false;
     settings = {
       dns = {
+        bind_hosts = [
+          "127.0.0.1"
+          "${config.qgroget.server.network.ip}"
+        ];
         upstream_dns = [
           "127.0.0.1:5335"
         ];
@@ -28,7 +32,7 @@
         rewrites = [
           {
             domain = "*.${config.qgroget.server.domain}";
-            answer = "192.168.0.34";
+            answer = "${config.qgroget.server.network.ip}";
           }
         ];
       };
