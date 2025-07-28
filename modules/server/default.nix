@@ -4,5 +4,6 @@
     ./traefik
     ./dashboard
     ./dns
+    ./SSO
   ];    
 }
