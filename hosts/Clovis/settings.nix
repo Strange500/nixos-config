@@ -1,13 +1,14 @@
 {...}: {
   config = {
     qgroget.nixos = {
+      auto-update = false;
       theme = "wide";
       desktop = {
         monitors = [", preferred, auto, 1"];
       };
       remote-access = {
         enable = true;
-        tailscale.enable = true;
+        tailscale.enable = false;
         sunshine.enable = false;
       };
       apps = {
