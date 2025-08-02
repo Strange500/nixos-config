@@ -56,9 +56,6 @@
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
 
-  networking.firewall = {
-    enable = false;
-  };
 
   boot = {
     initrd.availableKernelModules = ["virtiofs"];
