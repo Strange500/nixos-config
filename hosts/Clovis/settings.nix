@@ -23,6 +23,7 @@
         crypto = true;
       };
       gaming = true;
+      vr = true;
     };
   };
 }

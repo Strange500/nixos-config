@@ -13,6 +13,9 @@
     inputs.sops-nix.homeManagerModule
   ];
 
+  xdg.configFile."openxr/1/active_runtime.json".source = lib.mkIf config.qgroget.nixos.vr "${pkgs.monado}/share/openxr/1/openxr_monado.json";
+
+
   home = {
     username = "${config.qgroget.user.username}";
     homeDirectory = "/home/${config.qgroget.user.username}";
