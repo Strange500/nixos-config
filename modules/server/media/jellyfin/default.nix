@@ -10,19 +10,12 @@
     secrets."server/jellyfin/user/strange/password" = {
     };
   };
-
+ 
   environment.persistence."/persist".directories = [
     "/var/cache/jellyfin"
     "/var/lib/jellyfin"
   ];
 
-  traefik.services = {
-    jellyfin = {
-      name = "jellyfin";
-      url = "http://127.0.0.1:8096";
-      type = "public";
-    };
-  };
 
   services.declarative-jellyfin = {
     enable = true;
@@ -141,6 +134,68 @@
         permissions = {
           isAdministrator = false;
           enableAllFolders = false;
+        };
+      };
+    };
+  };
+
+  services.traefik.dynamicConfigOptions = {
+    http = {
+      routers = {
+        jellyfin = {
+          entryPoints = ["websecure"];
+          rule = "Host(`jellyfin.qgroget.com`)";
+          tls = {
+            certResolver = "production";
+          };
+          middlewares = ["jellyfin-mw"];
+          service = "jellyfin-svc";
+        };
+
+        jellyfin-insecure = {
+          entryPoints = ["websecure"];
+          rule = "Host(`jellyfin.qgroget.com`)";
+          middlewares = ["jellyfin-insecure-mw"];
+          service = "noop@internal";
+        };
+      };
+
+      middlewares = {
+        jellyfin-mw = {
+          headers = {
+            customResponseHeaders = {
+              X-Robots-Tag = "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
+              X-XSS-Protection = "1";
+            };
+            SSLRedirect = true;
+            SSLHost = "jellyfin.qgroget.com";
+            SSLForceHost = true;
+            STSSeconds = 315360000;
+            STSIncludeSubdomains = true;
+            STSPreload = true;
+            forceSTSHeader = true;
+            frameDeny = true;
+            contentTypeNosniff = true;
+            customFrameOptionsValue = "allow-from https://qgroget.com";
+          };
+        };
+
+        jellyfin-insecure-mw = {
+          redirectScheme = {
+            scheme = "https";
+            permanent = false;
+          };
+        };
+      };
+
+      services = {
+        jellyfin-svc = {
+          loadBalancer = {
+            servers = [
+              {url = "http://127.0.0.1:8096";}
+            ];
+            passHostHeader = true;
+          };
         };
       };
     };

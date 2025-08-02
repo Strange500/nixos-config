@@ -2,8 +2,8 @@
   config = {
     qgroget = {
       server = {
-        domain = "test.com";
-        test.enable = true;
+        domain = "qgroget.com";
+        test.enable = false;
       };
       nixos = {
         auto-update = false;

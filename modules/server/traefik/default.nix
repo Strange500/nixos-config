@@ -59,6 +59,14 @@ in {
       };
     };
 
+    traefik.services = {
+      proxy = {
+        name = "proxy";
+        url = "http://127.0.0.1:8080";
+        type = "private";
+      };
+    };
+
     services.traefik = {
       enable = true;
 
@@ -80,7 +88,7 @@ in {
           bufferingSize = 50;
         };
 
-        api = lib.mkIf (config.qgroget.server.test.enable) {
+        api = {
           dashboard = true;
           insecure = true;
         };
