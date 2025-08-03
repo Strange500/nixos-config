@@ -65,6 +65,11 @@
           default = false;
           description = "Enable test configurations for the qgroget server.";
         };
+        containerDir = lib.mkOption {
+          type = lib.types.str;
+          default = "/containers";
+          description = "Directory for container configurations.";
+        };
       };
       nixos = {
         auto-update = lib.mkOption {

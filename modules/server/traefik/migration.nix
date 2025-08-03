@@ -27,11 +27,6 @@
       url = "${server}:5244";
       type = "private";
     };
-    navidrome = {
-      name = "navidrome";
-      url = "${server}:4533";
-      type = "public";
-    };
     portfolio = {
       name = "portfolio";
       url = "${server}:3000";

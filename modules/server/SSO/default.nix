@@ -1,6 +1,6 @@
 {config, ...}: let
   # Configuration constants
-  containerDir = "/containers/authentik";
+  containerDir = "${config.qgroget.server.containerDir}/authentik";
   authentikImage = "ghcr.io/goauthentik/server";
   authentikTag = "2025.6";
 
@@ -36,12 +36,8 @@ in {
     "server/authentik/postgresPassword" = {};
   };
 
-  environment.persistence."/persist".directories = [
-    "${containerDir}"
-  ];
-
-  traefik.services.authentik = {
-    name = "authentik";
+  traefik.services.auth = {
+    name = "auth";
     url = "http://127.0.0.1:9000";
     type = "public";
   };
