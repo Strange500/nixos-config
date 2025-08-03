@@ -39,6 +39,14 @@
       "relatime"
     ];
   };
+  fileSystems."/mnt/music" = {
+    device = "music";
+    fsType = "virtiofs";
+    options = [
+      "rw"
+      "relatime"
+    ];
+  };
   fileSystems."/persist" = {
     neededForBoot = true;
     device = "persist";
