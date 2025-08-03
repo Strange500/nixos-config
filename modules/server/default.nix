@@ -1,7 +1,6 @@
 {config, ...}: {
   imports = [
-    ./media/jellyfin
-    ./media/music
+    ./media
     ./traefik
     ./traefik/migration.nix
     ./dashboard

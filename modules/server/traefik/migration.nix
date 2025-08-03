@@ -2,19 +2,9 @@
   server = "http://192.168.0.28";
   in {
   traefik.services = {
-    ai = {
-      name = "ai";
-      url = "${server}:10000";
-      type = "public";
-    };
     file = {
       name = "file";
       url = "${server}:8095";
-      type = "public";
-    };
-    immich = {
-      name = "immich";
-      url = "${server}:2283";
       type = "public";
     };
     jellyseer = {

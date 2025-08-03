@@ -47,6 +47,14 @@
       "relatime"
     ];
   };
+  fileSystems."/mnt/immich" = {
+    device = "immich";
+    fsType = "virtiofs";
+    options = [
+      "rw"
+      "relatime"
+    ];
+  };
   fileSystems."/persist" = {
     neededForBoot = true;
     device = "persist";
