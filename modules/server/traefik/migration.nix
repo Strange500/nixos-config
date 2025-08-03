@@ -50,10 +50,5 @@
       url = "${server}:8384";
       type = "public";
     };
-    vaultwarden = {
-      name = "vaultwarden";
-      url = "${server}:4743";
-      type = "public";
-    };
   };
 }
