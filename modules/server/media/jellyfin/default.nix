@@ -16,7 +16,21 @@
     "/var/lib/jellyfin"
   ];
 
+  # allow DLNA devices to access Jellyfin
+  networking.firewall = {
+    allowedUDPPorts = [1900 7359];
+    allowedTCPPorts = [ 8096  ];
+  };
 
+  hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
+  hardware.enableRedistributableFirmware = true;
+
+  # add user jellyfin to video and render groups
+  users.users.jellyfin = {
+    extraGroups = [ "video" "render" ];
+  };
+  
   services.declarative-jellyfin = {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
