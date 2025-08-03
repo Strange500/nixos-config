@@ -40,10 +40,10 @@
       url = "${server}:5984";
       type = "public";
     };
-    syncthing = {
-      name = "syncthing";
-      url = "${server}:8384";
-      type = "public";
-    };
+    # syncthing = {
+    #   name = "syncthing";
+    #   url = "${server}:8384";
+    #   type = "public";
+    # };
   };
 }
