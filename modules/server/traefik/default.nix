@@ -15,6 +15,7 @@
         else "production";
     };
     tls.options = lib.mkIf (service.type == "private") "mtls";
+    middlewares = lib.optionalAttrs (service.middlewares != []) service.middlewares;
   };
 
   generateService = service: {
@@ -40,6 +41,11 @@ in {
           type = lib.types.enum ["private" "public"];
           default = "private";
           description = "either 'private' or 'public'. 'private' means that the service is only accessible from the local network, while 'public' means it is accessible from the internet.";
+        };
+        middlewares = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          description = "List of middlewares to apply to the service.";
         };
       };
     });

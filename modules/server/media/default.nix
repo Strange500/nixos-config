@@ -1,0 +1,7 @@
+{...}: {
+  imports = [
+    ./photo
+    ./music
+    ./jellyfin
+  ];
+}
