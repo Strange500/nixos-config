@@ -2,6 +2,6 @@
   imports = [
     ./photo
     ./music
-    ./jellyfin
+    ./video
   ];
 }

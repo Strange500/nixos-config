@@ -10,7 +10,7 @@
     secrets."server/jellyfin/user/strange/password" = {
     };
   };
- 
+
   environment.persistence."/persist".directories = [
     "/var/cache/jellyfin"
     "/var/lib/jellyfin"
@@ -19,7 +19,7 @@
   # allow DLNA devices to access Jellyfin
   networking.firewall = {
     allowedUDPPorts = [1900 7359];
-    allowedTCPPorts = [ 8096  ];
+    allowedTCPPorts = [8096];
   };
 
   hardware.graphics.enable = true;
@@ -28,9 +28,9 @@
 
   # add user jellyfin to video and render groups
   users.users.jellyfin = {
-    extraGroups = [ "video" "render" ];
+    extraGroups = ["video" "render"];
   };
-  
+
   services.declarative-jellyfin = {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
@@ -153,64 +153,60 @@
     };
   };
 
+  virtualisation.quadlet = {
+    containers.jellyseer = {
+      autoStart = true;
+      containerConfig = {
+        name = "jellyseer";
+        image = "ghcr.io/fallenbagel/jellyseerr:latest";
+        environments = {
+          LOG_LEVEL = "info";
+          TZ = "Europe/Paris";
+        };
+        publishPorts = [
+          "5055:5055"
+        ];
+        volumes = [
+          "${config.qgroget.server.containerDir}/jellyseer/config:/app/config:Z"
+        ];
+      };
+      serviceConfig = {
+        Restart = "unless-stopped";
+      };
+    };
+  };
+
+  traefik.services = {
+    jellyfin = {
+      name = "jellyfin";
+      url = "http://127.0.0.1:8096";
+      type = "public";
+      middlewares = ["jellyfin-mw"];
+    };
+    jellyseer = {
+      name = "jellyseer";
+      url = "http://127.0.0.1:5055";
+      type = "public";
+    };
+  };
+
   services.traefik.dynamicConfigOptions = {
-    http = {
-      routers = {
-        jellyfin = {
-          entryPoints = ["websecure"];
-          rule = "Host(`jellyfin.qgroget.com`)";
-          tls = {
-            certResolver = "production";
-          };
-          middlewares = ["jellyfin-mw"];
-          service = "jellyfin-svc";
+    http.middlewares.jellyfin-mw = {
+      headers = {
+        customResponseHeaders = {
+          X-Robots-Tag = "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
+          X-XSS-Protection = "1";
         };
-
-        jellyfin-insecure = {
-          entryPoints = ["websecure"];
-          rule = "Host(`jellyfin.qgroget.com`)";
-          middlewares = ["jellyfin-insecure-mw"];
-          service = "noop@internal";
-        };
-      };
-
-      middlewares = {
-        jellyfin-mw = {
-          headers = {
-            customResponseHeaders = {
-              X-Robots-Tag = "noindex,nofollow,nosnippet,noarchive,notranslate,noimageindex";
-              X-XSS-Protection = "1";
-            };
-            SSLRedirect = true;
-            SSLHost = "jellyfin.qgroget.com";
-            SSLForceHost = true;
-            STSSeconds = 315360000;
-            STSIncludeSubdomains = true;
-            STSPreload = true;
-            forceSTSHeader = true;
-            frameDeny = true;
-            contentTypeNosniff = true;
-            customFrameOptionsValue = "allow-from https://qgroget.com";
-          };
-        };
-
-        jellyfin-insecure-mw = {
-          redirectScheme = {
-            scheme = "https";
-            permanent = false;
-          };
-        };
-      };
-
-      services = {
-        jellyfin-svc = {
-          loadBalancer = {
-            servers = [
-              {url = "http://127.0.0.1:8096";}
-            ];
-            passHostHeader = true;
-          };
-        };
+        SSLRedirect = true;
+        SSLHost = "jellyfin.${config.qgroget.server.domain}";
+        SSLForceHost = true;
+        STSSeconds = 315360000;
+        STSIncludeSubdomains = true;
+        STSPreload = true;
+        forceSTSHeader = true;
+        frameDeny = true;
+        contentTypeNosniff = true;
+        customFrameOptionsValue = "allow-from https://jellyfin.${config.qgroget.server.domain}";
       };
     };
   };
