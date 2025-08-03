@@ -4,6 +4,7 @@
     ./traefik
     ./traefik/migration.nix
     ./dashboard
+    ./password-manager
     ./dns
     ./SSO
   ];   
