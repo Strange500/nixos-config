@@ -7,11 +7,6 @@
       url = "${server}:8095";
       type = "public";
     };
-    jellyseer = {
-      name = "jellyseer";
-      url = "${server}:5055";
-      type = "public";
-    };
     list = {
       name = "list";
       url = "${server}:5244";
