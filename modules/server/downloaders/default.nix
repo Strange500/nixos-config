@@ -25,6 +25,10 @@
     TZ = "Etc/UTC";
   };
 
+  commonContainerConfig = {
+    user = "1000:1000";
+  };
+
   commonServiceConfig = {
     Restart = "unless-stopped";
   };
@@ -109,21 +113,23 @@ in {
 
       qbittorrent = {
         autoStart = true;
-        containerConfig = {
-          name = cfg.containers.qbittorrent;
-          pod = pods.${cfg.podName}.ref;
-          image = images.qbittorrent;
-          environments =
-            commonEnv
-            // {
-              WEBUI_PORT = "8112";
-            };
-          volumes = [
-            "${cfg.containerDir}/qbittorrent/config:/config:Z"
-            "/mnt/media:/data:Z"
-            "/mnt/media:/media:Z"
-          ];
-        };
+        containerConfig =
+          {
+            name = cfg.containers.qbittorrent;
+            pod = pods.${cfg.podName}.ref;
+            image = images.qbittorrent;
+            environments =
+              commonEnv
+              // {
+                WEBUI_PORT = "8112";
+              };
+            volumes = [
+              "${cfg.containerDir}/qbittorrent/config:/config:Z"
+              "/mnt/media:/data:Z"
+              "/mnt/media:/media:Z"
+            ];
+          }
+          // commonContainerConfig;
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];
@@ -133,21 +139,23 @@ in {
 
       qbittorrent-bis = {
         autoStart = true;
-        containerConfig = {
-          name = cfg.containers.qbittorrentBis;
-          image = images.qbittorrent;
-          pod = pods.${cfg.podName}.ref;
-          environments =
-            commonEnv
-            // {
-              WEBUI_PORT = "8113";
-            };
-          volumes = [
-            "${cfg.containerDir}/qbittorrent_bis/config:/config:Z"
-            "/mnt/media:/data:Z"
-            "/mnt/media:/media:Z"
-          ];
-        };
+        containerConfig =
+          {
+            name = cfg.containers.qbittorrentBis;
+            image = images.qbittorrent;
+            pod = pods.${cfg.podName}.ref;
+            environments =
+              commonEnv
+              // {
+                WEBUI_PORT = "8113";
+              };
+            volumes = [
+              "${cfg.containerDir}/qbittorrent_bis/config:/config:Z"
+              "/mnt/media:/data:Z"
+              "/mnt/media:/media:Z"
+            ];
+          }
+          // commonContainerConfig;
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];
@@ -157,21 +165,23 @@ in {
 
       qbittorrent-nyaa = {
         autoStart = true;
-        containerConfig = {
-          name = cfg.containers.qbittorrentNyaa;
-          image = images.qbittorrent;
-          pod = pods.${cfg.podName}.ref;
-          environments =
-            commonEnv
-            // {
-              WEBUI_PORT = "8114";
-            };
-          volumes = [
-            "${cfg.containerDir}/qbittorrent_nyaa/config:/config:Z"
-            "/mnt/media:/data:Z"
-            "/mnt/media:/media:Z"
-          ];
-        };
+        containerConfig =
+          {
+            name = cfg.containers.qbittorrentNyaa;
+            image = images.qbittorrent;
+            pod = pods.${cfg.podName}.ref;
+            environments =
+              commonEnv
+              // {
+                WEBUI_PORT = "8114";
+              };
+            volumes = [
+              "${cfg.containerDir}/qbittorrent_nyaa/config:/config:Z"
+              "/mnt/media:/data:Z"
+              "/mnt/media:/media:Z"
+            ];
+          }
+          // commonContainerConfig;
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];
@@ -181,16 +191,18 @@ in {
 
       nicotine-plus = {
         autoStart = true;
-        containerConfig = {
-          name = cfg.containers.nicotinePlus;
-          image = images.nicotinePlus;
-          pod = pods.${cfg.podName}.ref;
-          environments = commonEnv;
-          volumes = [
-            "${cfg.containerDir}/nicotine:/config:Z"
-            "/mnt/music:/music:Z"
-          ];
-        };
+        containerConfig =
+          {
+            name = cfg.containers.nicotinePlus;
+            image = images.nicotinePlus;
+            pod = pods.${cfg.podName}.ref;
+            environments = commonEnv;
+            volumes = [
+              "${cfg.containerDir}/nicotine:/config:Z"
+              "/mnt/music:/music:Z"
+            ];
+          }
+          // commonContainerConfig;
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];
