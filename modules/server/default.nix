@@ -1,6 +1,7 @@
 {config, ...}: {
   imports = [
     ./media
+    ./arrs
     ./downloaders
     ./traefik
     ./traefik/migration.nix
