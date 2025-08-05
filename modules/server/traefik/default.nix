@@ -54,6 +54,9 @@ in {
   };
 
   config = {
+    # fix traefik plugin
+    systemd.services.traefik.serviceConfig.WorkingDirectory = "/var/lib/traefik";
+
     environment.persistence."/persist".directories = [
       "${config.services.traefik.dataDir}"
     ];
@@ -99,6 +102,15 @@ in {
           insecure = true;
         };
 
+        experimental = {
+            plugins = {
+            geoblock = {
+              moduleName = "github.com/PascalMinder/geoblock";
+              version = "v0.3.3";
+            };
+            };
+        };
+
         entryPoints = {
           web = {
             address = ":80";
@@ -122,6 +134,7 @@ in {
             http = {
               middlewares = [
                 "googlenoindex"
+                "geoblock-fr"
               ];
             };
             transport = {
@@ -190,6 +203,25 @@ in {
               headers = {
                 customResponseHeaders = {
                   X-Robots-Tag = "noindex";
+                };
+              };
+            };
+
+            geoblock-fr = {
+              plugin = {
+                geoblock = {
+                  silentStartUp = false;
+                  allowLocalRequests = true;
+                  logLocalRequests = false;
+                  logAllowedRequests = false;
+                  logApiRequests = true;
+                  api = "https://get.geojs.io/v1/ip/country/{ip}";
+                  apiTimeoutMs = 750;
+                  cacheSize = 15;
+                  forceMonthlyUpdate = true;
+                  allowUnknownCountries = false;
+                  unknownCountryApiResponse = "nil";
+                  countries = ["FR"];
                 };
               };
             };
