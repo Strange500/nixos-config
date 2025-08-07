@@ -10,6 +10,7 @@
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
     ../../modules/system/tpm/tpm.nix
+    ./hardware-configuration.nix
   ];
 
   boot.loader.grub = {
@@ -24,7 +25,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    pkgs.brightnessctl
+    brightnessctl
   ];
 
   boot.kernelParams = ["acpi_enforce_resources=lax"];

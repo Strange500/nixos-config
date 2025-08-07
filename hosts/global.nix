@@ -32,23 +32,29 @@
 
   virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
-    docker.enable = true;
     libvirtd.enable = true;
   };
-
 
   xdg.portal = {
     enable = true;
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
 
+  sops = {
+    age.keyFile = "${config.qgroget.secretAgeKeyPath}";
+    defaultSopsFile = ../secrets/secrets.yaml;
+  };
+
   users.users.root.hashedPassword = "$6$13gz85QezPcMpTXb$jalGiNan9u2PYc3jP4zgUYoZqNcu.811AqfVNadcNQhH4kn9uWC0FxO7UPArX5Apm49lhDbQ5elFeBRS76.s.1";
   users.users.${config.qgroget.user.username} = {
     shell = pkgs.zsh;
     isNormalUser = true;
+    uid = 1000;
     home = "/home/${config.qgroget.user.username}";
     description = "${config.qgroget.user.username}";
     hashedPassword = "$6$tN1HR03Pv6LQFA.w$1byWSM0wWLFn6nQkYebqYLrPzYNf2eyqmGDvTqI8OET9M3y74in7lVGr1KJOHZQys6wWh.ggaRafH6fyrgPmm.";
+    linger = true; 
+    autoSubUidGidRange = true; 
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -82,7 +88,7 @@
 
   hardware = {
     graphics.enable = true;
-    ledger.enable = true;
+    ledger.enable = config.qgroget.nixos.apps.crypto;
   };
 
   environment.sessionVariables = {
@@ -96,7 +102,7 @@
 
   home-manager = {
     extraSpecialArgs = {inherit inputs pkgs hostname;};
-    users = {"${config.qgroget.user.username}" = import ../home.nix;};
+    users."${config.qgroget.user.username}" = import ../home.nix;
   };
 
   nixpkgs.config = {

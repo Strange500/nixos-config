@@ -1,10 +1,12 @@
 {
   pkgs,
-  inputs,
-  lib,
   config,
   ...
 }: {
+  sops.secrets."firefox/certFilePKCS12.p12" = {
+    format = "binary";
+    sopsFile = ../../../secrets/client.p12;
+  };
   programs.firefox = {
     enable = true;
     languagePacks = ["fr_FR"];

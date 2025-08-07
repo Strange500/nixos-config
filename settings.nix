@@ -8,9 +8,6 @@
       secretAgeKeyPath = "/var/lib/sops/age/keys.txt";
       user.username = "strange";
       nixos = {
-        apps = {
-          basic = true;
-        };
         desktop = {
           desktopEnvironment = "hyprland";
           loginManager = "ly";
@@ -52,11 +49,38 @@
         default = "strange";
         description = "The username for the qgroget user.";
       };
+      server = {
+        network.ip = lib.mkOption {
+          type = lib.types.str;
+          default = "192.168.0.34";
+          description = "The IP address of the qgroget server.";
+        };
+        domain = lib.mkOption {
+          type = lib.types.str;
+          default = "qgroget.com";
+          description = "The domain for the qgroget server.";
+        };
+        test.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable test configurations for the qgroget server.";
+        };
+        containerDir = lib.mkOption {
+          type = lib.types.str;
+          default = "/containers";
+          description = "Directory for container configurations.";
+        };
+      };
       nixos = {
         auto-update = lib.mkOption {
           type = lib.types.bool;
           default = true;
           description = "Enable automatic updates for NixOS.";
+        };
+        isDesktop = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Enable basic apps (terminal, browser, file manager, etc.).";
         };
         apps = {
           basic = lib.mkOption {
