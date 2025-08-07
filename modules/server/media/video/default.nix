@@ -1,9 +1,8 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}: {
+{config, ...}: {
+  imports = [
+    ./jellyseer.nix
+  ];
+
   sops = {
     secrets."server/jellyfin/user/admin/password" = {
     };
@@ -14,6 +13,13 @@
   environment.persistence."/persist".directories = [
     "/var/cache/jellyfin"
     "/var/lib/jellyfin"
+  ];
+
+  # system tmp file to give read access to every file inside /var/lib/jellyfin/log
+  systemd.tmpfiles.rules = [
+    "d /var/lib/jellyfin 0755 jellyfin jellyfin -"
+    "d /var/lib/jellyfin/log 0755 jellyfin jellyfin -"
+    "Z /var/lib/jellyfin/log/*.log 0644 jellyfin jellyfin -"
   ];
 
   # allow DLNA devices to access Jellyfin
@@ -34,6 +40,11 @@
   services.declarative-jellyfin = {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
+    backups = false;
+
+    network.knownProxies = [
+      "127.0.0.1"
+    ];
 
     system = {
       UICulture = "fr-FR";
@@ -153,40 +164,12 @@
     };
   };
 
-  virtualisation.quadlet = {
-    containers.jellyseer = {
-      autoStart = true;
-      containerConfig = {
-        name = "jellyseer";
-        image = "ghcr.io/fallenbagel/jellyseerr:latest";
-        environments = {
-          LOG_LEVEL = "info";
-          TZ = "Europe/Paris";
-        };
-        publishPorts = [
-          "5055:5055"
-        ];
-        volumes = [
-          "${config.qgroget.server.containerDir}/jellyseer/config:/app/config:Z"
-        ];
-      };
-      serviceConfig = {
-        Restart = "unless-stopped";
-      };
-    };
-  };
-
   traefik.services = {
     jellyfin = {
       name = "jellyfin";
       url = "http://127.0.0.1:8096";
       type = "public";
       middlewares = ["jellyfin-mw"];
-    };
-    jellyseer = {
-      name = "jellyseer";
-      url = "http://127.0.0.1:5055";
-      type = "public";
     };
   };
 
