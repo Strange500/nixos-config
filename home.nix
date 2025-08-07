@@ -22,7 +22,6 @@
       pkgs.discord
       pkgs.moonlight-qt
       pkgs.nautilus
-      pkgs.virtualbox
     ];
     file = {
       ".config" = {
