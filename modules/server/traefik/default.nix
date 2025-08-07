@@ -103,12 +103,16 @@ in {
         };
 
         experimental = {
-            plugins = {
+          plugins = {
             geoblock = {
               moduleName = "github.com/PascalMinder/geoblock";
               version = "v0.3.3";
             };
+            traefik-get-real-ip = {
+              moduleName = "github.com/Paxxs/traefik-get-real-ip";
+              version = "v1.0.3";
             };
+          };
         };
 
         entryPoints = {
@@ -246,6 +250,7 @@ in {
 
     networking.firewall = {
       allowedTCPPorts = [80 443] ++ lib.optional (config.qgroget.server.test.enable) 8080;
+      allowedUDPPorts = [443]; # allow DNS over HTTPS and QUIC
     };
   };
 }
