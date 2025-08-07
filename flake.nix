@@ -60,6 +60,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    crowdsec = {
+      url = "git+https://codeberg.org/kampka/nix-flake-crowdsec.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
@@ -97,6 +102,7 @@
       inputs.impermanence.nixosModules.impermanence
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
+      inputs.crowdsec.nixosModules.crowdsec
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)

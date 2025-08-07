@@ -70,7 +70,7 @@
           encoders = [
             {
               encoder = "vaapi";
-              codec = "h265";
+              codec = "h264";
               # 1.0 x 1.0 scaling
               width = 1.0;
               height = 1.0;

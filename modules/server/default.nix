@@ -2,6 +2,7 @@
   imports = [
     ./media
     ./arrs
+    ./security
     ./downloaders
     ./traefik
     ./traefik/migration.nix

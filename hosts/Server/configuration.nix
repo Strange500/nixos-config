@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  lib,
   ...
 }: {
   imports = [
@@ -25,9 +26,21 @@
       enable = true;
       dockerCompat = true;
     };
+    oci-containers.backend = "podman";
     quadlet = {
       enable = true;
       autoEscape = true;
+    };
+
+    containers.enable = true;
+    containers.storage.settings = {
+      storage = {
+        driver = "overlay";
+        runroot = "/run/containers/storage";
+        graphroot = "/var/lib/containers/storage";
+        rootless_storage_path = "/tmp/containers-$USER";
+        options.overlay.mountopt = "nodev,metacopy=on";
+      };
     };
   };
 
@@ -71,7 +84,6 @@
 
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
-
 
   boot = {
     initrd.availableKernelModules = ["virtiofs"];

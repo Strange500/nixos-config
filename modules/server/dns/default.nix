@@ -29,12 +29,6 @@
         safe_search = {
           enabled = false; 
         };
-        rewrites = [
-          {
-            domain = "*.${config.qgroget.server.domain}";
-            answer = "${config.qgroget.server.network.ip}";
-          }
-        ];
       };
       # to not have to manually create {enabled = true; url = "";} for every filter
       filters =

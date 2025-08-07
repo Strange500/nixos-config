@@ -103,12 +103,12 @@ in {
         };
 
         experimental = {
-            plugins = {
+          plugins = {
             geoblock = {
               moduleName = "github.com/PascalMinder/geoblock";
               version = "v0.3.3";
             };
-            };
+          };
         };
 
         entryPoints = {
@@ -246,6 +246,7 @@ in {
 
     networking.firewall = {
       allowedTCPPorts = [80 443] ++ lib.optional (config.qgroget.server.test.enable) 8080;
+      allowedUDPPorts = [443];
     };
   };
 }
