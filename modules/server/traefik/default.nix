@@ -26,8 +26,6 @@
     };
   };
 in {
-
-
   config = {
     systemd.services.qgroget.serviceConfig.WorkingDirectory = "/var/lib/traefik";
 

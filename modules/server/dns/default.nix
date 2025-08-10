@@ -8,8 +8,8 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 53 ];
-  networking.firewall.allowedUDPPorts = [ 53 ]; 
+  networking.firewall.allowedTCPPorts = [53];
+  networking.firewall.allowedUDPPorts = [53];
 
   services.adguardhome = {
     enable = true;
@@ -27,9 +27,9 @@
       filtering = {
         protection_enabled = true;
         filtering_enabled = true;
-        parental_enabled = false; 
+        parental_enabled = false;
         safe_search = {
-          enabled = false; 
+          enabled = false;
         };
       };
       # to not have to manually create {enabled = true; url = "";} for every filter
@@ -68,7 +68,7 @@
             "9.9.9.9#dns.quad9.net"
             "149.112.112.112#dns.quad9.net"
           ];
-          forward-tls-upstream = true; 
+          forward-tls-upstream = true;
         }
       ];
     };

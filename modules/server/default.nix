@@ -20,7 +20,6 @@
   # tmpfile rule to create the log directory
 
   config = {
-    
     # Create 'logs' group
     users.groups.logs = {};
 

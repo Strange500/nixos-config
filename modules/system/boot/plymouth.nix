@@ -4,13 +4,12 @@
   config,
   ...
 }: {
-
   boot = lib.mkIf config.qgroget.nixos.isDesktop {
     plymouth = {
-    enable = config.qgroget.nixos.isDesktop;
-    logo = ./../../../home/logo.png;
-  };
-    kernelParams =  [
+      enable = config.qgroget.nixos.isDesktop;
+      logo = ./../../../home/logo.png;
+    };
+    kernelParams = [
       "quiet"
       "splash"
       "plymouth.ignore-serial-consoles"

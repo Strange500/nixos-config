@@ -20,32 +20,31 @@
         binfmt = true;
       };
     };
-    environment.systemPackages = with pkgs; [
-      protontricks
-      steam-rom-manager
-    ] ++ lib.optionals config.qgroget.nixos.vr [
-      opencomposite
-      wlx-overlay-s
-    ];
+    environment.systemPackages = with pkgs;
+      [
+        protontricks
+        steam-rom-manager
+      ]
+      ++ lib.optionals config.qgroget.nixos.vr [
+        opencomposite
+        wlx-overlay-s
+      ];
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
     };
     services.xserver.videoDrivers = ["amdgpu"];
 
-
     programs.git = {
       enable = true;
       lfs.enable = true;
     };
 
-    systemd.user.services.monado.environment =  lib.mkIf config.qgroget.nixos.vr {
+    systemd.user.services.monado.environment = lib.mkIf config.qgroget.nixos.vr {
       STEAMVR_LH_ENABLE = "1";
       XRT_COMPOSITOR_COMPUTE = "1";
       HAND_TRACKING_ENABLE = "1";
     };
-
-   
 
     services.wivrn = lib.mkIf config.qgroget.nixos.vr {
       enable = true;

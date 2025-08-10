@@ -13,7 +13,6 @@
     inputs.sops-nix.homeManagerModule
   ];
 
-
   home = {
     username = "${config.qgroget.user.username}";
     homeDirectory = "/home/${config.qgroget.user.username}";

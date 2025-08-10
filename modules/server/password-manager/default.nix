@@ -1,4 +1,8 @@
-{config, lib, ...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   qgroget.services = {
     vaultwarden = {
       name = "vaultwarden";

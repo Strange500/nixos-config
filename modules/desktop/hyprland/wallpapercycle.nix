@@ -66,7 +66,7 @@
     while true; do
         initial_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
         set_wallpaper
-        
+
         for ((i=1; i<=WAIT; i++)); do
             current_monitors=$(hyprctl monitors | grep Monitor | awk -F'[ (]' '{print $2}')
             if [ "$initial_monitors" != "$current_monitors" ]; then

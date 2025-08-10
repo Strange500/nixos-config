@@ -44,7 +44,7 @@
     prowlarr = "lscr.io/linuxserver/prowlarr:latest";
   };
 
-  inherit (config.virtualisation.quadlet)  pods;
+  inherit (config.virtualisation.quadlet) pods;
 in {
   qgroget.services = {
     sonarr-anime = {

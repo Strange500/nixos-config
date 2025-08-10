@@ -33,8 +33,8 @@
 
   # Generate acquisition configuration for a service
   generateAcquisition = service:
-    if service ? journalctl && service.journalctl == true then
-      ''
+    if service ? journalctl && service.journalctl == true
+    then ''
       ---
       journalctl_filter:
         - "_SYSTEMD_UNIT=${service.unitName}"
