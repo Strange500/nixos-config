@@ -1,8 +1,4 @@
-{
-  inputs,
-  config,
-  ...
-}: {
+{config, ...}: {
   # Create necessary directories
   systemd.tmpfiles.rules = [
     "d /containers/jellyseer 0755 jellyseer jellyseer -"

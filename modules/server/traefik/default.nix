@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   generateRouter = service: {
@@ -152,8 +151,8 @@ in {
 
       dynamicConfigOptions = {
         http = {
-          routers = lib.mapAttrs (name: service: generateRouter service) config.qgroget.services;
-          services = lib.mapAttrs (name: service: generateService service) config.qgroget.services;
+          routers = lib.mapAttrs (_name: service: generateRouter service) config.qgroget.services;
+          services = lib.mapAttrs (_name: service: generateService service) config.qgroget.services;
           middlewares = {
             authentik = {
               forwardAuth = {

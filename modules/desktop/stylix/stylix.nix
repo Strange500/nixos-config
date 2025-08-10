@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  lib,
   ...
 }: {
   stylix.enable = true;

@@ -71,11 +71,7 @@
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
 
     # Common modules used by most hosts
