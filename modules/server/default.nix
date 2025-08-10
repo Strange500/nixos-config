@@ -40,6 +40,10 @@
       # Recursively fix existing permissions
       Z ${config.qgroget.logDir} - - logs - -
     '';
+
+    environment.persistence."/persist".directories = [
+      "${config.qgroget.server.containerDir}"
+    ];
   };
 
   options.qgroget = {
@@ -89,11 +93,5 @@
       default = {};
       description = "QGroget services to be managed";
     };
-  };
-
-  config = {
-    environment.persistence."/persist".directories = [
-      "${config.qgroget.server.containerDir}"
-    ];
   };
 }

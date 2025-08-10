@@ -191,9 +191,6 @@
         "/var/lib/systemd"
         "/etc/NetworkManager"
         "/root/.ssh"
-        "/var/lib/containers/storage"
-        #"/run/containers/storage"
-        # "/var/lib/containers/storage/volumes"
         {
           directory = "/var/lib/colord";
           user = "colord";
