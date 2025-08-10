@@ -1,7 +1,7 @@
 {config, ...}: let
   musicDir = "/mnt/music/media/beets"; # Adjust to your music directory
 in {
-  traefik.services.navidrome = {
+  qgroget.services.navidrome = {
     name = "navidrome";
     url = "http://127.0.0.1:4533";
     type = "public";

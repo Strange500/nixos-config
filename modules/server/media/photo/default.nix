@@ -57,7 +57,7 @@ in {
     };
   };
 
-  traefik.services.immich = {
+  qgroget.services.immich = {
     name = "immich";
     url = "http://127.0.0.1:${toString cfg.port}";
     type = "public";

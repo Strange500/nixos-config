@@ -11,7 +11,7 @@
     "Z /containers/jellyseer/config/logs/jellyseerr.log 0644 jellyseer jellyseer -"
   ];
 
-  traefik.services = {
+  qgroget.services = {
     jellyseer = {
       name = "jellyseer";
       url = "http://127.0.0.1:5055";

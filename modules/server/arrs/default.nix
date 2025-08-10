@@ -46,7 +46,7 @@
 
   inherit (config.virtualisation.quadlet)  pods;
 in {
-  traefik.services = {
+  qgroget.services = {
     sonarr-anime = {
       name = "sonarr-anime";
       url = "http://127.0.0.1:${toString cfg.ports.sonarr-anime}";

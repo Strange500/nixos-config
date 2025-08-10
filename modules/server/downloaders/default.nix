@@ -41,7 +41,7 @@
 
   inherit (config.virtualisation.quadlet) containers pods;
 in {
-  traefik.services = {
+  qgroget.services = {
     torrent = {
       name = "torrent";
       url = "http://127.0.0.1:${toString cfg.ports.qbittorrent1}";

@@ -1,5 +1,5 @@
 {config, lib, ...}: {
-  traefik.services = {
+  qgroget.services = {
     vaultwarden = {
       name = "vaultwarden";
       url = "http://127.0.0.1:4743";

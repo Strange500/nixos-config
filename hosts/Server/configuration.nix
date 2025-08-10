@@ -1,7 +1,7 @@
 {
   inputs,
   config,
-  lib,
+  pkgs,
   ...
 }: {
   imports = [
@@ -21,25 +21,35 @@
     autoSubUidGidRange = true;
   };
 
+  environment.systemPackages = [
+    pkgs.fuse-overlayfs
+  ];
+
+  boot.kernelModules = ["fuse"];
+
   virtualisation = {
     podman = {
       enable = true;
       dockerCompat = true;
     };
+
     oci-containers.backend = "podman";
+
     quadlet = {
       enable = true;
       autoEscape = true;
     };
 
     containers.enable = true;
+
     containers.storage.settings = {
       storage = {
         driver = "overlay";
-        runroot = "/run/containers/storage";
+        runroot = "/run/containers/storage"; # tmpfs is fine for runtime
         graphroot = "/var/lib/containers/storage";
-        rootless_storage_path = "/tmp/containers-$USER";
-        options.overlay.mountopt = "nodev,metacopy=on";
+        options = {
+          mount_program = "/run/current-system/sw/bin/fuse-overlayfs";
+        };
       };
     };
   };

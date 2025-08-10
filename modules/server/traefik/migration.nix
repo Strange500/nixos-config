@@ -1,7 +1,7 @@
 {...}:let
   server = "http://192.168.0.28";
   in {
-  traefik.services = {
+  qgroget.services = {
     file = {
       name = "file";
       url = "${server}:8095";

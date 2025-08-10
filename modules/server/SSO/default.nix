@@ -36,7 +36,7 @@ in {
     "server/authentik/postgresPassword" = {};
   };
 
-  traefik.services.auth = {
+  qgroget.services.auth = {
     name = "auth";
     url = "http://127.0.0.1:9000";
     type = "public";

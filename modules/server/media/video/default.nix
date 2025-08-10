@@ -1,4 +1,6 @@
-{config, ...}: {
+{config, ...}: let
+  logDir = "${config.qgroget.logDir}/jellyfin";
+in {
   imports = [
     ./jellyseer.nix
   ];
@@ -16,11 +18,11 @@
   ];
 
   # system tmp file to give read access to every file inside /var/lib/jellyfin/log
-  systemd.tmpfiles.rules = [
-    "d /var/lib/jellyfin 0755 jellyfin jellyfin -"
-    "d /var/lib/jellyfin/log 0755 jellyfin jellyfin -"
-    "Z /var/lib/jellyfin/log/*.log 0644 jellyfin jellyfin -"
-  ];
+  # systemd.tmpfiles.rules = [
+  #   "d /var/lib/jellyfin 0755 jellyfin jellyfin -"
+  #   "d /var/lib/jellyfin/log 0755 jellyfin jellyfin -"
+  #   "Z /var/lib/jellyfin/log/*.log 0644 jellyfin jellyfin -"
+  # ];
 
   # allow DLNA devices to access Jellyfin
   networking.firewall = {
@@ -41,6 +43,9 @@
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
     backups = false;
+    logDir = logDir;
+    user = "jellyfin";
+    group = "jellyfin";
 
     network.knownProxies = [
       "127.0.0.1"
@@ -164,11 +169,14 @@
     };
   };
 
-  traefik.services = {
+  qgroget.services = {
     jellyfin = {
       name = "jellyfin";
       url = "http://127.0.0.1:8096";
       type = "public";
+      #logPath = "${logDir}/log_*";
+      journalctl = true;
+      unitName = "jellyfin.service";
       middlewares = ["jellyfin-mw"];
     };
   };

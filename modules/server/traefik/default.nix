@@ -26,36 +26,11 @@
     };
   };
 in {
-  options.traefik.services = lib.mkOption {
-    type = lib.types.attrsOf (lib.types.submodule {
-      options = {
-        name = lib.mkOption {
-          type = lib.types.str;
-          description = "Service name for subdomain";
-        };
-        url = lib.mkOption {
-          type = lib.types.str;
-          description = "Backend URL";
-        };
-        type = lib.mkOption {
-          type = lib.types.enum ["private" "public"];
-          default = "private";
-          description = "either 'private' or 'public'. 'private' means that the service is only accessible from the local network, while 'public' means it is accessible from the internet.";
-        };
-        middlewares = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [];
-          description = "List of middlewares to apply to the service.";
-        };
-      };
-    });
-    default = {};
-    description = "Traefik services configuration";
-  };
+
 
   config = {
     # fix traefik plugin
-    systemd.services.traefik.serviceConfig.WorkingDirectory = "/var/lib/traefik";
+    systemd.services.qgroget.serviceConfig.WorkingDirectory = "/var/lib/traefik";
 
     environment.persistence."/persist".directories = [
       "${config.services.traefik.dataDir}"
@@ -68,7 +43,7 @@ in {
       };
     };
 
-    traefik.services = {
+    qgroget.services = {
       proxy = {
         name = "proxy";
         url = "http://127.0.0.1:8080";
@@ -102,14 +77,14 @@ in {
           insecure = true;
         };
 
-        experimental = {
-          plugins = {
-            geoblock = {
-              moduleName = "github.com/PascalMinder/geoblock";
-              version = "v0.3.3";
-            };
-          };
-        };
+        # experimental = {
+        #   # plugins = {
+        #   #   geoblock = {
+        #   #     moduleName = "github.com/PascalMinder/geoblock";
+        #   #     version = "v0.3.3";
+        #   #   };
+        #   # };
+        # };
 
         entryPoints = {
           web = {
@@ -134,7 +109,7 @@ in {
             http = {
               middlewares = [
                 "googlenoindex"
-                "geoblock-fr"
+                # "geoblock-fr"
               ];
             };
             transport = {
@@ -176,8 +151,8 @@ in {
 
       dynamicConfigOptions = {
         http = {
-          routers = lib.mapAttrs (name: service: generateRouter service) config.traefik.services;
-          services = lib.mapAttrs (name: service: generateService service) config.traefik.services;
+          routers = lib.mapAttrs (name: service: generateRouter service) config.qgroget.services;
+          services = lib.mapAttrs (name: service: generateService service) config.qgroget.services;
           middlewares = {
             authentik = {
               forwardAuth = {
@@ -207,24 +182,24 @@ in {
               };
             };
 
-            geoblock-fr = {
-              plugin = {
-                geoblock = {
-                  silentStartUp = false;
-                  allowLocalRequests = true;
-                  logLocalRequests = false;
-                  logAllowedRequests = false;
-                  logApiRequests = true;
-                  api = "https://get.geojs.io/v1/ip/country/{ip}";
-                  apiTimeoutMs = 750;
-                  cacheSize = 15;
-                  forceMonthlyUpdate = true;
-                  allowUnknownCountries = false;
-                  unknownCountryApiResponse = "nil";
-                  countries = ["FR"];
-                };
-              };
-            };
+            # geoblock-fr = {
+            #   plugin = {
+            #     geoblock = {
+            #       silentStartUp = false;
+            #       allowLocalRequests = true;
+            #       logLocalRequests = false;
+            #       logAllowedRequests = false;
+            #       logApiRequests = true;
+            #       api = "https://get.geojs.io/v1/ip/country/{ip}";
+            #       apiTimeoutMs = 750;
+            #       cacheSize = 15;
+            #       forceMonthlyUpdate = true;
+            #       allowUnknownCountries = false;
+            #       unknownCountryApiResponse = "nil";
+            #       countries = ["FR"];
+            #     };
+            #   };
+            # };
           };
         };
 
