@@ -5,6 +5,8 @@ in {
     name = "navidrome";
     url = "http://127.0.0.1:4533";
     type = "public";
+    journalctl = true;
+    unitName = "navidrome.service";
   };
 
   virtualisation.quadlet = {

@@ -4,6 +4,8 @@
       name = "vaultwarden";
       url = "http://127.0.0.1:4743";
       type = "public";
+      journalctl = true;
+      unitName = "vaultwarden.service";
       # middlewares = ["password-manager-limit"];
     };
   };

@@ -62,6 +62,8 @@ in {
     url = "http://127.0.0.1:${toString cfg.port}";
     type = "public";
     middlewares = ["immich-limit"];
+    journalctl = true;
+    unitName = "immich-server.service";
   };
 
   virtualisation.quadlet = {

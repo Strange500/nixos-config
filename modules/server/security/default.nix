@@ -3,8 +3,7 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   cfg = config.qgroget.services;
 
   # Collection definitions with better organization
@@ -15,6 +14,11 @@ let
     applications = [
       "LePresidente/jellyfin"
       "LePresidente/jellyseerr"
+      "LePresidente/adguardhome"
+      "firix/authentik"
+      "gauth-fr/immich"
+      "sdwilsh/navidrome"
+      "Dominic-Wagner/vaultwarden"
     ];
   };
 
@@ -31,12 +35,12 @@ let
   generateAcquisition = service:
     if service ? journalctl && service.journalctl == true then
       ''
-        ---
-        journalctl_filter:
-          - "_SYSTEMD_UNIT=${service.unitName}"
-        labels:
-          type: ${service.name}
-      ''
+      ---
+      journalctl_filter:
+        - "_SYSTEMD_UNIT=${service.unitName}"
+      labels:
+        type: ${service.name}
+    ''
     else
       lib.optionalString (service.logPath != "") ''
         ---
@@ -67,20 +71,20 @@ let
     wait_for_api() {
       local max_attempts=30
       local attempt=1
-      
+
       echo "Waiting for CrowdSec API to be ready..."
-      
+
       while [ $attempt -le $max_attempts ]; do
         if cscli version >/dev/null 2>&1; then
           echo "CrowdSec API is ready"
           return 0
         fi
-        
+
         echo "Attempt $attempt/$max_attempts: API not ready, waiting..."
         sleep 2
         ((attempt++))
       done
-      
+
       echo "ERROR: CrowdSec API failed to start after $max_attempts attempts"
       return 1
     }
@@ -109,7 +113,6 @@ let
 
     main "$@"
   '';
-
 in {
   config = {
     # SOPS secrets configuration
@@ -118,15 +121,12 @@ in {
       owner = "crowdsec";
     };
 
-    # User configuration
-    users.users.crowdsec.extraGroups = [ "systemd-journal" ];
-
     # CrowdSec service configuration
     services.crowdsec = {
       enable = true;
       enrollKeyFile = config.sops.secrets."crowdsec/enrollKey".path;
       allowLocalJournalAccess = true;
-      
+
       settings = {
         crowdsec_service.acquisition_path = acquisitionsFile;
         api.server.listen_uri = "127.0.0.1:8887";
@@ -135,14 +135,17 @@ in {
 
     # Systemd service overrides
     systemd.services.crowdsec = {
-      after = [ "network.target" ];
-      wants = [ "network.target" ];
-      
+      after = ["network.target"];
+      wants = ["network.target"];
+
       serviceConfig = {
-        ExecStartPre = [ "${setupScript}/bin/crowdsec-setup" ];
+        ExecStartPre = ["${setupScript}/bin/crowdsec-setup"];
         # Add restart policies for better resilience
         Restart = "on-failure";
         RestartSec = "10s";
+
+        PrivateUsers = false;
+        SupplementaryGroups = ["systemd-journal"];
       };
     };
 
@@ -156,7 +159,7 @@ in {
         ExecStart = pkgs.writeScript "update-collections" ''
           #!${pkgs.runtimeShell}
           set -euo pipefail
-          
+
           echo "Updating CrowdSec collections..."
           cscli collections upgrade --all || true
           cscli parsers upgrade --all || true
@@ -167,7 +170,7 @@ in {
 
     systemd.timers.crowdsec-update-collections = {
       description = "Update CrowdSec collections weekly";
-      wantedBy = [ "timers.target" ];
+      wantedBy = ["timers.target"];
       timerConfig = {
         OnCalendar = "weekly";
         Persistent = true;

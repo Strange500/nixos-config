@@ -1,8 +1,10 @@
 {config, ...}: {
   qgroget.services = {
-    adguard = {
-      name = "adguard";
+    adguardhome = {
+      name = "adguardhome";
       url = "http://127.0.0.1:3000";
+      journalctl = true;
+      unitName = "adguardhome.service";
     };
   };
 

@@ -40,6 +40,8 @@ in {
     name = "auth";
     url = "http://127.0.0.1:9000";
     type = "public";
+    journalctl = true;
+    unitName = "authentik.service";
   };
 
   virtualisation.quadlet = {
