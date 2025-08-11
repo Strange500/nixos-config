@@ -69,9 +69,7 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
-
-    wivrn-flake.url = "github:WiVRn/WiVRn";
-    wivrn-flake.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs-xr.url = "github:nix-community/nixpkgs-xr";
   };
 
   outputs = {nixpkgs, ...} @ inputs: let
@@ -89,21 +87,6 @@
       ({pkgs, ...}: {
         environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
       })
-
-      (
-        {pkgs, ...}: {
-          nixpkgs.overlays = [
-            (final: prev: {
-              wivrn-custom = inputs.wivrn-flake.packages.x86_64-linux.default;
-            })
-          ];
-
-          # Then use it in your config
-          environment.systemPackages = [pkgs.wivrn-custom];
-          # or in your services
-          services.wivrn.package = pkgs.wivrn-custom;
-        }
-      )
     ];
 
     # Desktop-specific modules
@@ -122,6 +105,7 @@
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       inputs.jovian-nixos.nixosModules.default
+      inputs.nixpkgs-xr.nixosModules.nixpkgs-xr
     ];
 
     # Helper function to create a NixOS system configuration
