@@ -14,6 +14,7 @@
     ./password-manager
     ./dns
     ./SSO
+    ./misc
   ];
 
   # tmpfile rule to create the log directory
