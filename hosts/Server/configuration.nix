@@ -70,6 +70,14 @@
       "relatime"
     ];
   };
+  fileSystems."/mnt/share" = {
+    device = "share";
+    fsType = "virtiofs";
+    options = [
+      "rw"
+      "relatime"
+    ];
+  };
   fileSystems."/mnt/immich" = {
     device = "immich";
     fsType = "virtiofs";
