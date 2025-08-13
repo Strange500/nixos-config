@@ -18,6 +18,7 @@
     ../modules/game/game.nix
     ../modules/system/remoteAccess.nix
     ./setting.nix
+    ../modules/shared
   ];
 
   networking.networkmanager = {enable = true;};

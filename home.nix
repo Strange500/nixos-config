@@ -10,6 +10,7 @@
     ./hosts/setting.nix
     ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
+    ./modules/shared
     inputs.sops-nix.homeManagerModule
   ];
 

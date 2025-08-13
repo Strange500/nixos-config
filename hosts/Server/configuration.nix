@@ -27,6 +27,15 @@
 
   boot.kernelModules = ["fuse"];
 
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      amdvlk
+    ];
+  };
+
+  services.xserver.videoDrivers = ["amdgpu"];
+
   virtualisation = {
     podman = {
       enable = true;

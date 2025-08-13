@@ -3,67 +3,51 @@
   hostname,
   lib,
   ...
-}: {
+}: let
+  cfg = config.qgroget.syncthing;
+
+  # Extract client devices (devices that are NOT this client)
+  clientDevices =
+    lib.filterAttrs (
+      name: device:
+        device.id != cfg.settings.devices.computer.id
+    )
+    cfg.settings.devices;
+
+  # Build client folder configuration from options
+  clientFolders =
+    lib.mapAttrs' (
+      name: folderCfg: let
+        # Map folder names to enable conditions
+        enableCondition =
+          if name == "Documents"
+          then config.qgroget.nixos.apps.sync.desktop.enable
+          else if name == "QGCube"
+          then config.qgroget.nixos.apps.sync.game.enable
+          else true; # Default to enabled for other folders
+      in
+        lib.nameValuePair name (lib.mkIf (folderCfg.enable && folderCfg.client.enable && enableCondition) {
+          inherit (folderCfg) id ignorePerms;
+          path = folderCfg.client.path;
+          type = folderCfg.client.type;
+          devices = map (deviceName: cfg.settings.devices.${deviceName}.id) folderCfg.client.devices;
+        })
+    )
+    cfg.settings.folders;
+in {
   sops.secrets = {
-    "syncthing/${hostname}/cert" = {
-    };
-    "syncthing/${hostname}/key" = {
-    };
+    "syncthing/${hostname}/cert" = {};
+    "syncthing/${hostname}/key" = {};
   };
 
   services.syncthing = {
     enable = true;
-
     cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
     key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
-
     settings = {
-      folders = {
-        "computer" = lib.mkIf config.qgroget.nixos.apps.sync.desktop.enable {
-          id = "rglxv-6cyvw";
-          path = "${config.home.homeDirectory}";
-          devices = [
-            "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY"
-          ];
-          ignorePerms = false;
-          type = "sendreceive";
-        };
-        "QGCube" = lib.mkIf config.qgroget.nixos.apps.sync.game.enable {
-          id = "pqmdn-esnyq";
-          path = "${config.home.homeDirectory}/gameSync";
-          devices = [
-            "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY"
-          ];
-          ignorePerms = false;
-          type = "receiveonly";
-        };
-      };
-
-      devices = {
-        "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY" = {
-          id = "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY";
-          name = "Server";
-          addresses = ["dynamic"];
-        };
-      };
-
-      options = {
-        upnpEnabled = true;
-        localAnnounceEnabled = false;
-        globalAnnounceEnabled = true;
-        relaysEnabled = true;
-        urAccepted = -1;
-      };
+      folders = clientFolders;
+      devices = clientDevices;
+      options = cfg.settings.options;
     };
   };
-
-  home.file.".stignore".text = ''
-    .*
-              *.tmp
-              *.log
-              *~
-              *.swp
-              .DS_Store
-              wallpaper
-              nixos'';
 }
