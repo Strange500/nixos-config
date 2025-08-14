@@ -63,7 +63,7 @@ in {
     };
 
     encoding = {
-      enableHardwareEncoding = false;
+      enableHardwareEncoding = true;
       hardwareAccelerationType = "vaapi";
       hardwareDecodingCodecs = [
         "h264"
