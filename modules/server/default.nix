@@ -9,7 +9,6 @@
     ./security
     ./downloaders
     ./traefik
-    ./traefik/migration.nix
     ./dashboard
     ./password-manager
     ./dns

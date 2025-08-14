@@ -70,6 +70,10 @@
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
     nixpkgs-xr.url = "github:nix-community/nixpkgs-xr";
+
+    portfolio = {
+      url = "github:strange500/nextPortfolio";
+    };
   };
 
   outputs = {nixpkgs, ...} @ inputs: let
@@ -100,6 +104,7 @@
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
       inputs.crowdsec.nixosModules.crowdsec
+      inputs.portfolio.nixosModules.default
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)
