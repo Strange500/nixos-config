@@ -1,6 +1,4 @@
-{config, ...}: let
-  logDir = "${config.qgroget.logDir}/jellyfin";
-in {
+{config, ...}: {
   imports = [
     ./jellyseer.nix
   ];
@@ -43,7 +41,6 @@ in {
     enable = true;
     serverId = "68fb5b2c9433451fa16eb7e29139e7f2";
     backups = false;
-    logDir = logDir;
     user = "jellyfin";
     group = "jellyfin";
 
@@ -174,7 +171,6 @@ in {
       name = "jellyfin";
       url = "http://127.0.0.1:8096";
       type = "public";
-      #logPath = "${logDir}/log_*";
       journalctl = true;
       unitName = "jellyfin.service";
       middlewares = ["jellyfin-mw"];

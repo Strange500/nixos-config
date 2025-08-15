@@ -121,6 +121,8 @@ in {
       owner = "crowdsec";
     };
 
+    users.users.crowdsec.extraGroups = ["systemd-journal"];
+
     # CrowdSec service configuration
     services.crowdsec = {
       enable = true;

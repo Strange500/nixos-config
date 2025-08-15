@@ -39,7 +39,6 @@
     sonarr = "lscr.io/linuxserver/sonarr:latest";
     radarr = "lscr.io/linuxserver/radarr:latest";
     bazarr = "lscr.io/linuxserver/bazarr:latest";
-    #flaresolverr = "21hsmw/flaresolverr:nodriver ";
     flaresolverr = "ghcr.io/flaresolverr/flaresolverr:latest";
     prowlarr = "lscr.io/linuxserver/prowlarr:latest";
   };

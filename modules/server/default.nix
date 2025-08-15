@@ -16,40 +16,14 @@
     ./misc
   ];
 
-  # tmpfile rule to create the log directory
-
   config = {
-    # Create 'logs' group
-    users.groups.logs = {};
-
-    # Add your users to the right groups
-    users.users.strange.extraGroups = ["logs" "jellyfin"];
     users.users.crowdsec.extraGroups = ["systemd-journal" "logs" "jellyfin"];
-
-    # Configure tmpfiles for logs directory
-    environment.etc."tmpfiles.d/qgroget.conf".text = ''
-      # Create the main logs directory with correct group and setgid
-      d ${config.qgroget.logDir} 2775 root logs - -
-
-      # Set default ACLs so new files/dirs inherit group permissions
-      a+ ${config.qgroget.logDir} - - - - \
-        d:g:logs:r-x,d:g:logs:r--,g:logs:r-x,g:logs:r--
-
-      # Recursively fix existing permissions
-      Z ${config.qgroget.logDir} - - logs - -
-    '';
-
     environment.persistence."/persist".directories = [
       "${config.qgroget.server.containerDir}"
     ];
   };
 
   options.qgroget = {
-    logDir = lib.mkOption {
-      type = lib.types.str;
-      default = "/var/log/qgroget";
-      description = "Directory where QGroget logs are stored.";
-    };
     services = lib.mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
         options = {
