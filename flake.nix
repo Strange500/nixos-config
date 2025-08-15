@@ -2,7 +2,8 @@
   description = "Nixos config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:PassiveLemon/nixpkgs/wivrn-2580";
+    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -69,7 +70,10 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
-    nixpkgs-xr.url = "github:nix-community/nixpkgs-xr";
+    # wivrn= {
+    #   #url = "github:WiVRn/WiVRn/v25.8";
+    #   url = "github:PassiveLemon/nixpkgs/wivrn-2580";
+    # };
 
     portfolio = {
       url = "github:strange500/nextPortfolio";
@@ -111,7 +115,6 @@
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       inputs.jovian-nixos.nixosModules.default
-      inputs.nixpkgs-xr.nixosModules.nixpkgs-xr
     ];
 
     # Helper function to create a NixOS system configuration
