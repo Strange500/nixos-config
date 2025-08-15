@@ -1,4 +1,4 @@
-{config, ...}: {
+{...}: {
   qgroget.services.file = {
     name = "file";
     url = "http://127.0.0.1:8095";

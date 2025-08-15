@@ -19,6 +19,7 @@ in {
       pre-commit
       alejandra
       nixd
+      deadnix
     ]
     ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
       (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)

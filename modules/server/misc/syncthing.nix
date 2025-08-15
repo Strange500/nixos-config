@@ -9,7 +9,7 @@
   # Extract server devices (devices that are NOT this server)
   serverDevices =
     lib.filterAttrs (
-      name: device:
+      _name: device:
         device.id != cfg.settings.devices.server.id
     )
     cfg.settings.devices;

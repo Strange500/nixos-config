@@ -9,7 +9,7 @@
   # Extract client devices (devices that are NOT this client)
   clientDevices =
     lib.filterAttrs (
-      name: device:
+      _name: device:
         device.id != cfg.settings.devices.computer.id
     )
     cfg.settings.devices;
