@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }: let
   cfg = config.qgroget.services;
@@ -121,6 +122,15 @@ in {
       owner = "crowdsec";
     };
 
+    nixpkgs.overlays = [inputs.crowdsec.overlays.default];
+    services.crowdsec-firewall-bouncer = {
+      enable = true;
+      settings = {
+        api_key = "ZEDCIHBIYUBZEF4145221544SFEFR514QDSRFV541";
+        api_url = "http://localhost:8887";
+      };
+    };
+
     users.users.crowdsec.extraGroups = ["systemd-journal"];
 
     # CrowdSec service configuration
@@ -141,7 +151,17 @@ in {
       wants = ["network.target"];
 
       serviceConfig = {
-        ExecStartPre = ["${setupScript}/bin/crowdsec-setup"];
+        ExecStartPre = let
+          script = pkgs.writeScriptBin "register-bouncer" ''
+            #!${pkgs.runtimeShell}
+            set -eu
+            set -o pipefail
+
+            if ! cscli bouncers list | grep -q "firewall"; then
+              cscli bouncers add "firewall" --key "ZEDCIHBIYUBZEF4145221544SFEFR514QDSRFV541"
+            fi
+          '';
+        in ["${setupScript}/bin/crowdsec-setup" "${script}/bin/register-bouncer"];
         # Add restart policies for better resilience
         Restart = "on-failure";
         RestartSec = "10s";

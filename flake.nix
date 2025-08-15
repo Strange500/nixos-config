@@ -104,6 +104,7 @@
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
       inputs.crowdsec.nixosModules.crowdsec
+      inputs.crowdsec.nixosModules.crowdsec-firewall-bouncer
       inputs.portfolio.nixosModules.default
     ];
 
