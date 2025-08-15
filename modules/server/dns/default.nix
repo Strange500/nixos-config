@@ -13,9 +13,13 @@
 
   services.adguardhome = {
     enable = true;
-    #mutableSettings = false;
+    mutableSettings = false;
     settings = {
       dns = {
+        bootstrap_dns = [
+          "8.8.8.8"
+          "8.8.4.4"
+        ];
         bind_hosts = [
           "127.0.0.1"
           "${config.qgroget.server.network.ip}"
