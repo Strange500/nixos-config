@@ -106,10 +106,13 @@ in {
         ports = [22];
         settings = {
           PasswordAuthentication = false;
-          AllowUsers = ["${config.qgroget.user.username}"];
           UseDns = true;
           PermitRootLogin = "no";
         };
+        extraConfig = ''
+          Match LocalPort 22
+          AllowUsers ${config.qgroget.user.username}
+        '';
 
         hostKeys = [
           {
@@ -137,7 +140,6 @@ in {
         enable = true;
         useRoutingFeatures = "client";
       };
-
       sunshine = lib.mkIf config.qgroget.nixos.remote-access.sunshine.enable {
         enable = true;
         autoStart = true;
