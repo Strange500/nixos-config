@@ -50,7 +50,7 @@
 
         # Generate new auth key and connect
         if auth_key=$(${pkgs.tailscale}/bin/get-authkey -ephemeral -tags tag:oauth 2>/dev/null); then
-            if ${pkgs.tailscale}/bin/tailscale up --auth-key "$auth_key" --accept-routes --accept-dns; then
+            if ${pkgs.tailscale}/bin/tailscale up --auth-key "$auth_key" --accept-routes; then
                 log "Successfully reconnected to Tailscale"
             else
                 log "Failed to reconnect to Tailscale"
