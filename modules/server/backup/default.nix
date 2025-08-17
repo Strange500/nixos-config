@@ -8,6 +8,11 @@
 
   repoPath = "/persist/backup/restic";
 
+  # Run restic with cap_dac_read_search wrapper
+  wrapperPackage = pkgs.writeShellScriptBin "restic" ''
+    exec /run/wrappers/bin/restic "$@"
+  '';
+
   # Emulate modulo: x % y = x - y * (x div y)
   rem = x: y: x - y * (builtins.div x y);
 
@@ -37,11 +42,8 @@
         initialize = true;
         passwordFile = config.sops.secrets."server/restic/repoPassword".path;
 
-        # Run restic with cap_dac_read_search wrapper
         user = "restic";
-        package = pkgs.writeShellScriptBin "restic" ''
-          exec /run/wrappers/bin/restic "$@"
-        '';
+        package = wrapperPackage;
 
         paths = backup.paths;
         timerConfig = mkTimer (idx - 1);
@@ -109,7 +111,7 @@ in {
     systemd.services = lib.listToAttrs (
       lib.imap1
       (
-        idx: elem: let
+        _idx: elem: let
           name = elem.name;
           backup = elem.value;
         in
@@ -120,6 +122,8 @@ in {
                 map (u: "+${pkgs.systemd}/bin/systemctl stop ${u}") backup.systemdUnits;
               ExecStartPost =
                 map (u: "+${pkgs.systemd}/bin/systemctl start ${u}") backup.systemdUnits;
+              wants = backup.systemdUnits;
+              after = backup.systemdUnits;
             };
           })
       )
