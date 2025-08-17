@@ -1,40 +1,53 @@
-{config, ...}: {
-  # Create necessary directories
+{
+  config,
+  lib,
+  ...
+}: {
   systemd.tmpfiles.rules = [
-    "d /containers/jellyseer 0755 jellyseer jellyseer -"
-    "d /containers/jellyseer/config 0755 jellyseer jellyseer -"
-    "d /containers/jellyseer/config/logs 0755 jellyseer jellyseer -"
-    "Z /containers/jellyseer/config/logs/jellyseerr.log 0644 jellyseer jellyseer -"
+    "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
+    "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
+    "d ${config.services.jellyseerr.configDir}/logs 0755 jellyseerr jellyseerr -"
+    "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
   ];
 
   qgroget.services = {
     jellyseer = {
       name = "jellyseer";
-      url = "http://127.0.0.1:5055";
+      url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
       type = "public";
       journalctl = true;
-      unitName = "jellyseer.service";
+      unitName = "jellyseerr.service";
+    };
+    jellyseerr = {
+      name = "jellyseerr";
+      url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
+      type = "public";
+      journalctl = true;
+      unitName = "jellyseerr.service";
     };
   };
 
-  virtualisation.quadlet = {
-    containers.jellyseer = {
-      autoStart = true;
-      containerConfig = {
-        name = "jellyseer";
-        image = "ghcr.io/fallenbagel/jellyseerr:latest";
-        environments = {
-          LOG_LEVEL = "info";
-          TZ = "Europe/Paris";
-        };
-        publishPorts = ["5055:5055"];
-        volumes = [
-          "${config.qgroget.server.containerDir}/jellyseer/config:/app/config:Z"
-        ];
-      };
-      serviceConfig = {
-        Restart = "unless-stopped";
-      };
-    };
+  environment.persistence."/persist".directories = [
+    "/var/lib/jellyseerr/config/db"
+  ];
+  environment.persistence."/persist".files = [
+    "${config.services.jellyseerr.configDir}/settings.json"
+  ];
+
+  users.users.jellyseerr = {
+    isSystemUser = true;
+    description = "Jellyseerr user";
+    group = "jellyseerr";
   };
+  users.groups.jellyseerr = {
+  };
+
+  services.jellyseerr = {
+    openFirewall = false;
+    enable = true;
+    port = 5055;
+  };
+
+  systemd.services.jellyseerr.serviceConfig.DynamicUser = lib.mkForce false;
+  systemd.services.jellyseerr.serviceConfig.User = "jellyseerr";
 }
