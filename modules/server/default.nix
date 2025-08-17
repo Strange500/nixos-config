@@ -13,6 +13,7 @@
     ./password-manager
     ./dns
     ./SSO
+    ./backup
     ./misc
   ];
 
