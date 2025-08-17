@@ -70,6 +70,11 @@ in {
           default = null;
           description = "Optional script to run after the backup (backupCleanupCommand).";
         };
+        systemdUnits = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          description = "Systemd units to stop while backup runs.";
+        };
       };
     });
     default = {};
@@ -100,5 +105,25 @@ in {
     };
 
     services.restic.backups = backups;
+
+    systemd.services = lib.listToAttrs (
+      lib.imap1
+      (
+        idx: elem: let
+          name = elem.name;
+          backup = elem.value;
+        in
+          lib.nameValuePair "restic-backups-${name}"
+          (lib.mkIf (backup.systemdUnits != []) {
+            serviceConfig = {
+              ExecStartPre =
+                map (u: "+${pkgs.systemd}/bin/systemctl stop ${u}") backup.systemdUnits;
+              ExecStartPost =
+                map (u: "+${pkgs.systemd}/bin/systemctl start ${u}") backup.systemdUnits;
+            };
+          })
+      )
+      (lib.attrsToList cfg)
+    );
   };
 }
