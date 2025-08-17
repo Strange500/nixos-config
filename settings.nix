@@ -40,7 +40,7 @@
   options = {
     qgroget = {
       secretAgeKeyPath = lib.mkOption {
-        type = lib.types.string;
+        type = lib.types.str;
         default = "/var/lib/sops/age/keys.txt";
         description = "Path to the age key file for sops.";
       };

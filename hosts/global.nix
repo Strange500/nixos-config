@@ -38,7 +38,8 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [pkgs.xdg-desktop-portal-gtk];
+    wlr.enable = true;
+    configPackages = [pkgs.xdg-desktop-portal-gtk];
   };
 
   sops = {
