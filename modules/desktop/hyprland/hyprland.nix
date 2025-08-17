@@ -189,6 +189,11 @@
           $mainMod Control_L, S, exec, grim -g "$(slurp)" $HOME/Images/$(date +'%s_grim.png')''
 
         ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+
+        "$mainMod SHIFT, right, resizeactive, 20 0"
+        "$mainMod SHIFT, left, resizeactive, -20 0"
+        "$mainMod SHIFT, up, resizeactive, 0 -20"
+        "$mainMod SHIFT, down, resizeactive, 0 20"
       ];
 
       bindm = [
