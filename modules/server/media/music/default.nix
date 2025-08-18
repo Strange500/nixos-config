@@ -9,6 +9,15 @@ in {
     unitName = "navidrome.service";
   };
 
+  qgroget.backups.navidrome = {
+    paths = [
+      "${config.qgroget.server.containerDir}/navidrome"
+    ];
+    systemdUnits = [
+      "navidrome.service"
+    ];
+  };
+
   virtualisation.quadlet = {
     containers.navidrome = {
       autoStart = true;

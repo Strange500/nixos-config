@@ -44,6 +44,15 @@ in {
     unitName = "authentik.service";
   };
 
+  qgroget.backups.auth = {
+    paths = [
+      "${containerDir}"
+    ];
+    systemdUnits = [
+      "SSO-pod.service"
+    ];
+  };
+
   virtualisation.quadlet = {
     pods.SSO = {
       autoStart = true;

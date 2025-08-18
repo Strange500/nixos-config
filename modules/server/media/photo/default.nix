@@ -66,6 +66,15 @@ in {
     unitName = "immich-server.service";
   };
 
+  qgroget.backups.immich = {
+    paths = [
+      "${cfg.containerDir}"
+    ];
+    systemdUnits = [
+      "immich-pod.service"
+    ];
+  };
+
   virtualisation.quadlet = {
     pods.immich = {
       autoStart = true;

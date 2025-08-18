@@ -12,6 +12,17 @@ in {
     type = "private";
   };
 
+  qgroget.backups.git = {
+    paths = [
+      "${cfg.stateDir}"
+      "/var/lib/mysql"
+    ];
+    systemdUnits = [
+      "forgejo.service"
+      "mysql.service"
+    ];
+  };
+
   sops.secrets = {
     "server/forgejo/strange/password" = {
       owner = "forgejo";

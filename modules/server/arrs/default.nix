@@ -78,6 +78,20 @@ in {
     };
   };
 
+  qgroget.backups.arr = {
+    paths = [
+      "${cfg.containerDir}/sonarr"
+      "${cfg.containerDir}/radarr"
+      "${cfg.containerDir}/sonarr-anime"
+      "${cfg.containerDir}/radarr-anime"
+      "${cfg.containerDir}/bazarr"
+      "${cfg.containerDir}/prowlarr"
+    ];
+    systemdUnits = [
+      "${cfg.podName}-pod.service"
+    ];
+  };
+
   virtualisation.quadlet = {
     pods.${cfg.podName} = {
       autoStart = true;

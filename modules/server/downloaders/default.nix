@@ -67,6 +67,19 @@ in {
     };
   };
 
+  qgroget.backups.torrent = {
+    paths = [
+      "${config.qgroget.server.containerDir}/qbittorrent"
+      "${config.qgroget.server.containerDir}/qbittorrent_bis"
+      "${config.qgroget.server.containerDir}/qbittorrent_nyaa"
+      "${config.qgroget.server.containerDir}/nicotine"
+      "${config.qgroget.server.containerDir}/gluetun"
+    ];
+    systemdUnits = [
+      "${cfg.podName}-pod.service"
+    ];
+  };
+
   boot.kernelModules = ["wireguard"];
 
   sops.secrets."server/gluetun/env" = {

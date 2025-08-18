@@ -14,6 +14,15 @@
     };
   };
 
+  qgroget.backups.vaultwarden = {
+    paths = [
+      "${config.qgroget.server.containerDir}/vaultwarden"
+    ];
+    systemdUnits = [
+      "vaultwarden.service"
+    ];
+  };
+
   sops.secrets = {
     "server/vaultwarden/config" = {
     };
