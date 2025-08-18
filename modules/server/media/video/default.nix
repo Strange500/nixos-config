@@ -15,14 +15,15 @@
     "/var/lib/jellyfin"
   ];
 
-  # system tmp file to give read access to every file inside /var/lib/jellyfin/log
-  # systemd.tmpfiles.rules = [
-  #   "d /var/lib/jellyfin 0755 jellyfin jellyfin -"
-  #   "d /var/lib/jellyfin/log 0755 jellyfin jellyfin -"
-  #   "Z /var/lib/jellyfin/log/*.log 0644 jellyfin jellyfin -"
-  # ];
+  qgroget.backups.jellyfin = {
+    paths = [
+      "${config.services.jellyfin.dataDir}"
+    ];
+    systemdUnits = [
+      "jellyfin.service"
+    ];
+  };
 
-  # allow DLNA devices to access Jellyfin
   networking.firewall = {
     allowedUDPPorts = [1900 7359];
     allowedTCPPorts = [8096];

@@ -10,6 +10,15 @@
     "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
   ];
 
+  qgroget.backups.jellyseerr = {
+    paths = [
+      "${config.services.jellyseerr.configDir}"
+    ];
+    systemdUnits = [
+      "jellyseerr.service"
+    ];
+  };
+
   qgroget.services = {
     jellyseer = {
       name = "jellyseer";
