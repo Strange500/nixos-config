@@ -8,53 +8,46 @@
 
   repoPath = "/persist/backup/restic";
 
-  # Run restic with cap_dac_read_search wrapper
-  wrapperPackage = pkgs.writeShellScriptBin "restic" ''
+  # One wrapper package, reused everywhere
+  resticWrapperPkg = pkgs.writeShellScriptBin "restic" ''
     exec /run/wrappers/bin/restic "$@"
   '';
 
-  # Emulate modulo: x % y = x - y * (x div y)
-  rem = x: y: x - y * (builtins.div x y);
+  # Deterministic list of backups (sort by priority, then name)
+  backupsList = let
+    toList = lib.mapAttrsToList (name: value: {inherit name value;}) cfg;
+    byPriority = a: b: let
+      pa = a.value.priority or 1000;
+      pb = b.value.priority or 1000;
+    in
+      if pa == pb
+      then a.name < b.name
+      else pa < pb;
+  in
+    lib.sort byPriority toList;
 
-  # Timers: start 02:00, then +5 minutes per backup; wrap hours at 24.
-  mkTimer = idx: let
-    stepMin = 5;
-    startHour = 2;
-    total = idx * stepMin; # minutes to add
-    addHours = builtins.div total 60; # whole hours to add
-    minutes = rem total 60;
-    hoursRaw = startHour + addHours;
-    hours = rem hoursRaw 24; # keep 0..23
-  in {
-    # Full systemd calendar spec (daily at HH:MM:SS)
-    OnCalendar = "*-*-* ${lib.fixedWidthNumber 2 hours}:${lib.fixedWidthNumber 2 minutes}:00";
-    Persistent = true;
-  };
-
-  # Build the attrset expected by services.restic.backups
-  backups = lib.listToAttrs (lib.imap1
-    (idx: elem: let
+  # Attrset that services.restic.backups expects
+  backupsAttrset = lib.listToAttrs (map
+    (elem: let
       name = elem.name;
       backup = elem.value;
     in
       lib.nameValuePair name {
         repository = "${repoPath}/${name}";
         initialize = true;
-        passwordFile = config.sops.secrets."server/restic/repoPassword".path;
-
         user = "restic";
-        package = wrapperPackage;
-
+        package = resticWrapperPkg;
+        passwordFile = config.sops.secrets."server/restic/repoPassword".path;
         paths = backup.paths;
-        timerConfig = mkTimer (idx - 1);
-
-        # Hook names as per the NixOS restic module
+        exclude = backup.exclude;
+        # IMPORTANT: disable per-backup timers; coordinator drives schedule
+        timerConfig = lib.mkForce null;
         backupPrepareCommand = backup.preBackup;
         backupCleanupCommand = backup.postBackup;
       })
-    (lib.attrsToList cfg));
+    backupsList);
 in {
-  #### Options other modules can populate
+  #### Options
   options.qgroget.backups = lib.mkOption {
     type = lib.types.attrsOf (lib.types.submodule {
       options = {
@@ -62,20 +55,36 @@ in {
           type = lib.types.listOf lib.types.str;
           description = "Paths to include in this backup.";
         };
+        exclude = lib.mkOption {
+          type = lib.types.listOf lib.types.str;
+          default = [];
+          description = "Patterns or paths to exclude (restic --exclude / --exclude-file).";
+        };
         preBackup = lib.mkOption {
           type = lib.types.nullOr lib.types.lines;
           default = null;
-          description = "Optional script to run before the backup (backupPrepareCommand).";
+          description = "Script to run before the backup.";
         };
         postBackup = lib.mkOption {
           type = lib.types.nullOr lib.types.lines;
           default = null;
-          description = "Optional script to run after the backup (backupCleanupCommand).";
+          description = "Script to run after the backup.";
         };
         systemdUnits = lib.mkOption {
           type = lib.types.listOf lib.types.str;
           default = [];
-          description = "Systemd units to stop while backup runs.";
+          description = "Units to stop while this backup runs.";
+        };
+        priority = lib.mkOption {
+          type = lib.types.int;
+          default = 1000;
+          description = "Lower runs earlier in the coordinator chain.";
+        };
+        # Optional: require network for this backup (e.g., remote repos)
+        requireNetwork = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "If true, add Wants/After=network-online.target to this backup.";
         };
       };
     });
@@ -83,51 +92,148 @@ in {
     description = "Declarative restic backups keyed by service name.";
   };
 
-  #### Implementation
   config = {
-    systemd.tmpfiles.rules = [
-      "d ${repoPath} 0755 restic users - -"
-    ];
-
+    users.groups.restic = {};
     users.users.restic = {
-      isNormalUser = true;
+      isSystemUser = true;
+      group = "restic";
     };
 
+    systemd.tmpfiles.rules = [
+      "d ${repoPath} 0750 restic restic - -"
+    ];
+
+    # Capability wrapper limited to restic group
     security.wrappers.restic = {
       source = "${pkgs.restic.out}/bin/restic";
-      owner = "restic";
-      group = "users";
-      permissions = "u=rwx,g=,o=";
+      owner = "root";
+      group = "restic";
+      permissions = "0750";
       capabilities = "cap_dac_read_search=+ep";
     };
 
     sops.secrets."server/restic/repoPassword" = {
       mode = "0600";
       owner = "restic";
+      group = "restic";
     };
 
-    services.restic.backups = backups;
+    services.restic.backups = backupsAttrset;
 
-    systemd.services = lib.listToAttrs (
-      lib.imap1
-      (
-        _idx: elem: let
-          name = elem.name;
-          backup = elem.value;
-        in
-          lib.nameValuePair "restic-backups-${name}"
-          (lib.mkIf (backup.systemdUnits != []) {
+    systemd.services = lib.mkMerge ([
+        {
+          # Coordinator runs one-by-one, stopping/starting units.
+          restic-backup-coordinator = {
+            description = "Restic backup coordinator";
             serviceConfig = {
-              ExecStartPre =
-                map (u: "+${pkgs.systemd}/bin/systemctl stop ${u}") backup.systemdUnits;
-              ExecStartPost =
-                map (u: "+${pkgs.systemd}/bin/systemctl start ${u}") backup.systemdUnits;
-              wants = backup.systemdUnits;
-              after = backup.systemdUnits;
+              Type = "oneshot";
+              Nice = 10;
+              IOSchedulingClass = "best-effort";
+              IOSchedulingPriority = 7;
+              ExecStart = pkgs.writeShellScript "backup-coordinator" ''
+                set -euo pipefail
+                sys=${pkgs.systemd}/bin/systemctl
+
+                run_one() {
+                  local name="$1"; shift
+                  local units=("$@")
+
+                  echo "==> Starting backup: ''${name}"
+                  for u in "''${units[@]}"; do
+                    echo "   - stopping $u"
+                    "$sys" stop "$u" || true
+                  done
+                  trap '
+                    for u in "''${units[@]}"; do
+                      echo "   - starting $u"
+                      "$sys" start "$u" || true
+                    done
+                  ' RETURN
+
+                  if ! "$sys" start --wait "restic-backups-''${name}.service"; then
+                    echo "!! Backup ''${name} failed"
+                    return 1
+                  fi
+                  echo "<= Backup ''${name} completed successfully"
+                }
+
+                ${lib.concatMapStringsSep "\n" (
+                    elem: let
+                      escapedName = lib.escapeShellArg elem.name;
+                      units = lib.concatMapStringsSep " " (u: lib.escapeShellArg u) elem.value.systemdUnits;
+                    in ''
+                      run_one ${escapedName} ${units}
+                    ''
+                  )
+                  backupsList}
+              '';
             };
+          };
+          restic-maintenance = {
+            description = "Restic prune & check (all repos)";
+            serviceConfig = {
+              Type = "oneshot";
+              ExecStart = pkgs.writeShellScript "restic-maintenance" ''
+                set -euo pipefail
+                for name in ${lib.concatMapStringsSep " " (e: lib.escapeShellArg e.name) backupsList}; do
+                  echo "==> prune $name"
+                  ${resticWrapperPkg}/bin/restic -r ${repoPath}/"$name" --password-file ${config.sops.secrets."server/restic/repoPassword".path} forget --prune \
+                    --keep-daily 7 --keep-weekly 4 --keep-monthly 12
+                  echo "==> check $name"
+                  ${resticWrapperPkg}/bin/restic -r ${repoPath}/"$name" --password-file ${config.sops.secrets."server/restic/repoPassword".path} check --read-data-subset=1/10
+                done
+              '';
+              Nice = 10;
+              IOSchedulingClass = "best-effort";
+              IOSchedulingPriority = 7;
+            };
+          };
+        }
+      ]
+      # Per-backup network deps
+      ++ (map
+        (elem: let
+          name = elem.name;
+          requiresNet = elem.value.requireNetwork or false;
+        in {
+          "restic-backups-${name}" = {
+            wantedBy = lib.mkForce []; # ensure no auto-start
+            # If some backups need network (e.g., rclone/rest-server)
+            unitConfig = lib.mkIf requiresNet {
+              Wants = ["network-online.target"];
+              After = ["network-online.target"];
+            };
+          };
+        })
+        backupsList));
+
+    # One timer to rule them all
+    systemd.timers =
+      {
+        restic-backup-coordinator = {
+          description = "Trigger restic backup chain";
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            OnCalendar = "*-*-* 02:00:00";
+            RandomizedDelaySec = "15m";
+            Persistent = true;
+          };
+        };
+        restic-maintenance = {
+          description = "Weekly restic maintenance";
+          wantedBy = ["timers.target"];
+          timerConfig = {
+            OnCalendar = "Sun 03:30";
+            RandomizedDelaySec = "30m";
+            Persistent = true;
+          };
+        };
+      }
+      // lib.listToAttrs (map
+        (elem:
+          lib.nameValuePair "restic-backups-${elem.name}" {
+            wantedBy = lib.mkForce [];
           })
-      )
-      (lib.attrsToList cfg)
-    );
+        backupsList);
   };
 }
