@@ -11,6 +11,15 @@
   sops.secrets."server/obsidian-livesync/env" = {
   };
 
+  qgroget.backups.obsidian = {
+    paths = [
+      "${config.qgroget.server.containerDir}/obsidianlivesync"
+    ];
+    systemdUnits = [
+      "obsidian-livesync.service"
+    ];
+  };
+
   services.traefik.dynamicConfigOptions = {
     http.middlewares.obsidiancors = {
       headers = {
