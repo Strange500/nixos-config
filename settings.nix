@@ -67,7 +67,7 @@
         };
         containerDir = lib.mkOption {
           type = lib.types.str;
-          default = "/containers";
+          default = "/etc/containersConfig";
           description = "Directory for container configurations.";
         };
       };

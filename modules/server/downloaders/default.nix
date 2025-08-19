@@ -1,4 +1,8 @@
-{config, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   # Configuration constants
   cfg = {
     containerDir = "${config.qgroget.server.containerDir}";
@@ -10,6 +14,12 @@
       qbittorrent2 = 8113;
       qbittorrent3 = 8114;
       nicotine = 6080;
+    };
+
+    vpnOutGoingPort = {
+      qbittorrent1 = 30402;
+      qbittorrent2 = 40656;
+      qbittorrent3 = 59078;
     };
 
     containers = {
@@ -38,6 +48,156 @@
     qbittorrent = "lscr.io/linuxserver/qbittorrent:latest";
     nicotinePlus = "ghcr.io/fletchto99/nicotine-plus-docker:latest";
   };
+
+  ini = pkgs.formats.ini {};
+
+  qbittorrentConfig = {
+    Application = {
+      "FileLogger\\Age" = 1;
+      "FileLogger\\AgeType" = 1;
+      "FileLogger\\Backup" = true;
+      "FileLogger\\DeleteOld" = true;
+      "FileLogger\\Enabled" = true;
+      "FileLogger\\MaxSizeBytes" = 66560;
+      "FileLogger\\Path" = "/config/qBittorrent/logs";
+    };
+
+    AutoRun = {
+      enabled = false;
+      program = "";
+    };
+
+    BitTorrent = {
+      "Session\\AddTorrentStopped" = false;
+      "Session\\AddTorrentToTopOfQueue" = true;
+      "Session\\AddTrackersEnabled" = false;
+      "Session\\AdditionalTrackers" = "";
+      "Session\\AlternativeGlobalDLSpeedLimit" = 0;
+      "Session\\AnonymousModeEnabled" = false;
+      "Session\\BTProtocol" = "TCP";
+      "Session\\BandwidthSchedulerEnabled" = true;
+      "Session\\DefaultSavePath" = "/media/torrents";
+      "Session\\DisableAutoTMMByDefault" = false;
+      "Session\\DisableAutoTMMTriggers\\CategorySavePathChanged" = false;
+      "Session\\DisableAutoTMMTriggers\\DefaultSavePathChanged" = false;
+      "Session\\DiskCacheTTL" = 600;
+      "Session\\ExcludedFileNames" = "";
+      "Session\\FinishedTorrentExportDirectory" = "/media/torrents/torrent_file_backup";
+      "Session\\GlobalMaxInactiveSeedingMinutes" = 131400;
+      "Session\\GlobalMaxRatio" = -1;
+      "Session\\GlobalMaxSeedingMinutes" = 131400;
+      "Session\\GlobalUPSpeedLimit" = 10000;
+      "Session\\IgnoreLimitsOnLAN" = false;
+      "Session\\IgnoreSlowTorrentsForQueueing" = true;
+      "Session\\MaxActiveCheckingTorrents" = 3;
+      "Session\\MaxActiveDownloads" = 7;
+      "Session\\MaxActiveTorrents" = 30000;
+      "Session\\MaxActiveUploads" = 250;
+      "Session\\MaxUploads" = 1;
+      "Session\\MaxUploadsPerTorrent" = 10;
+      "Session\\Port" = "@OUTGOING_PORT@";
+      "Session\\Preallocation" = true;
+      "Session\\QueueingSystemEnabled" = true;
+      "Session\\SSL\\Port" = 7633;
+      "Session\\SendBufferWatermark" = 1000;
+      "Session\\SendBufferWatermarkFactor" = 100;
+      "Session\\ShareLimitAction" = "Stop";
+      "Session\\SubcategoriesEnabled" = true;
+      "Session\\Tags" = "cross-seed";
+      "Session\\TempPath" = "/tempdl";
+      "Session\\TempPathEnabled" = false;
+      "Session\\TorrentExportDirectory" = "";
+      "Session\\UseAlternativeGlobalSpeedLimit" = false;
+      "Session\\uTPRateLimited" = true;
+    };
+
+    Core = {
+      AutoDeleteAddedTorrentFile = "IfAdded";
+    };
+
+    LegalNotice = {Accepted = true;};
+
+    Meta = {MigrationVersion = 8;};
+
+    Network = {
+      PortForwardingEnabled = false;
+      "Proxy\\HostnameLookupEnabled" = false;
+      "Proxy\\Profiles\\BitTorrent" = true;
+      "Proxy\\Profiles\\Misc" = true;
+      "Proxy\\Profiles\\RSS" = true;
+    };
+
+    Preferences = {
+      "Connection\\PortRangeMin" = 6881;
+      "Connection\\ResolvePeerCountries" = false;
+      "Connection\\UPnP" = false;
+      "Downloads\\SavePath" = "/downloads/";
+      "Downloads\\TempPath" = "/downloads/incomplete/";
+      "General\\DeleteTorrentsFilesAsDefault" = true;
+      "General\\Locale" = "en";
+      "MailNotification\\password" = "";
+      "MailNotification\\req_auth" = true;
+      "MailNotification\\username" = "";
+      "Scheduler\\end_time" = "@Variant(\\0\\0\\0\\xf\\x1\\xb7t\\0)";
+      "Scheduler\\start_time" = "@Variant(\\0\\0\\0\\xf\\0\\x36\\xee\\x80)";
+      "WebUI\\Address" = "*";
+      "WebUI\\AlternativeUIEnabled" = false;
+      "WebUI\\AuthSubnetWhitelist" = "0.0.0.0/0";
+      "WebUI\\AuthSubnetWhitelistEnabled" = true;
+      "WebUI\\ClickjackingProtection" = false;
+      "WebUI\\LocalHostAuth" = false;
+      "WebUI\\Password_PBKDF2" = "\"@PASSWORD@\"";
+      "WebUI\\Port" = "@PORT@";
+      "WebUI\\ReverseProxySupportEnabled" = false;
+      "WebUI\\RootFolder" = "/torrentWebUI/2";
+      "WebUI\\ServerDomains" = "*";
+      "WebUI\\TrustedReverseProxiesList" = "172.16.0.0/20";
+      "WebUI\\Username" = "@USERNAME@";
+    };
+
+    RSS = {
+      "AutoDownloader\\DownloadRepacks" = false;
+      "AutoDownloader\\SmartEpisodeFilter" = ''s(\\d+)e(\\d+), (\\d+)x(\\d+), "(\\d{4}[.\\-]\\d{1,2}[.\\-]\\d{1,2})", "(\\d{1,2}[.\\-]\\d{1,2}[.\\-]\\d{4})"'';
+    };
+  };
+
+  # ⬇️ New: a small helper that prepares the config per instance
+  qbitPrestartScript = pkgs.writeShellApplication {
+    name = "qbit-prestart";
+    runtimeInputs = with pkgs; [coreutils gnused];
+    text = ''
+      set -euo pipefail
+
+      TARGET_DIR="$1"   # e.g. /.../qbittorrent/config/qBittorrent
+      PORT="$2"         # WebUI port (8112 / 8113 / 8114)
+      OUTGOING_PORT="$3" # BitTorrent listen port (e.g. 30402)
+
+      TEMPLATE="/etc/qbittorrent.conf.template"
+      USER_FILE='${config.sops.secrets."qbit/user".path}'
+      PASS_FILE='${config.sops.secrets."qbit/password".path}'
+
+      USERNAME="$(cat "$USER_FILE")"
+      PASSWORD="$(cat "$PASS_FILE")"
+
+      mkdir -p "$TARGET_DIR"
+      tmp="$(mktemp)"
+      cp "$TEMPLATE" "$tmp"
+
+      # Safely substitute placeholders (escape sed metachars)
+      esc() { printf '%s' "$1" | sed -e 's/[\\/&]/\\&/g'; }
+
+      sed -i "s|@USERNAME@|$(esc "$USERNAME")|g" "$tmp"
+      sed -i "s|@PASSWORD@|$(esc "$PASSWORD")|g" "$tmp"
+      sed -i "s|@PORT@|$(esc "$PORT")|g" "$tmp"
+      sed -i "s|@OUTGOING_PORT@|$(esc "$OUTGOING_PORT")|g" "$tmp"
+
+      install -m 0644 -D "$tmp" "$TARGET_DIR/qBittorrent.conf"
+      chown 1000:1000 "$TARGET_DIR/qBittorrent.conf"
+      rm -f "$tmp"
+    '';
+  };
+
+  qbittorrentConf = ini.generate "qBittorrent.conf" qbittorrentConfig;
 
   inherit (config.virtualisation.quadlet) containers pods;
 in {
@@ -82,7 +242,24 @@ in {
 
   boot.kernelModules = ["wireguard"];
 
-  sops.secrets."server/gluetun/env" = {
+  sops.secrets = {
+    "server/gluetun/env" = {
+      restartUnits = [pods.${cfg.podName}.ref];
+    };
+    "qbit/user" = {
+      restartUnits = [
+        containers.qbittorrent.ref
+        containers.qbittorrent-bis.ref
+        containers.qbittorrent-nyaa.ref
+      ];
+    };
+    "qbit/password" = {
+      restartUnits = [
+        containers.qbittorrent.ref
+        containers.qbittorrent-bis.ref
+        containers.qbittorrent-nyaa.ref
+      ];
+    };
   };
 
   virtualisation.quadlet = {
@@ -143,7 +320,13 @@ in {
             ];
           }
           // commonContainerConfig;
-        serviceConfig = commonServiceConfig;
+        serviceConfig =
+          commonServiceConfig
+          // {
+            ExecStartPre = [
+              "${qbitPrestartScript}/bin/qbit-prestart ${cfg.containerDir}/qbittorrent/config/qBittorrent ${toString cfg.ports.qbittorrent1} ${toString cfg.vpnOutGoingPort.qbittorrent1}"
+            ];
+          };
         unitConfig = {
           Requires = [containers.gluetun.ref];
           After = [containers.gluetun.ref];
@@ -169,7 +352,14 @@ in {
             ];
           }
           // commonContainerConfig;
-        serviceConfig = commonServiceConfig;
+        # ⬇️ Add ExecStartPre
+        serviceConfig =
+          commonServiceConfig
+          // {
+            ExecStartPre = [
+              "${qbitPrestartScript}/bin/qbit-prestart ${cfg.containerDir}/qbittorrent_bis/config/qBittorrent ${toString cfg.ports.qbittorrent2} ${toString cfg.vpnOutGoingPort.qbittorrent2}"
+            ];
+          };
         unitConfig = {
           Requires = [containers.gluetun.ref];
           After = [containers.gluetun.ref];
@@ -195,7 +385,13 @@ in {
             ];
           }
           // commonContainerConfig;
-        serviceConfig = commonServiceConfig;
+        serviceConfig =
+          commonServiceConfig
+          // {
+            ExecStartPre = [
+              "${qbitPrestartScript}/bin/qbit-prestart ${cfg.containerDir}/qbittorrent_nyaa/config/qBittorrent ${toString cfg.ports.qbittorrent3} ${toString cfg.vpnOutGoingPort.qbittorrent3}"
+            ];
+          };
         unitConfig = {
           Requires = [containers.gluetun.ref];
           After = [containers.gluetun.ref];
@@ -224,4 +420,6 @@ in {
       };
     };
   };
+
+  environment.etc."qbittorrent.conf.template".source = qbittorrentConf;
 }
