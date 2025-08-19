@@ -60,6 +60,7 @@
       "FileLogger\\Enabled" = true;
       "FileLogger\\MaxSizeBytes" = 66560;
       "FileLogger\\Path" = "/config/qBittorrent/logs";
+      "MemoryWorkingSetLimit" = 256;
     };
 
     AutoRun = {
@@ -80,21 +81,27 @@
       "Session\\DisableAutoTMMByDefault" = false;
       "Session\\DisableAutoTMMTriggers\\CategorySavePathChanged" = false;
       "Session\\DisableAutoTMMTriggers\\DefaultSavePathChanged" = false;
-      "Session\\DiskCacheTTL" = 600;
-      "Session\\ExcludedFileNames" = "";
-      "Session\\FinishedTorrentExportDirectory" = "/media/torrents/torrent_file_backup";
-      "Session\\GlobalMaxInactiveSeedingMinutes" = 131400;
-      "Session\\GlobalMaxRatio" = -1;
-      "Session\\GlobalMaxSeedingMinutes" = 131400;
-      "Session\\GlobalUPSpeedLimit" = 10000;
-      "Session\\IgnoreLimitsOnLAN" = false;
-      "Session\\IgnoreSlowTorrentsForQueueing" = true;
+
+      # Disk / cache tuning (big memory lever)
+      # Disk cache in MiB: set small to save RAM
+      "Session\\DiskCache" = 256;
+      # how long cached blocks live (s) — you already had 60; keep low to free RAM
+      "Session\\DiskCacheTTL" = 60;
+      # Turn off read caching to reduce memory (will increase disk reads)
+      "Session\\UseReadCache" = false;
+
+      # File/socket/thread pools — reduce memory and fds
+      "Session\\FilePoolSize" = 200;
+      "Session\\AsyncIOThreadsCount" = 1;
+      "Session\\HashingThreadsCount" = 1;
+      "Session\\MaxConnections" = 400; # global peers
+      "Session\\MaxConnectionsPerTorrent" = 60; # per torrent peers
       "Session\\MaxActiveCheckingTorrents" = 3;
       "Session\\MaxActiveDownloads" = 7;
-      "Session\\MaxActiveTorrents" = 30000;
-      "Session\\MaxActiveUploads" = 250;
-      "Session\\MaxUploads" = 1;
-      "Session\\MaxUploadsPerTorrent" = 10;
+      "Session\\MaxActiveTorrents" = 100;
+      "Session\\MaxActiveUploads" = 20;
+      "Session\\MaxUploads" = 80;
+      "Session\\MaxUploadsPerTorrent" = 3;
       "Session\\Port" = "@OUTGOING_PORT@";
       "Session\\Preallocation" = true;
       "Session\\QueueingSystemEnabled" = true;
@@ -104,7 +111,7 @@
       "Session\\ShareLimitAction" = "Stop";
       "Session\\SubcategoriesEnabled" = true;
       "Session\\Tags" = "cross-seed";
-      "Session\\TempPath" = "/tempdl";
+      "Session\\TempPath" = "/media/torrents/incomplete";
       "Session\\TempPathEnabled" = false;
       "Session\\TorrentExportDirectory" = "";
       "Session\\UseAlternativeGlobalSpeedLimit" = false;
@@ -149,9 +156,9 @@
       "WebUI\\Password_PBKDF2" = "\"@PASSWORD@\"";
       "WebUI\\Port" = "@PORT@";
       "WebUI\\ReverseProxySupportEnabled" = false;
-      "WebUI\\RootFolder" = "/torrentWebUI/2";
+      "WebUI\\RootFolder" = "";
       "WebUI\\ServerDomains" = "*";
-      "WebUI\\TrustedReverseProxiesList" = "172.16.0.0/20";
+      "WebUI\\TrustedReverseProxiesList" = "127.0.0.1/32";
       "WebUI\\Username" = "@USERNAME@";
     };
 
@@ -161,7 +168,6 @@
     };
   };
 
-  # ⬇️ New: a small helper that prepares the config per instance
   qbitPrestartScript = pkgs.writeShellApplication {
     name = "qbit-prestart";
     runtimeInputs = with pkgs; [coreutils gnused];
@@ -352,7 +358,6 @@ in {
             ];
           }
           // commonContainerConfig;
-        # ⬇️ Add ExecStartPre
         serviceConfig =
           commonServiceConfig
           // {
