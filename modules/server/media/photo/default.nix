@@ -24,6 +24,15 @@ in {
     };
   };
 
+  systemd.tmpfiles.rules = [
+    "d /var/lib/immich 0700 immich immich -"
+    "d /var/lib/immich/assets 0700 immich immich -"
+    "d /var/lib/immich/database 0700 immich immich -"
+    "d /var/lib/immich/logs 0700 immich immich -"
+    "Z /var/lib/immich 0700 immich immich -"
+    "Z ${cfg.uploadLocation} 0700 immich immich -"
+  ];
+
   users.users.immich.extraGroups = ["render" "video"];
   services = {
     immich = {
