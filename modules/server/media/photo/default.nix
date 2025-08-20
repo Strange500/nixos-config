@@ -44,9 +44,7 @@ in {
       mediaLocation = cfg.uploadLocation;
       database = {
         createDB = true;
-        host = "127.0.0.1"; # Socket path
-        port = 5432; # Port to connect to
-
+        host = "/run/postgresql/"; # Socket path
         name = "immich"; #
         user = "immich"; # User to connect with
       };
