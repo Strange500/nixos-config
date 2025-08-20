@@ -44,9 +44,9 @@ in {
       mediaLocation = cfg.uploadLocation;
       database = {
         createDB = true;
-        host = "/run/postgresql/"; # Socket path
-        name = "immich"; #
-        user = "immich"; # User to connect with
+        # host = "/run/postgresql/"; # Socket path
+        # name = "immich"; #
+        # user = "immich"; # User to connect with
       };
       redis.enable = true;
       machine-learning.enable = true;
@@ -294,7 +294,7 @@ in {
 
   qgroget.services.immich = {
     name = "immich";
-    url = "http://127.0.0.1:${toString cfg.port}";
+    url = "https//127.0.0.1:${toString cfg.port}";
     type = "public";
     middlewares = ["immich-limit"];
     journalctl = true;
