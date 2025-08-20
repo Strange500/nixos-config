@@ -1,51 +1,18 @@
-{config, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   # Configuration constants
   cfg = {
-    containerDir = "${config.qgroget.server.containerDir}/immich";
     uploadLocation = "/mnt/immich";
     port = 2283;
-    podName = "immich";
-
-    containers = {
-      database = "immich_postgres";
-      redis = "immich_redis";
-      machineLearning = "immich_machine_learning";
-      server = "immich_server";
-    };
-  };
-
-  commonEnv = {
-    POSTGRES_USER = "immich";
-    POSTGRES_DB = "immich";
-    UPLOAD_LOCATION = "/mnt/user/immich";
-    IMMICH_VERSION = "release";
-    DB_HOSTNAME = cfg.containers.database;
-    DB_USERNAME = "postgres";
-    DB_DATABASE_NAME = "immich";
-    REDIS_HOSTNAME = cfg.containers.redis;
-  };
-
-  envFiles = ["${config.sops.secrets."server/immich/env".path}"];
-
-  commonServiceConfig = {
-    Restart = "unless-stopped";
-  };
-
-  images = {
-    postgres = "registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0";
-    redis = "registry.hub.docker.com/library/redis:6.2-alpine@sha256:51d6c56749a4243096327e3fb964a48ed92254357108449cb6e23999c37773c5";
-    machineLearning = "ghcr.io/immich-app/immich-machine-learning:release";
-    server = "ghcr.io/immich-app/immich-server:release";
   };
 
   traefikConfig = {
     bufferLimits = 5000000000;
   };
-
-  inherit (config.virtualisation.quadlet) containers pods;
 in {
-  sops.secrets."server/immich/env" = {};
-
   services.traefik.dynamicConfigOptions = {
     http.middlewares.immich-limit = {
       buffering = {
@@ -53,6 +20,265 @@ in {
         maxResponseBodyBytes = traefikConfig.bufferLimits;
         memResponseBodyBytes = traefikConfig.bufferLimits;
         memRequestBodyBytes = traefikConfig.bufferLimits;
+      };
+    };
+  };
+
+  users.users.immich.extraGroups = ["render" "video"];
+  services = {
+    immich = {
+      enable = true;
+      user = "immich";
+      group = "immich";
+      port = cfg.port;
+      accelerationDevices = ["/dev/dri/renderD128"];
+      mediaLocation = cfg.uploadLocation;
+      database = {
+        createDB = true;
+        host = "/run/postgresql/"; # Socket path
+        name = "immich"; #
+        user = "immich"; # User to connect with
+      };
+      redis.enable = true;
+      machine-learning.enable = true;
+      settings = {
+        backup = {
+          database = {
+            cronExpression = "0 02 * * *";
+            enabled = true;
+            keepLastAmount = 14;
+          };
+        };
+
+        ffmpeg = {
+          accel = "disabled";
+          accelDecode = false;
+          acceptedAudioCodecs = [
+            "aac"
+            "mp3"
+            "libopus"
+            "pcm_s16le"
+          ];
+          acceptedContainers = [
+            "mov"
+            "ogg"
+            "webm"
+          ];
+          acceptedVideoCodecs = [
+            "h264"
+          ];
+          bframes = -1;
+          cqMode = "auto";
+          crf = 23;
+          gopSize = 0;
+          maxBitrate = "0";
+          preferredHwDevice = "auto";
+          preset = "ultrafast";
+          refs = 0;
+          targetAudioCodec = "aac";
+          targetResolution = "720";
+          targetVideoCodec = "h264";
+          temporalAQ = false;
+          threads = 0;
+          tonemap = "hable";
+          transcode = "required";
+          twoPass = false;
+        };
+
+        image = {
+          colorspace = "p3";
+          extractEmbedded = false;
+          fullsize = {
+            enabled = false;
+            format = "jpeg";
+            quality = 80;
+          };
+          preview = {
+            format = "jpeg";
+            quality = 80;
+            size = 1440;
+          };
+          thumbnail = {
+            format = "webp";
+            quality = 80;
+            size = 250;
+          };
+        };
+
+        job = {
+          backgroundTask = {
+            concurrency = 5;
+          };
+          faceDetection = {
+            concurrency = 2;
+          };
+          library = {
+            concurrency = 5;
+          };
+          metadataExtraction = {
+            concurrency = 5;
+          };
+          migration = {
+            concurrency = 5;
+          };
+          notifications = {
+            concurrency = 5;
+          };
+          search = {
+            concurrency = 5;
+          };
+          sidecar = {
+            concurrency = 5;
+          };
+          smartSearch = {
+            concurrency = 2;
+          };
+          thumbnailGeneration = {
+            concurrency = 3;
+          };
+          videoConversion = {
+            concurrency = 1;
+          };
+        };
+
+        library = {
+          scan = {
+            cronExpression = "0 0 * * *";
+            enabled = true;
+          };
+          watch = {
+            enabled = false;
+          };
+        };
+
+        logging = {
+          enabled = true;
+          level = "log";
+        };
+
+        machineLearning = {
+          clip = {
+            enabled = true;
+            modelName = "ViT-B-32__openai";
+          };
+          duplicateDetection = {
+            enabled = true;
+            maxDistance = 0.01;
+          };
+          enabled = true;
+          facialRecognition = {
+            enabled = true;
+            maxDistance = 0.5;
+            minFaces = 3;
+            minScore = 0.7;
+            modelName = "buffalo_l";
+          };
+          urls = [
+            "http://immich-machine-learning:3003"
+          ];
+        };
+
+        map = {
+          darkStyle = "https://tiles.immich.cloud/v1/style/dark.json";
+          enabled = true;
+          lightStyle = "https://tiles.immich.cloud/v1/style/light.json";
+        };
+
+        metadata = {
+          faces = {
+            import = false;
+          };
+        };
+
+        newVersionCheck = {
+          enabled = true;
+        };
+
+        nightlyTasks = {
+          clusterNewFaces = true;
+          databaseCleanup = true;
+          generateMemories = true;
+          missingThumbnails = true;
+          startTime = "00:00";
+          syncQuotaUsage = true;
+        };
+
+        notifications = {
+          smtp = {
+            enabled = false;
+            from = "";
+            replyTo = "";
+            transport = {
+              host = "";
+              ignoreCert = false;
+              password = "";
+              port = 587;
+              username = "";
+            };
+          };
+        };
+
+        oauth = {
+          autoLaunch = true;
+          autoRegister = true;
+          buttonText = "Login with OAuth";
+          clientId = "ff";
+          clientSecret = "ff";
+          defaultStorageQuota = 50;
+          enabled = true;
+          issuerUrl = "https://auth.qgroget.com/application/o/immich/.well-known/openid-configuration";
+          mobileOverrideEnabled = true;
+          mobileRedirectUri = "https://immich.qgroget.com/api/oauth/mobile-redirect";
+          profileSigningAlgorithm = "none";
+          roleClaim = "immich_role";
+          scope = "openid email profile";
+          signingAlgorithm = "RS256";
+          storageLabelClaim = "preferred_username";
+          storageQuotaClaim = "immich_quota";
+          timeout = 30000;
+          tokenEndpointAuthMethod = "client_secret_post";
+        };
+
+        passwordLogin = {
+          enabled = true;
+        };
+
+        reverseGeocoding = {
+          enabled = true;
+        };
+
+        server = {
+          externalDomain = "";
+          loginPageMessage = "";
+          publicUsers = true;
+        };
+
+        storageTemplate = {
+          enabled = false;
+          hashVerificationEnabled = true;
+          template = "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}";
+        };
+
+        templates = {
+          email = {
+            albumInviteTemplate = "";
+            albumUpdateTemplate = "";
+            welcomeTemplate = "";
+          };
+        };
+
+        theme = {
+          customCss = "";
+        };
+
+        trash = {
+          days = 30;
+          enabled = true;
+        };
+
+        user = {
+          deleteDelay = 7;
+        };
       };
     };
   };
@@ -66,90 +292,12 @@ in {
     unitName = "immich-server.service";
   };
 
-  qgroget.backups.immich = {
-    paths = [
-      "${cfg.containerDir}"
-    ];
-    systemdUnits = [
-      "immich-pod.service"
-    ];
-  };
-
-  virtualisation.quadlet = {
-    pods.immich = {
-      autoStart = true;
-      podConfig = {
-        name = cfg.podName;
-        publishPorts = ["${toString cfg.port}:${toString cfg.port}"];
-      };
-      unitConfig = {
-        Requires = ["network-online.target"];
-        After = ["network-online.target"];
-      };
-    };
-
-    containers = {
-      immich-database = {
-        autoStart = true;
-        containerConfig = {
-          pod = pods.immich.ref;
-          name = cfg.containers.database;
-          image = images.postgres;
-          environments = commonEnv;
-          environmentFiles = envFiles;
-          volumes = [
-            "${cfg.containerDir}/pg:/var/lib/postgresql/data:Z"
-          ];
-        };
-        serviceConfig = commonServiceConfig;
-      };
-
-      immich-redis = {
-        autoStart = true;
-        containerConfig = {
-          name = cfg.containers.redis;
-          pod = pods.immich.ref;
-          image = images.redis;
-        };
-        serviceConfig = commonServiceConfig;
-      };
-
-      immich-machine-learning = {
-        autoStart = true;
-        containerConfig = {
-          pod = pods.immich.ref;
-          image = images.machineLearning;
-          environments = commonEnv;
-          environmentFiles = envFiles;
-        };
-        serviceConfig = commonServiceConfig;
-      };
-
-      immich-server = {
-        autoStart = true;
-        containerConfig = {
-          pod = pods.immich.ref;
-          image = images.server;
-          volumes = [
-            "${cfg.uploadLocation}:/usr/src/app/upload:Z"
-          ];
-          environments = commonEnv;
-          environmentFiles = envFiles;
-        };
-        serviceConfig = commonServiceConfig;
-        unitConfig = {
-          Requires = [
-            containers.immich-database.ref
-            containers.immich-redis.ref
-            containers.immich-machine-learning.ref
-          ];
-          After = [
-            containers.immich-database.ref
-            containers.immich-redis.ref
-            containers.immich-machine-learning.ref
-          ];
-        };
-      };
-    };
-  };
+  # qgroget.backups.immich = {
+  #   paths = [
+  #     ""
+  #   ];
+  #   systemdUnits = [
+  #     "immich-pod.service"
+  #   ];
+  # };
 }
