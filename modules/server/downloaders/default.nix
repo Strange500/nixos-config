@@ -212,24 +212,28 @@ in {
       name = "torrent";
       url = "http://127.0.0.1:${toString cfg.ports.qbittorrent1}";
       type = "private";
+      middlewares = ["SSO"];
     };
 
     torrent2 = {
       name = "torrent2";
       url = "http://127.0.0.1:${toString cfg.ports.qbittorrent2}";
       type = "private";
+      middlewares = ["SSO"];
     };
 
     torrent3 = {
       name = "torrent3";
       url = "http://127.0.0.1:${toString cfg.ports.qbittorrent3}";
       type = "private";
+      middlewares = ["SSO"];
     };
 
     nicotine = {
       name = "nicotine";
       url = "http://127.0.0.1:${toString cfg.ports.nicotine}";
       type = "private";
+      middlewares = ["SSO"];
     };
   };
 

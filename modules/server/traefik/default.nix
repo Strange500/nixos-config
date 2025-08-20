@@ -154,26 +154,6 @@ in {
           routers = lib.mapAttrs (_name: service: generateRouter service) config.qgroget.services;
           services = lib.mapAttrs (_name: service: generateService service) config.qgroget.services;
           middlewares = {
-            authentik = {
-              forwardAuth = {
-                address = "http://authentik:9000/outpost.goauthentik.io/auth/traefik";
-                trustForwardHeader = true;
-                authResponseHeaders = [
-                  "X-authentik-username"
-                  "X-authentik-groups"
-                  "X-authentik-email"
-                  "X-authentik-name"
-                  "X-authentik-uid"
-                  "X-authentik-jwt"
-                  "X-authentik-meta-jwks"
-                  "X-authentik-meta-outpost"
-                  "X-authentik-meta-provider"
-                  "X-authentik-meta-app"
-                  "X-authentik-meta-version"
-                ];
-              };
-            };
-
             googlenoindex = {
               headers = {
                 customResponseHeaders = {
