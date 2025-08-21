@@ -13,6 +13,10 @@ in {
     "Z /var/lib/${authelia} 0700 ${authelia} ${authelia} - -"
   ];
 
+  environment.persistence."/persist".directories = [
+    "/var/lib/${authelia}"
+  ];
+
   sops.secrets = {
     "server/authelia/smtp/password" = {
       owner = authelia;
