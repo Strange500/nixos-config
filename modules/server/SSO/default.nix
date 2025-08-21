@@ -30,6 +30,18 @@ in {
       owner = authelia;
       group = authelia;
     };
+    "server/authelia/hmac_secret" = {
+      owner = authelia;
+      group = authelia;
+    };
+    "server/authelia/oidc_private_key" = {
+      owner = authelia;
+      group = authelia;
+    };
+    "server/authelia/users" = {
+      owner = authelia;
+      group = authelia;
+    };
   };
 
   services.authelia.instances.qgroget = {
@@ -80,8 +92,8 @@ in {
         password_reset.disable = true;
 
         file = {
-          path = "/var/lib/${authelia}/users_database.yml";
-          watch = true;
+          path = config.sops.secrets."server/authelia/users".path;
+          watch = false;
           search = {
             email = true;
             case_insensitive = false;
@@ -100,12 +112,9 @@ in {
         };
       };
 
-      access_control.rules = [
-        {
-          domain = "*.${config.qgroget.server.domain}";
-          policy = "two_factor";
-        }
-      ];
+      access_control = {
+        default_policy = "deny";
+      };
 
       session = {
         cookies = [
@@ -149,6 +158,62 @@ in {
     secrets = {
       jwtSecretFile = config.sops.secrets."server/authelia/jwt-secret".path;
       storageEncryptionKeyFile = config.sops.secrets."server/authelia/storage-encryption-key".path;
+      oidcHmacSecretFile = config.sops.secrets."server/authelia/hmac_secret".path;
+      oidcIssuerPrivateKeyFile = config.sops.secrets."server/authelia/oidc_private_key".path;
+    };
+
+    settings.identity_providers.oidc = {
+      jwks = [
+        {
+          key_id = "authelia";
+          algorithm = "RS256";
+          use = "sig";
+          certificate_chain = ''
+            -----BEGIN CERTIFICATE-----
+            MIIDJDCCAgygAwIBAgIRAMdmhuNJrLaDZltuLRgZmDYwDQYJKoZIhvcNAQELBQAw
+            MjERMA8GA1UEChMIQXV0aGVsaWExHTAbBgNVBAMTFGF1dGhlbGlhLmV4YW1wbGUu
+            Y29tMB4XDTI1MDgyMTA2NTc0MVoXDTI2MDgyMTA2NTc0MVowMjERMA8GA1UEChMI
+            QXV0aGVsaWExHTAbBgNVBAMTFGF1dGhlbGlhLmV4YW1wbGUuY29tMIIBIjANBgkq
+            hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4zo2vyK4msyKwF9EmaenlyB5hm+VPdQZ
+            DI3prz8KnT4J2f+zRE85YsAnj4nhXsBibK6aUKPrMlvCZ3KrmsGuUMUK3mE+Thr7
+            T0PiqEH9oCGltgnc0CcRlVq+O1YREHhuMa5vUkR80sziNMbeSVszVayWDT85YZT9
+            fg++qdqZL5we9zPJKg8DR/ZYcuXABWHSLMc8QUEijvIiSFU55mu2pQogYG5m1HEC
+            auxIBY/zYzKf+O9Y4iwovUIyxQBX3dAU8E26dFF3s6uXuPABjW0gwtxBI+Hkd1I0
+            muupmAVq2klkpM4QCX1YQXTZdJ0jifk2D7EsrhUvY6r8ccsotqM/RwIDAQABozUw
+            MzAOBgNVHQ8BAf8EBAMCBaAwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDAYDVR0TAQH/
+            BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAyEVs72c+jP1H803EokEoJRaak3rsFaJf
+            W2k31LZWC5UB4w6DXU4CTnZNfbugCQFeP5DXgo4XpwkW2p61w9dc19UylrAEQJiF
+            WlCZ2suB9gWSoClfWHrmyL6B6TDqZFslBzop0PLsQB/cJu9EJzHx0Dl7fl2uuawr
+            hQjaPMMlf5/BrEDjW4mTHMz9SqaMUeR2IrV7J/GZtvavaJYAZO93l7V+kkvmiITO
+            LDJPMMWYV0ttlD6A7b5FWkMeSqf0C6XMKmZ53xbFzGbcubwCxi+aY9R48YrJW6mo
+            Z4FKOuYmGYErFuD2/LtCNYvERadXskC05bbw5ZlOgCptdJIk/O/EVw==
+            -----END CERTIFICATE-----
+          '';
+        }
+      ];
+      enable_client_debug_messages = false;
+      minimum_parameter_entropy = 8;
+      enforce_pkce = "public_clients_only";
+      enable_pkce_plain_challenge = false;
+      enable_jwt_access_token_stateless_introspection = false;
+      discovery_signed_response_alg = "none";
+      discovery_signed_response_key_id = "";
+      require_pushed_authorization_requests = false;
+      lifespans = {
+        access_token = "1h";
+        authorize_code = "1m";
+        id_token = "1h";
+        refresh_token = "90m";
+      };
+      cors = {
+        endpoints = [
+          "authorization"
+          "token"
+          "revocation"
+          "introspection"
+        ];
+        allowed_origins_from_client_redirect_uris = false;
+      };
     };
   };
 

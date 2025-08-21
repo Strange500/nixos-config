@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: let
   # Configuration constants
@@ -236,6 +237,37 @@ in {
       middlewares = ["SSO"];
     };
   };
+
+  services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+    {
+      domain = "torrent.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "torrent2.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "torrent3.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "nicotine.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+  ];
 
   qgroget.backups.torrent = {
     paths = [
