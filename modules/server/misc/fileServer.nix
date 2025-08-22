@@ -1,4 +1,4 @@
-{...}: {
+{config, ...}: {
   qgroget.services.file = {
     name = "file";
     url = "http://127.0.0.1:8095";
@@ -13,11 +13,12 @@
         image = "halverneus/static-file-server:latest";
         publishPorts = ["8095:8080"];
         volumes = [
-          "/mnt/share/file_serv:/web:ro"
+          "${config.logo.web}:/web:ro"
         ];
       };
       serviceConfig = {
-        Restart = "unless-stopped";
+        Restart = "always";
+        RestartSec = "10s";
       };
     };
   };

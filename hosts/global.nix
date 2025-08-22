@@ -19,6 +19,7 @@
     ../modules/system/remoteAccess.nix
     ./setting.nix
     ../modules/shared
+    ../modules/logo
   ];
 
   networking.networkmanager = {enable = true;};

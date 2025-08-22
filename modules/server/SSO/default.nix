@@ -1,15 +1,12 @@
 {
   config,
-  lib,
+  pkgs,
   ...
 }: let
   authelia = "authelia-qgroget";
 in {
   systemd.tmpfiles.rules = [
-    "d /var/lib/${authelia}/assets 0700 ${authelia} ${authelia} - -"
     "d /var/lib/${authelia}logs 0700 ${authelia} ${authelia} - -"
-    "d /var/lib/${authelia}/database 0700 ${authelia} ${authelia} - -"
-    "d /var/lib/${authelia}/users 0700 ${authelia} ${authelia} - -"
     "Z /var/lib/${authelia} 0700 ${authelia} ${authelia} - -"
   ];
 
@@ -53,8 +50,8 @@ in {
       theme = "auto";
 
       server = {
-        address = "tcp://0.0.0.0:9091";
-        asset_path = "/var/lib/${authelia}/assets";
+        address = "tcp://127.0.0.1:9091";
+        asset_path = config.logo.autheliaAssetsPath;
         endpoints = {
           authz = {
             forward-auth = {

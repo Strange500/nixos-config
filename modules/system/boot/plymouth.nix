@@ -6,7 +6,7 @@
   boot = lib.mkIf config.qgroget.nixos.isDesktop {
     plymouth = {
       enable = config.qgroget.nixos.isDesktop;
-      logo = ./../../../home/logo.png;
+      logo = config.logo.plymouth;
     };
     kernelParams = [
       "quiet"
