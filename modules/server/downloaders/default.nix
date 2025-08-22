@@ -286,7 +286,6 @@ in {
 
   sops.secrets = {
     "server/gluetun/env" = {
-      restartUnits = [pods.${cfg.podName}.ref];
     };
     "qbit/user" = {
       restartUnits = [
