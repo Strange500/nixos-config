@@ -56,6 +56,8 @@ qgroget = {
   server = {
     domain = "qgroget.com";          # Your domain
     network.ip = "192.168.0.34";     # Server IP
+    containerDir = "/etc/containersConfig";  # Container configs
+    mediaDir = "/mnt/media";         # Media storage path
     test.enable = false;             # Test mode
   };
   nixos = {
