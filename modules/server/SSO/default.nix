@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: let
+{config, ...}: let
   authelia = "authelia-qgroget";
 in {
   systemd.tmpfiles.rules = [
