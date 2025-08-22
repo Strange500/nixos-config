@@ -1,6 +1,6 @@
 <div align="center">
 
-![QGroget](./qgroget-logo.png)
+![QGroget](./modules/logo/assets/logo_text.png)
 
 **NixOS Configuration for QGroget Infrastructure**
 
@@ -15,11 +15,16 @@
 
 ## 🏠 Why This Configuration Exists
 
-This NixOS configuration serves as the foundation for **QGroget** - a personal computing ecosystem focused on reproducibility and self-hosting. The goal is simple: create identical, reliable systems across multiple machines while maintaining a powerful homelab infrastructure.
+After being a distro hopper for a year and a half - bouncing from basic Debian to Ubuntu (not customizable enough!), to Arch (breaking after each update 💥), and EndeavourOS - I finally discovered **NixOS**! 🎉 
 
-**The Problem:** Setting up and maintaining multiple computers with consistent configurations is tedious and error-prone.
+It's highly customizable yet nearly unbreakable. Now I'm exploring the Nix world and trying different things, which led to this configuration serving as the foundation for **QGroget** - a personal computing ecosystem focused on reproducibility and self-hosting.
 
-**The Solution:** NixOS with flakes provides declarative, version-controlled system configurations that ensure every machine is identical and reproducible.
+**The Journey:** From distro chaos to NixOS zen 🧘‍♂️  
+**The Goal:** Create identical, reliable systems across multiple machines while maintaining a powerful homelab infrastructure.
+
+**The Problem:** Setting up and maintaining multiple computers with consistent configurations is tedious and error-prone (especially after yet another Arch update breaks everything).
+
+**The Solution:** NixOS with flakes provides declarative, version-controlled system configurations that ensure every machine is identical and reproducible - no more broken systems!
 
 ## 🖥️ What's Inside
 
@@ -58,4 +63,4 @@ sudo nixos-rebuild switch --flake ~/nixos#your-hostname
 
 ---
 
-*For detailed installation and customization instructions, see the [installation guide](docs/installation.md).*
+*For detailed installation and customization instructions, check the configuration files or open an issue for specific questions.*
