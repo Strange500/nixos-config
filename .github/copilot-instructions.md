@@ -18,7 +18,7 @@ Always reference these instructions first and fallback to search or bash command
   ```
 
 ### Core Build Commands
-- **NEVER CANCEL builds** - NixOS builds can take 30-90 minutes depending on changes. Set timeout to 120+ minutes.
+- **NEVER CANCEL builds** - NixOS builds can take 15-45 minutes depending on changes (tools fetched from cache). Set timeout to 60+ minutes.
 - Test flake syntax and validate configuration:
   ```bash
   nix flake check
@@ -26,12 +26,12 @@ Always reference these instructions first and fallback to search or bash command
 - Build specific host configuration (dry-run, no installation):
   ```bash
   nix build .#nixosConfigurations.Clovis.config.system.build.toplevel
-  # Takes 30-90 minutes. NEVER CANCEL. Set timeout to 120+ minutes.
+  # Takes 15-45 minutes (tools fetched from cache). NEVER CANCEL. Set timeout to 60+ minutes.
   ```
 - Apply configuration to current system:
   ```bash
   sudo nixos-rebuild switch --flake .#hostname
-  # Takes 30-90 minutes. NEVER CANCEL. Set timeout to 120+ minutes.
+  # Takes 15-45 minutes (tools fetched from cache). NEVER CANCEL. Set timeout to 60+ minutes.
   ```
 - Build installer ISO:
   ```bash
@@ -50,7 +50,7 @@ Always reference these instructions first and fallback to search or bash command
 - Update flake inputs:
   ```bash
   nix flake update
-  # Takes 5-15 minutes depending on number of inputs
+  # Takes about 1 minute or less
   ```
 - Format Nix code:
   ```bash
@@ -61,16 +61,14 @@ Always reference these instructions first and fallback to search or bash command
   ```bash
   # Build without switching (faster validation)
   nixos-rebuild build --flake .#hostname
-  # Takes 20-60 minutes. NEVER CANCEL. Set timeout to 90+ minutes.
+  # Takes 5-15 minutes (tools fetched from cache). NEVER CANCEL. Set timeout to 30+ minutes.
   ```
 
 ## Secret Management
 - Uses sops-nix with age encryption
 - Setup age key for secrets:
   ```bash
-  mkdir -p ~/.config/sops/age
-  echo "your-age-key" > ~/.config/sops/age/keys.txt
-  # For system-level secrets:
+  # System is configured for system-level secrets only:
   sudo mkdir -p /var/lib/sops/age
   sudo echo "your-age-key" > /var/lib/sops/age/keys.txt
   ```
@@ -90,8 +88,8 @@ Always reference these instructions first and fallback to search or bash command
   ```
 - Rebuild remote host:
   ```bash
-  nixos-rebuild --target-host user@example.com switch --flake .#hostname
-  # Takes 30-90 minutes. NEVER CANCEL. Set timeout to 120+ minutes.
+  nixos-rebuild --target-host user@example.com --remote-sudo --ask-sudo-password switch --flake .#hostname
+  # Takes 15-45 minutes (tools fetched from cache). NEVER CANCEL. Set timeout to 60+ minutes.
   ```
 
 ## Code Quality and Validation
@@ -112,11 +110,11 @@ Always reference these instructions first and fallback to search or bash command
   
   # 2. Validate flake
   nix flake check
-  # Takes 5-10 minutes
+  # Takes 1-5 minutes
   
   # 3. Test build (choose appropriate host)
   nixos-rebuild build --flake .#Clovis
-  # Takes 20-60 minutes. NEVER CANCEL. Set timeout to 90+ minutes.
+  # Takes 5-20 minutes (tools fetched from cache). NEVER CANCEL. Set timeout to 45+ minutes.
   
   # 4. Check for common issues
   # Verify secrets are accessible
@@ -228,8 +226,7 @@ After making changes, ALWAYS test these complete scenarios:
 ### Secret Access Issues
 - Verify age key exists and is readable:
   ```bash
-  ls -la ~/.config/sops/age/keys.txt
-  ls -la /var/lib/sops/age/keys.txt  # System-level
+  ls -la /var/lib/sops/age/keys.txt  # System-level (only path used)
   ```
 - Check sops configuration in `.sops.yaml`
 - Test secret access:
@@ -288,10 +285,10 @@ After making changes, ALWAYS test these complete scenarios:
   ```
 
 ## Timing Expectations
-- **Flake check**: 5-10 minutes
-- **Build (no changes)**: 5-15 minutes  
-- **Build (with changes)**: 20-60 minutes
-- **Full rebuild with updates**: 30-90 minutes
+- **Flake check**: 1-5 minutes
+- **Build (no changes)**: 1-5 minutes  
+- **Build (with changes)**: 5-20 minutes (tools fetched from cache)
+- **Full rebuild with updates**: 15-45 minutes (with cache benefits)
 - **Installer ISO build**: 45-120 minutes
 - **Remote installation**: 45-120 minutes
 
@@ -322,17 +319,17 @@ After making changes, ALWAYS test these complete scenarios:
 ## Key Commands Reference
 ```bash
 # Essential workflows
-nix flake check                                    # Validate flake (5-10 min)
-sudo nixos-rebuild switch --flake .#hostname       # Apply config (30-90 min, NEVER CANCEL)
-nix build .#nixosConfigurations.hostname.config.system.build.toplevel  # Build only (20-60 min, NEVER CANCEL)
+nix flake check                                    # Validate flake (1-5 min)
+sudo nixos-rebuild switch --flake .#hostname       # Apply config (15-45 min, NEVER CANCEL)
+nix build .#nixosConfigurations.hostname.config.system.build.toplevel  # Build only (5-20 min, NEVER CANCEL)
 
 # Development
 alejandra .                                        # Format Nix code
-nix flake update                                   # Update inputs (5-15 min)
+nix flake update                                   # Update inputs (about 1 minute)
 pre-commit run --all-files                        # Run quality checks
 
 # Remote operations  
-nixos-rebuild --target-host user@host switch --flake .#hostname  # Remote rebuild (30-90 min, NEVER CANCEL)
+nixos-rebuild --target-host user@host --remote-sudo --ask-sudo-password switch --flake .#hostname  # Remote rebuild (15-45 min, NEVER CANCEL)
 
 # Secrets
 ./show_secret.sh                                   # Edit secrets safely
