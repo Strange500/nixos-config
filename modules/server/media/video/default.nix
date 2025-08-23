@@ -35,7 +35,7 @@
 
   # add user jellyfin to video and render groups
   users.users.jellyfin = {
-    extraGroups = ["video" "render"];
+    extraGroups = ["video" "render" "media"];
   };
 
   services.declarative-jellyfin = {

@@ -37,7 +37,7 @@
   };
 
   commonContainerConfig = {
-    user = "1000:1000";
+    user = "${toString config.users.users.nobody.uid}:${toString config.users.groups.downloaders.gid}";
   };
 
   commonServiceConfig = {
@@ -268,6 +268,8 @@ in {
       ];
     }
   ];
+  users.groups.downloaders = {};
+  users.groups.music = {};
 
   qgroget.backups.torrent = {
     paths = [
@@ -440,18 +442,17 @@ in {
 
       nicotine-plus = {
         autoStart = true;
-        containerConfig =
-          {
-            name = cfg.containers.nicotinePlus;
-            image = images.nicotinePlus;
-            pod = pods.${cfg.podName}.ref;
-            environments = commonEnv;
-            volumes = [
-              "${cfg.containerDir}/nicotine:/config:Z"
-              "/mnt/music:/music:Z"
-            ];
-          }
-          // commonContainerConfig;
+        containerConfig = {
+          name = cfg.containers.nicotinePlus;
+          image = images.nicotinePlus;
+          pod = pods.${cfg.podName}.ref;
+          environments = commonEnv;
+          volumes = [
+            "${cfg.containerDir}/nicotine:/config:Z"
+            "/mnt/music:/music:Z"
+          ];
+          user = "${toString config.users.users.nobody.uid}:${toString config.users.groups.music.gid}";
+        };
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];

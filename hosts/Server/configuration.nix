@@ -71,6 +71,10 @@
       "relatime"
     ];
   };
+  environment.etc."tmpfiles.d/media.conf".text = ''
+    Z /mnt/media/media 0660 arr jellyfin -
+    Z /mnt/media/torrents 0660 arr downloaders -
+  '';
   fileSystems."/mnt/music" = {
     device = "music";
     fsType = "virtiofs";
@@ -79,6 +83,9 @@
       "relatime"
     ];
   };
+  environment.etc."tmpfiles.d/music.conf".text = ''
+    Z /mnt/music 0750 nobody music -
+  '';
   fileSystems."/mnt/share" = {
     device = "share";
     fsType = "virtiofs";
@@ -87,6 +94,9 @@
       "relatime"
     ];
   };
+  environment.etc."tmpfiles.d/share.conf".text = ''
+    Z /mnt/share 0750 nobody share -
+  '';
   fileSystems."/mnt/immich" = {
     device = "immich";
     fsType = "virtiofs";
@@ -95,6 +105,9 @@
       "relatime"
     ];
   };
+  environment.etc."tmpfiles.d/immich.conf".text = ''
+    Z /mnt/immich 0750 immich immich -
+  '';
   fileSystems."/persist" = {
     neededForBoot = true;
     device = "persist";
