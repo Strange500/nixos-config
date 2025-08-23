@@ -20,7 +20,7 @@
     ];
   };
 
-  services.traefik.dynamicConfigOptions = {
+  qgroget.services.obsidian.traefikDynamicConfig = {
     http.middlewares.obsidiancors = {
       headers = {
         customResponseHeaders = {

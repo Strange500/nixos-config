@@ -127,12 +127,12 @@ in {
     222
   ];
 
-  services.traefik.dynamicConfigOptions.tcp.routers.forgejo-ssh = {
+  qgroget.services.git.traefikDynamicConfig.tcp.routers.forgejo-ssh = {
     rule = "HostSNI(`*`)";
     entryPoints = ["ssh"];
     service = "forgejo-ssh";
   };
-  services.traefik.dynamicConfigOptions.tcp.services.forgejo-ssh = {
+  qgroget.services.git.traefikDynamicConfig.tcp.services.forgejo-ssh = {
     loadBalancer = {
       servers = [
         {address = "127.0.0.1:2222";}

@@ -61,6 +61,11 @@
             default = "";
             description = "The name of the systemd unit for the service, used for journalctl filtering.";
           };
+          traefikDynamicConfig = lib.mkOption {
+            type = lib.types.attrs;
+            default = {};
+            description = "Additional Traefik dynamic configuration for the service.";
+          };
         };
       });
       default = {};

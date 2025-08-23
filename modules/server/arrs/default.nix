@@ -1,4 +1,9 @@
-{config, ...}: let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   cfg = {
     containerDir = "${config.qgroget.server.containerDir}";
     mediaDir = "/mnt/media";
@@ -30,8 +35,15 @@
   };
 
   commonServiceConfig = {
-    Restart = "unless-stopped";
+    Restart = "always";
   };
+
+  # Build the TOML template in the Nix store (with a placeholder).
+  tomlFmt = pkgs.formats.toml {};
+  traefikHeaderRaw = {
+    http.middlewares."inject-basic-arr".headers.customRequestHeaders.Authorization = "Basic __SECRET__";
+  };
+  traefikHeaderSecret = tomlFmt.generate "inject-basic-arr.tpl.toml" traefikHeaderRaw;
 
   images = {
     sonarrAnime = "lscr.io/linuxserver/sonarr:latest";
@@ -50,33 +62,84 @@ in {
       name = "sonarr-anime";
       url = "http://127.0.0.1:${toString cfg.ports.sonarr-anime}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
     radarr-anime = {
       name = "radarr-anime";
       url = "http://127.0.0.1:${toString cfg.ports.radarr-anime}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
     sonarr = {
       name = "sonarr";
       url = "http://127.0.0.1:${toString cfg.ports.sonarr}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
     radarr = {
       name = "radarr";
       url = "http://127.0.0.1:${toString cfg.ports.radarr}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
     bazarr = {
       name = "bazarr";
       url = "http://127.0.0.1:${toString cfg.ports.bazarr}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
     prowlarr = {
       name = "prowlarr";
       url = "http://127.0.0.1:${toString cfg.ports.prowlarr}";
       type = "private";
+      middlewares = ["SSO" "inject-basic-arr"];
     };
   };
+
+  services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+    {
+      domain = "sonarr.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "radarr.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "sonarr-anime.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "radarr-anime.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "bazarr.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+    {
+      domain = "prowlarr.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+  ];
 
   qgroget.backups.arr = {
     paths = [
@@ -90,6 +153,49 @@ in {
     systemdUnits = [
       "${cfg.podName}-pod.service"
     ];
+  };
+
+  sops.secrets = {
+    "server/arrs/username" = {
+      owner = "traefik";
+      group = "traefik";
+    };
+    "server/arrs/password" = {
+      owner = "traefik";
+      group = "traefik";
+    };
+  };
+
+  # inject secret basic token into config file at startup
+  systemd.services.traefik = {
+    path = [pkgs.coreutils pkgs.gnused];
+
+    serviceConfig = {
+      RuntimeDirectory = "traefik";
+      RuntimeDirectoryMode = "0700";
+      # Make preStart run as root (so it can chown and read secrets),
+      PermissionsStartOnly = true;
+    };
+
+    preStart = lib.mkAfter ''
+      set -euo pipefail
+
+      # Create target dir in tmpfs with tight perms, owned by traefik
+      install -d -m 0700 -o traefik -g traefik /run/traefik/secureConf
+
+      username=$(cat ${config.sops.secrets."server/arrs/username".path})
+      password=$(cat ${config.sops.secrets."server/arrs/password".path})
+
+      # Build Basic auth (no newline, no wrapping)
+      auth="$(printf '%s' "$username:$password" | base64 -w0)"
+
+      tmp="$(mktemp /run/traefik/secureConf/inject-basic-arr.toml.XXXXXX)"
+      sed "s#__SECRET__#''${auth}#g" ${traefikHeaderSecret} > "$tmp"
+
+      chown traefik:traefik "$tmp"
+      chmod 0600 "$tmp"
+      mv -f "$tmp" /run/traefik/secureConf/inject-basic-arr.toml
+    '';
   };
 
   virtualisation.quadlet = {

@@ -216,7 +216,7 @@ in {
     type = "public";
   };
 
-  services.traefik.dynamicConfigOptions.http.middlewares.SSO = {
+  qgroget.services.auth.traefikDynamicConfig.http.middlewares.SSO = {
     forwardAuth = {
       address = "http://127.0.0.1:9091/api/authz/forward-auth";
       trustForwardHeader = true;

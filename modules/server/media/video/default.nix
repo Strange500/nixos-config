@@ -178,7 +178,7 @@
     };
   };
 
-  services.traefik.dynamicConfigOptions = {
+  qgroget.services.jellyfin.traefikDynamicConfig = {
     http.middlewares.jellyfin-mw = {
       headers = {
         customResponseHeaders = {

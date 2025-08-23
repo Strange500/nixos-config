@@ -252,7 +252,7 @@
     };
   };
 in {
-  services.traefik.dynamicConfigOptions = {
+  qgroget.services.immich.traefikDynamicConfig = {
     http.middlewares.immich-limit = {
       buffering = {
         maxRequestBodyBytes = traefikConfig.bufferLimits;
