@@ -3,12 +3,33 @@
   lib,
   ...
 }: {
-  systemd.tmpfiles.rules = [
-    "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
-    "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
-    "d ${config.services.jellyseerr.configDir}/logs 0755 jellyseerr jellyseerr -"
-    "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
-  ];
+  # Configure permissions for jellyseerr service
+  qgroget.server.permissions.services.jellyseerr = {
+    user = "jellyseerr";
+    group = "jellyseerr";
+    directories = [
+      {
+        path = "${config.services.jellyseerr.configDir}";
+        mode = "0755";
+        type = "d";
+      }
+      {
+        path = "${config.services.jellyseerr.configDir}/db";
+        mode = "0755";
+        type = "d";
+      }
+      {
+        path = "${config.services.jellyseerr.configDir}/logs";
+        mode = "0755";
+        type = "d";
+      }
+      {
+        path = "${config.services.jellyseerr.configDir}";
+        mode = "-";
+        type = "Z";
+      }
+    ];
+  };
 
   qgroget.backups.jellyseerr = {
     paths = [
@@ -42,14 +63,6 @@
   environment.persistence."/persist".files = [
     "${config.services.jellyseerr.configDir}/settings.json"
   ];
-
-  users.users.jellyseerr = {
-    isSystemUser = true;
-    description = "Jellyseerr user";
-    group = "jellyseerr";
-  };
-  users.groups.jellyseerr = {
-  };
 
   services.jellyseerr = {
     openFirewall = false;

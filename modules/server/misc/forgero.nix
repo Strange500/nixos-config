@@ -6,6 +6,30 @@
   cfg = config.services.forgejo;
   port = 8082;
 in {
+  # Configure permissions for forgejo service
+  qgroget.server.permissions.services.forgejo = {
+    user = "forgejo";
+    group = "forgejo";
+    homeDir = "/var/lib/forgejo";
+    directories = [
+      {
+        path = "${cfg.stateDir}";
+        mode = "2700";
+        type = "d";
+      }
+      {
+        path = "${cfg.stateDir}";
+        mode = "-";
+        type = "Z";
+      }
+    ];
+    secrets = {
+      "server/forgejo/strange/password" = {};
+      "server/forgejo/strange/mail" = {};
+      "server/forgejo/strange/dbPassword" = {};
+    };
+  };
+
   qgroget.services.git = {
     name = "git";
     url = "http://127.0.0.1:${toString port}";
@@ -21,18 +45,6 @@ in {
       "forgejo.service"
       "mysql.service"
     ];
-  };
-
-  sops.secrets = {
-    "server/forgejo/strange/password" = {
-      owner = "forgejo";
-    };
-    "server/forgejo/strange/mail" = {
-      owner = "forgejo";
-    };
-    "server/forgejo/strange/dbPassword" = {
-      owner = "forgejo";
-    };
   };
 
   services.forgejo = {
@@ -86,26 +98,15 @@ in {
     '';
   };
 
-  users.users.forgejo = {
-    isSystemUser = true;
-    description = "Forgejo SSH user";
-    home = "/var/lib/forgejo";
-    group = "forgejo";
-  };
-  users.groups.forgejo = {};
-
   environment.persistence."/persist".directories = [
     "${config.services.forgejo.stateDir}"
   ];
 
-  environment.etc."tmpfiles.d/forgejo.conf".text = ''
-    # Create the main forgejo state directory with correct group and setgid
-    d ${config.services.forgejo.stateDir} 2700 forgejo forgejo - -
+  # Additional ACL setup for forgejo directories
+  environment.etc."tmpfiles.d/forgejo-acl.conf".text = ''
     # Set default ACLs so new files/dirs inherit group permissions
     a+ ${config.services.forgejo.stateDir} - - - - \
       d:g:forgejo:r-x,d:g:forgejo:r--,g:forgejo:r-x,g:forgejo:r--
-    # Recursively fix existing permissions
-    Z ${config.services.forgejo.stateDir} - - forgejo - -
   '';
 
   systemd.services.forgejo.preStart = let
