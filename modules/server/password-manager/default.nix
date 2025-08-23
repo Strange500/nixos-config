@@ -3,6 +3,23 @@
   lib,
   ...
 }: {
+  # Configure permissions for vaultwarden service
+  qgroget.server.permissions.services.vaultwarden = {
+    user = "vaultwarden";
+    group = "password-manager";
+    directories = [
+      {
+        path = "${config.qgroget.server.containerDir}/vaultwarden";
+        mode = "0700";
+        type = "Z";
+      }
+    ];
+    secrets = {
+      "server/vaultwarden/config" = {};
+      "server/vaultwarden/env" = {};
+    };
+  };
+
   qgroget.services = {
     vaultwarden = {
       name = "vaultwarden";
@@ -21,26 +38,6 @@
     systemdUnits = [
       "vaultwarden.service"
     ];
-  };
-
-  environment.etc."tmpfiles.d/vaultwarden.conf".text = ''
-    Z ${config.qgroget.server.containerDir}/vaultwarden 0700 vaultwarden password-manager -
-  '';
-
-  users.users.vaultwarden = {
-    isSystemUser = true;
-    description = "User for running vaultwarden";
-    home = "/nonexistent";
-    createHome = false;
-    group = "password-manager";
-  };
-  users.groups.password-manager = {};
-
-  sops.secrets = {
-    "server/vaultwarden/config" = {
-    };
-    "server/vaultwarden/env" = {
-    };
   };
 
   virtualisation.quadlet = {
