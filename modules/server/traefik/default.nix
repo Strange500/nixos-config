@@ -97,8 +97,8 @@ in {
         };
 
         api = {
-          dashboard = true;
-          insecure = true;
+          dashboard = false;
+          insecure = false;
         };
 
         experimental = {
@@ -231,7 +231,7 @@ in {
     };
 
     networking.firewall = {
-      allowedTCPPorts = [80 443] ++ lib.optional true 8080;
+      allowedTCPPorts = [80 443] ++ lib.optional (config.qgroget.server.test.enable) [8080];
       allowedUDPPorts = [443];
     };
   };
