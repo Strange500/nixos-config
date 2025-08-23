@@ -37,7 +37,12 @@
   };
 
   commonContainerConfig = {
-    user = "1000:1000";
+    user = "${toString config.users.users.arr.uid}:${toString config.users.groups.downloaders.gid}";
+  };
+
+  qbitEnv = {
+    PUID = toString config.users.users.arr.uid;
+    PGID = toString config.users.groups.downloaders.gid;
   };
 
   commonServiceConfig = {
@@ -238,6 +243,19 @@ in {
     };
   };
 
+  environment.etc."tmpfiles.d/downloaders.conf".text = ''
+    Z ${config.qgroget.server.containerDir}/qbittorrent 0700 qbit downloaders -
+    Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 qbit downloaders -
+    Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 qbit downloaders -
+  '';
+  users.users.qbit = {
+    isSystemUser = true;
+    description = "User for running qBittorrent";
+    home = "/nonexistent";
+    createHome = false;
+    group = "downloaders";
+  };
+
   services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
     {
       domain = "torrent.${config.qgroget.server.domain}";
@@ -268,6 +286,8 @@ in {
       ];
     }
   ];
+  users.groups.downloaders = {};
+  users.groups.music = {};
 
   qgroget.backups.torrent = {
     paths = [
@@ -353,11 +373,12 @@ in {
               commonEnv
               // {
                 WEBUI_PORT = "8112";
-              };
+              }
+              // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent/config:/config:Z"
-              "/mnt/media:/data:Z"
-              "/mnt/media:/media:Z"
+              "/mnt/media/torrents:/data/torrents:Z"
+              "/mnt/media/torrents:/media/torrents:Z"
             ];
           }
           // commonContainerConfig;
@@ -385,7 +406,8 @@ in {
               commonEnv
               // {
                 WEBUI_PORT = "8113";
-              };
+              }
+              // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent_bis/config:/config:Z"
               "/mnt/media:/data:Z"
@@ -417,7 +439,8 @@ in {
               commonEnv
               // {
                 WEBUI_PORT = "8114";
-              };
+              }
+              // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent_nyaa/config:/config:Z"
               "/mnt/media:/data:Z"
@@ -440,18 +463,17 @@ in {
 
       nicotine-plus = {
         autoStart = true;
-        containerConfig =
-          {
-            name = cfg.containers.nicotinePlus;
-            image = images.nicotinePlus;
-            pod = pods.${cfg.podName}.ref;
-            environments = commonEnv;
-            volumes = [
-              "${cfg.containerDir}/nicotine:/config:Z"
-              "/mnt/music:/music:Z"
-            ];
-          }
-          // commonContainerConfig;
+        containerConfig = {
+          name = cfg.containers.nicotinePlus;
+          image = images.nicotinePlus;
+          pod = pods.${cfg.podName}.ref;
+          environments = commonEnv;
+          volumes = [
+            "${cfg.containerDir}/nicotine:/config:Z"
+            "/mnt/music:/music:Z"
+          ];
+          user = "${toString config.users.users.nobody.uid}:${toString config.users.groups.music.gid}";
+        };
         serviceConfig = commonServiceConfig;
         unitConfig = {
           Requires = [containers.gluetun.ref];

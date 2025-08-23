@@ -23,6 +23,19 @@
     ];
   };
 
+  environment.etc."tmpfiles.d/vaultwarden.conf".text = ''
+    Z ${config.qgroget.server.containerDir}/vaultwarden 0700 vaultwarden password-manager -
+  '';
+
+  users.users.vaultwarden = {
+    isSystemUser = true;
+    description = "User for running vaultwarden";
+    home = "/nonexistent";
+    createHome = false;
+    group = "password-manager";
+  };
+  users.groups.password-manager = {};
+
   sops.secrets = {
     "server/vaultwarden/config" = {
     };
@@ -36,6 +49,7 @@
 
       containerConfig = {
         image = "docker.io/vaultwarden/server:latest";
+        user = "${toString config.users.users.vaultwarden.uid}:${toString config.users.groups.password-manager.gid}";
 
         # Environment variables
         environments = {

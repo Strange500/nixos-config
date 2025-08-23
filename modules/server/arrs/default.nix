@@ -31,7 +31,7 @@
   };
 
   commonContainerConfig = {
-    user = "1000:1000";
+    user = "${toString config.users.users.arr.uid}:${toString config.users.groups.media.gid}";
   };
 
   commonServiceConfig = {
@@ -57,6 +57,17 @@
 
   inherit (config.virtualisation.quadlet) pods;
 in {
+  users.users.arr = {
+    isSystemUser = true;
+    description = "User for running arr services";
+    home = "/nonexistent";
+    group = "arr";
+    createHome = false;
+    extraGroups = ["media"];
+  };
+  users.groups.arr = {};
+  users.groups.media = {};
+
   qgroget.services = {
     sonarr-anime = {
       name = "sonarr-anime";
