@@ -38,6 +38,10 @@
 
   commonContainerConfig = {
     user = "${toString config.users.users.arr.uid}:${toString config.users.groups.downloaders.gid}";
+    dns = [
+      "94.140.14.140"
+      "94.140.14.141"
+    ];
   };
 
   qbitEnv = {
@@ -103,7 +107,7 @@
       "Session\\MaxConnections" = 400; # global peers
       "Session\\MaxConnectionsPerTorrent" = 60; # per torrent peers
       "Session\\MaxActiveCheckingTorrents" = 3;
-      "Session\\MaxActiveDownloads" = 7;
+      "Session\\MaxActiveDownloads" = 200;
       "Session\\MaxActiveTorrents" = 100;
       "Session\\MaxActiveUploads" = 20;
       "Session\\MaxUploads" = 80;
@@ -244,18 +248,10 @@ in {
   };
 
   environment.etc."tmpfiles.d/downloaders.conf".text = ''
-    Z ${config.qgroget.server.containerDir}/qbittorrent 0700 qbit downloaders -
-    Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 qbit downloaders -
-    Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 qbit downloaders -
+    Z ${config.qgroget.server.containerDir}/qbittorrent 0700 arr downloaders -
+    Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 arr downloaders -
+    Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 arr downloaders -
   '';
-  users.users.qbit = {
-    isSystemUser = true;
-    description = "User for running qBittorrent";
-    home = "/nonexistent";
-    createHome = false;
-    group = "downloaders";
-  };
-
   services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
     {
       domain = "torrent.${config.qgroget.server.domain}";
@@ -286,7 +282,9 @@ in {
       ];
     }
   ];
-  users.groups.downloaders = {};
+  users.groups.downloaders = {
+    gid = 972;
+  };
   users.groups.music = {};
 
   qgroget.backups.torrent = {

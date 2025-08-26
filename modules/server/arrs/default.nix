@@ -59,6 +59,7 @@
 in {
   users.users.arr = {
     isSystemUser = true;
+    uid = 980;
     description = "User for running arr services";
     home = "/nonexistent";
     group = "arr";
@@ -66,7 +67,9 @@ in {
     extraGroups = ["media"];
   };
   users.groups.arr = {};
-  users.groups.media = {};
+  users.groups.media = {
+    gid = 973;
+  };
 
   qgroget.services = {
     sonarr-anime = {
@@ -150,6 +153,13 @@ in {
         "group:admin"
       ];
     }
+    {
+      domain = "jackett.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
   ];
 
   qgroget.backups.arr = {
@@ -166,6 +176,15 @@ in {
     ];
   };
 
+  environment.etc."tmpfiles.d/arr.conf".text = ''
+    Z ${config.services.jackett.dataDir} 0750 arr media -
+    Z ${cfg.containerDir}/sonarr 0700 arr media -
+    Z ${cfg.containerDir}/radarr 0700 arr media -
+    Z ${cfg.containerDir}/sonarr-anime 0700 arr media -
+    Z ${cfg.containerDir}/radarr-anime 0700 arr media -
+    Z ${cfg.containerDir}/bazarr 0700 arr media -
+  '';
+
   sops.secrets = {
     "server/arrs/username" = {
       owner = "traefik";
@@ -176,6 +195,28 @@ in {
       group = "traefik";
     };
   };
+
+  environment.persistence."/persist".directories = [
+    "${config.services.jackett.dataDir}"
+  ];
+
+  services.jackett = {
+    enable = true;
+    user = "arr";
+    group = "media";
+    port = 9117;
+  };
+
+  qgroget.services.jackett = {
+    name = "jackett";
+    url = "http://127.0.0.1:9117";
+    type = "private";
+    middlewares = ["SSO"];
+  };
+
+  networking.firewall.allowedTCPPorts = [
+    9117
+  ];
 
   # inject secret basic token into config file at startup
   systemd.services.traefik = {
@@ -329,18 +370,18 @@ in {
         serviceConfig = commonServiceConfig;
       };
 
-      prowlarr = {
-        autoStart = true;
-        containerConfig = {
-          name = cfg.containers.prowlarr;
-          pod = pods.${cfg.podName}.ref;
-          image = images.prowlarr;
-          volumes = [
-            "${cfg.containerDir}/prowlarr/config:/config:Z"
-          ];
-        };
-        serviceConfig = commonServiceConfig;
-      };
+      # prowlarr = {
+      #   autoStart = true;
+      #   containerConfig = {
+      #     name = cfg.containers.prowlarr;
+      #     pod = pods.${cfg.podName}.ref;
+      #     image = images.prowlarr;
+      #     volumes = [
+      #       "${cfg.containerDir}/prowlarr/config:/config:Z"
+      #     ];
+      #   };
+      #   serviceConfig = commonServiceConfig;
+      # };
     };
   };
 }
