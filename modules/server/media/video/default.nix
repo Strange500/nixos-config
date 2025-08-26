@@ -146,6 +146,21 @@
           ];
         };
       };
+      music = {
+        enabled = true;
+        contentType = "music";
+        pathInfos = ["/mnt/music/media/library"];
+        # preferredMetadataLanguage = "fr";
+        # typeOptions.Music = {
+        #   metadataFetchers = [
+        #     "MusicBrainz"
+        #   ];
+        #   imageFetchers = [
+        #     "MusicBrainz"
+        #     "FanartTv"
+        #   ];
+        # };
+      };
     };
 
     users = {
