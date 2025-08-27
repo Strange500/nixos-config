@@ -7,8 +7,6 @@
   cfg = config.services.beets;
 in {
   options.services.beets = {
-    enable = lib.mkEnableOption "beets (system-wide)";
-
     user = lib.mkOption {
       type = lib.types.str;
       default = "beets";
@@ -17,7 +15,7 @@ in {
 
     group = lib.mkOption {
       type = lib.types.str;
-      default = "jellyfin";
+      default = "music";
       description = "Group for the beets user (should have access to your music tree).";
     };
 
@@ -50,14 +48,12 @@ in {
       default = [
         pkgs.ffmpeg
         pkgs.chromaprint
-        #pkgs.bs1770gain
         pkgs.inotifyTools
         pkgs.util-linux
       ];
       description = "Extra native packages available to beets and used by plugins (fpcalc/chromaprint, ffmpeg, inotifywait, flock, etc.).";
     };
 
-    # Allow overriding the config entirely if the user wants to supply a custom YAML.
     configFile = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
@@ -67,7 +63,7 @@ in {
 
   config = {
     # create user/group
-    users.groups = {"${cfg.group}" = lib.mkDefault {};};
+    users.groups."${cfg.group}" = {};
 
     users.users.${cfg.user} = {
       isSystemUser = true;
@@ -103,6 +99,7 @@ in {
             write: yes
             move: yes
             copy: no
+            hardlink: no
             resume: yes
             incremental: yes
 
@@ -151,23 +148,28 @@ in {
         Group = cfg.group;
         WorkingDirectory = cfg.musicDir;
         Environment = ["BEETSDIR=${toString cfg.configDir}"];
+        RuntimeDirectory = "beets";
         ExecStart = ''
-          ${pkgs.util-linux}/bin/flock -n /run/beets-scan.lock ${pkgs.beets}/bin/beet ${cfg.scanCommand}
+          ${pkgs.util-linux}/bin/flock -n /run/beets/scan.lock \
+            ${pkgs.beets}/bin/beet \
+              -c /etc/beets/config.yaml \
+              -l ${cfg.configDir}/musiclibrary.db \
+              -d ${cfg.musicDir} \
+              ${cfg.scanCommand}
         '';
       };
     };
 
-    # recursive inotify watcher (recommended)
     systemd.services."beets-watcher" = {
       description = "Recursive watcher that triggers Beets scans when music files change";
       wantedBy = ["multi-user.target"];
       serviceConfig = {
         Type = "simple";
-        User = cfg.user;
-        Group = cfg.group;
+        #User = cfg.user;
+        #Group = cfg.group;
         Restart = "always";
         RestartSec = 2;
-        Environment = ["MUSIC_DIR=${toString cfg.musicDir}"];
+        Environment = ["MUSIC_DIR=${toString cfg.inboxDir}"];
         ExecStart = ''
           ${pkgs.bash}/bin/bash -eu -o pipefail -c '${pkgs.inotifyTools}/bin/inotifywait -m -r -e close_write,move,create,delete "$MUSIC_DIR" | while read -r; do sleep 2; systemctl start beets-scan.service || true; done'
         '';

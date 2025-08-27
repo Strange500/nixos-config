@@ -83,7 +83,7 @@
     ];
   };
   environment.etc."tmpfiles.d/music.conf".text = ''
-    Z /mnt/music 0770 nobody jellyfin -
+    Z /mnt/music 0770 beets music -
   '';
   fileSystems."/mnt/share" = {
     device = "share";

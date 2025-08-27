@@ -251,6 +251,7 @@ in {
     Z ${config.qgroget.server.containerDir}/qbittorrent 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 arr downloaders -
+    Z ${config.qgroget.server.containerDir}/nicotine 0700 beets music -
   '';
   services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
     {
@@ -285,7 +286,9 @@ in {
   users.groups.downloaders = {
     gid = 972;
   };
-  users.groups.music = {};
+  users.groups.music = {
+    gid = 971;
+  };
 
   qgroget.backups.torrent = {
     paths = [
@@ -465,12 +468,17 @@ in {
           name = cfg.containers.nicotinePlus;
           image = images.nicotinePlus;
           pod = pods.${cfg.podName}.ref;
-          environments = commonEnv;
+          environments =
+            commonEnv
+            // {
+              PUID = toString config.users.users.beets.uid;
+              PGID = toString config.users.groups.music.gid;
+            };
           volumes = [
             "${cfg.containerDir}/nicotine:/config:Z"
             "/mnt/music:/music:Z"
           ];
-          user = "${toString config.users.users.nobody.uid}:${toString config.users.groups.music.gid}";
+          #user = "${toString config.users.users.nicotine.uid}:${toString config.users.groups.music.gid}";
         };
         serviceConfig = commonServiceConfig;
         unitConfig = {
