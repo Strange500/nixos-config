@@ -70,6 +70,7 @@ in {
       group = cfg.group;
       home = cfg.configDir;
       createHome = true;
+      uid = 969;
     };
 
     # install beets and helper tools
