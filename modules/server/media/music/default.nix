@@ -4,140 +4,105 @@
   config,
   ...
 }: let
-  cfg = config.services.beets;
-in {
-  options.services.beets = {
-    user = lib.mkOption {
-      type = lib.types.str;
-      default = "beets";
-      description = "System user to run the beets services.";
-    };
+  cfg = {
+    user = "beets";
+    group = "music";
+    musicDir = "/mnt/music/media/library";
+    inboxDir = "/mnt/music/torrent/nicotine";
+    configDir = "/var/lib/beets";
+    scanCommand = "import -q ${cfg.inboxDir}";
+    extraPackages = [
+      pkgs.ffmpeg
+      pkgs.chromaprint
+      pkgs.inotifyTools
+      pkgs.util-linux
+    ];
+    settings = (pkgs.formats.yaml {}).generate "config.yaml" {
+      directory = cfg.musicDir;
+      library = "${cfg.configDir}/musiclibrary.db";
+      art_filename = "cover.jpg";
+      threaded = true;
 
-    group = lib.mkOption {
-      type = lib.types.str;
-      default = "music";
-      description = "Group for the beets user (should have access to your music tree).";
-    };
-
-    musicDir = lib.mkOption {
-      type = lib.types.path;
-      default = "/mnt/music/media/library";
-      description = "Root path of the organized music library (where beets writes files).";
-    };
-
-    inboxDir = lib.mkOption {
-      type = lib.types.path;
-      default = "/mnt/music/torrent/nicotine";
-      description = "Optional incoming/inbox folder to watch and import from (used when watcher=\"inbox\").";
-    };
-
-    configDir = lib.mkOption {
-      type = lib.types.path;
-      default = "/var/lib/beets";
-      description = "Directory containing config.yaml and beets state. This module sets BEETSDIR for the services.";
-    };
-
-    scanCommand = lib.mkOption {
-      type = lib.types.str;
-      default = "import -q ${toString config.services.beets.inboxDir}";
-      description = "The beet subcommand to run when a scan is triggered (e.g. 'update -q' or 'import -q /srv/music_inbox').";
-    };
-
-    extraPackages = lib.mkOption {
-      type = lib.types.listOf lib.types.package;
-      default = [
-        pkgs.ffmpeg
-        pkgs.chromaprint
-        pkgs.inotifyTools
-        pkgs.util-linux
+      plugins = [
+        "fetchart"
+        "embedart"
+        "replaygain"
+        "scrub"
+        "lastgenre"
+        "chroma"
+        "web"
       ];
-      description = "Extra native packages available to beets and used by plugins (fpcalc/chromaprint, ffmpeg, inotifywait, flock, etc.).";
-    };
 
-    configFile = lib.mkOption {
-      type = lib.types.nullOr lib.types.str;
-      default = null;
-      description = "If set, the exact YAML text to write to ${config.services.beets.configDir}/config.yaml. If null, the module generates a sane default.";
+      import = {
+        write = true;
+        move = true;
+        copy = false;
+        hardlink = false;
+        resume = true;
+        incremental = true;
+      };
+
+      paths = {
+        default = "$albumartist/$original_year - $album%aunique{}/$track - $title";
+        singleton = "_Singles/$artist - $title";
+        comp = "_Compilations/$album%aunique{} ($original_year)/$track - $artist - $title";
+      };
+
+      fetchart = {
+        auto = true;
+        minwidth = 300;
+        maxwidth = 1000;
+        quality = 85;
+        enforce_ratio = true;
+      };
+
+      embedart = {
+        auto = true;
+      };
+
+      replaygain = {
+        auto = true;
+      };
+
+      scrub = {
+        auto = true;
+      };
+
+      lastgenre = {
+        auto = true;
+        source = "album";
+        count = 3;
+        canonical = true;
+      };
     };
   };
-
+in {
   config = {
-    # create user/group
-    users.groups."${cfg.group}" = {};
+    users.groups.music = {
+      gid = 971;
+    };
 
-    users.users.${cfg.user} = {
+    users.users.beets = {
       isSystemUser = true;
-      group = cfg.group;
       home = cfg.configDir;
-      createHome = true;
+      createHome = false;
+      group = cfg.group;
       uid = 976;
     };
 
     # install beets and helper tools
     environment.systemPackages = [pkgs.beets] ++ cfg.extraPackages;
 
-    # place the generated config (or user-provided config)
-    environment.etc."beets/config.yaml" = {
-      text =
-        if cfg.configFile != null
-        then cfg.configFile
-        else ''
-          directory: ${cfg.musicDir}
-          library: ${cfg.configDir}/musiclibrary.db
-          art_filename: cover.jpg
-          threaded: yes
-
-          plugins:
-            - fetchart
-            - embedart
-            - replaygain
-            - scrub
-            - lastgenre
-            - chroma
-            - web
-
-          import:
-            write: yes
-            move: yes
-            copy: no
-            hardlink: no
-            resume: yes
-            incremental: yes
-
-          paths:
-            default: $albumartist/$original_year - $album%aunique{}/$track - $title
-            singleton: _Singles/$artist - $title
-            comp: _Compilations/$album%aunique{} ($original_year)/$track - $artist - $title
-
-          fetchart:
-            auto: yes
-            minwidth: 300
-            maxwidth: 1000
-            quality: 85
-            enforce_ratio: yes
-
-          embedart:
-            auto: yes
-
-          replaygain:
-            auto: yes
-
-          scrub:
-            auto: yes
-
-          lastgenre:
-            auto: yes
-            source: album
-            count: 3
-            canonical: yes
-        '';
-      mode = "0640";
-      user = cfg.user;
-      group = cfg.group;
-    };
-
     # ensure configDir exists
-    systemd.tmpfiles.rules = ["d ${cfg.configDir} 0750 ${cfg.user} ${cfg.group} -"];
+    systemd.tmpfiles.rules = ["Z ${cfg.configDir} 0700 ${cfg.user} ${cfg.group} -"];
+    environment.persistence."/persist".directories = [
+      {
+        directory = cfg.configDir;
+        user = cfg.user;
+        group = cfg.group;
+        mode = "0700";
+      }
+    ];
 
     # oneshot scan service (locked via flock)
     systemd.services."beets-scan" = {
@@ -153,7 +118,7 @@ in {
         ExecStart = ''
           ${pkgs.util-linux}/bin/flock -n /run/beets/scan.lock \
             ${pkgs.beets}/bin/beet \
-              -c /etc/beets/config.yaml \
+              -c ${cfg.settings} \
               -l ${cfg.configDir}/musiclibrary.db \
               -d ${cfg.musicDir} \
               ${cfg.scanCommand}
@@ -166,8 +131,6 @@ in {
       wantedBy = ["multi-user.target"];
       serviceConfig = {
         Type = "simple";
-        #User = cfg.user;
-        #Group = cfg.group;
         Restart = "always";
         RestartSec = 2;
         Environment = ["MUSIC_DIR=${toString cfg.inboxDir}"];
