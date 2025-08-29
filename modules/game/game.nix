@@ -50,7 +50,9 @@
       enable = true;
       openFirewall = true;
       defaultRuntime = true;
-      autoStart = false;
+      autoStart = true;
+      highPriority = true;
+      steam.importOXRRuntimes = true;
     };
 
     services.hardware.openrgb = {

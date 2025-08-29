@@ -68,7 +68,6 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
-    nixpkgs-xr.url = "github:nix-community/nixpkgs-xr";
 
     portfolio = {
       url = "github:strange500/nextPortfolio";
