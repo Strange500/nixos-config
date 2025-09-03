@@ -266,12 +266,8 @@
                 url = "https://claude.ai/login?returnTo=%2F%3F";
               }
               {
-                name = "Partage - Mines-Télécom";
-                url = "https://partage.imt.fr/index.php/s/58M4RH2qbJ2SZHi";
-              }
-              {
-                name = "Inscription administrative";
-                url = "https://e-services.imt-nord-europe.fr/inscription-administrative/index.php?key=lWlnbGo=&itv=0#";
+                name = "ENT IMT NORD EUROPE";
+                url = "https://myservices.imt-nord-europe.fr/portail/";
               }
             ];
           }
