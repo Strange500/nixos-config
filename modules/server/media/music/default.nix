@@ -1,67 +1,142 @@
-{config, ...}: let
-  musicDir = "/mnt/music/media/beets"; # Adjust to your music directory
-in {
-  qgroget.services.navidrome = {
-    name = "navidrome";
-    url = "http://127.0.0.1:4533";
-    type = "public";
-    journalctl = true;
-    unitName = "navidrome.service";
-  };
-
-  qgroget.backups.navidrome = {
-    paths = [
-      "${config.qgroget.server.containerDir}/navidrome"
-    ];
-    systemdUnits = [
-      "navidrome.service"
-    ];
-  };
-  environment.etc."tmpfiles.d/navidrome.conf".text = ''
-    Z ${config.qgroget.server.containerDir}/navidrome 0700 navidrome music -
-  '';
-  users.users.navidrome = {
-    isSystemUser = true;
-    description = "User for running navidrome";
-    home = "/nonexistent";
-    createHome = false;
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}: let
+  cfg = {
+    user = "beets";
     group = "music";
+    musicDir = "/mnt/music/media/library";
+    inboxDir = "/mnt/music/torrent/nicotine";
+    configDir = "/var/lib/beets";
+    scanCommand = "import -q ${cfg.inboxDir}";
+    extraPackages = [
+      pkgs.ffmpeg
+      pkgs.chromaprint
+      pkgs.inotifyTools
+      pkgs.util-linux
+    ];
+    settings = (pkgs.formats.yaml {}).generate "config.yaml" {
+      directory = cfg.musicDir;
+      library = "${cfg.configDir}/musiclibrary.db";
+      art_filename = "cover.jpg";
+      threaded = true;
+
+      plugins = [
+        "fetchart"
+        "embedart"
+        "replaygain"
+        "scrub"
+        "lastgenre"
+        "chroma"
+        "web"
+      ];
+
+      import = {
+        write = true;
+        move = true;
+        copy = false;
+        hardlink = false;
+        resume = true;
+        incremental = true;
+      };
+
+      paths = {
+        default = "$albumartist/$original_year - $album%aunique{}/$track - $title";
+        singleton = "_Singles/$artist - $title";
+        comp = "_Compilations/$album%aunique{} ($original_year)/$track - $artist - $title";
+      };
+
+      fetchart = {
+        auto = true;
+        minwidth = 300;
+        maxwidth = 1000;
+        quality = 85;
+        enforce_ratio = true;
+      };
+
+      embedart = {
+        auto = true;
+      };
+
+      replaygain = {
+        auto = true;
+      };
+
+      scrub = {
+        auto = true;
+      };
+
+      lastgenre = {
+        auto = true;
+        source = "album";
+        count = 3;
+        canonical = true;
+      };
+    };
   };
-  users.groups.music = {};
+in {
+  config = {
+    users.groups.music = {
+      gid = 971;
+    };
 
-  virtualisation.quadlet = {
-    containers.navidrome = {
-      autoStart = true;
+    users.users.beets = {
+      isSystemUser = true;
+      home = cfg.configDir;
+      createHome = false;
+      group = cfg.group;
+      uid = 976;
+    };
 
-      containerConfig = {
-        image = "docker.io/deluan/navidrome:latest";
-        user = "${toString config.users.users.navidrome.uid}:${toString config.users.groups.music.gid}";
+    # install beets and helper tools
+    environment.systemPackages = [pkgs.beets] ++ cfg.extraPackages;
 
-        # Environment variables
-        environments = {
-          ND_SCANSCHEDULE = "@every 12h";
-          ND_LOGLEVEL = "info";
-          ND_SESSIONTIMEOUT = "24h";
-          ND_BASEURL = "";
-        };
+    # ensure configDir exists
+    systemd.tmpfiles.rules = ["Z ${cfg.configDir} 0700 ${cfg.user} ${cfg.group} -"];
+    environment.persistence."/persist".directories = [
+      {
+        directory = cfg.configDir;
+        user = cfg.user;
+        group = cfg.group;
+        mode = "0700";
+      }
+    ];
 
-        # Volume mounts
-        volumes = [
-          "${config.qgroget.server.containerDir}/navidrome/data:/data:Z"
-          "${musicDir}:/music:ro,Z"
-        ];
-
-        # Port mapping
-        publishPorts = ["4533:4533"];
-      };
-
+    # oneshot scan service (locked via flock)
+    systemd.services."beets-scan" = {
+      description = "Beets library scan/update";
+      wantedBy = ["multi-user.target"];
       serviceConfig = {
-        Restart = "unless-stopped";
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        WorkingDirectory = cfg.musicDir;
+        Environment = ["BEETSDIR=${toString cfg.configDir}"];
+        RuntimeDirectory = "beets";
+        ExecStart = ''
+          ${pkgs.util-linux}/bin/flock -n /run/beets/scan.lock \
+            ${pkgs.beets}/bin/beet \
+              -c ${cfg.settings} \
+              -l ${cfg.configDir}/musiclibrary.db \
+              -d ${cfg.musicDir} \
+              ${cfg.scanCommand}
+        '';
       };
+    };
 
-      unitConfig = {
-        Requires = ["network-online.target"];
-        After = ["network-online.target"];
+    systemd.services."beets-watcher" = {
+      description = "Recursive watcher that triggers Beets scans when music files change";
+      wantedBy = ["multi-user.target"];
+      serviceConfig = {
+        Type = "simple";
+        Restart = "always";
+        RestartSec = 2;
+        Environment = ["MUSIC_DIR=${toString cfg.inboxDir}"];
+        ExecStart = ''
+          ${pkgs.bash}/bin/bash -eu -o pipefail -c '${pkgs.inotifyTools}/bin/inotifywait -m -r -e close_write,move,create,delete "$MUSIC_DIR" | while read -r; do sleep 2; systemctl start beets-scan.service || true; done'
+        '';
       };
     };
   };

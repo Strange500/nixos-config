@@ -35,7 +35,7 @@
 
   # add user jellyfin to video and render groups
   users.users.jellyfin = {
-    extraGroups = ["video" "render" "media"];
+    extraGroups = ["video" "render" "media" "music"];
   };
 
   services.declarative-jellyfin = {
@@ -145,6 +145,21 @@
             "TheMovieDb"
           ];
         };
+      };
+      music = {
+        enabled = true;
+        contentType = "music";
+        pathInfos = ["/mnt/music/media/library"];
+        # preferredMetadataLanguage = "fr";
+        # typeOptions.Music = {
+        #   metadataFetchers = [
+        #     "MusicBrainz"
+        #   ];
+        #   imageFetchers = [
+        #     "MusicBrainz"
+        #     "FanartTv"
+        #   ];
+        # };
       };
     };
 
