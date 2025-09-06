@@ -8,7 +8,7 @@
       };
       remote-access = {
         enable = true;
-        tailscale.enable = false;
+        tailscale.enable = true;
         sunshine.enable = false;
       };
       apps = {
