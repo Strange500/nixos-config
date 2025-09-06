@@ -176,6 +176,11 @@
             default = false;
             description = "Enable Tailscale for remote access.";
           };
+          tailscale.autoConnect = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable automatic connection to Tailscale on network changes.";
+          };
           sunshine.enable = lib.mkOption {
             type = lib.types.bool;
             default = false;

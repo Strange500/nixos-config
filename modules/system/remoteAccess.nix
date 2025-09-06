@@ -6,8 +6,6 @@
 }: let
   # Tailscale reconnection script
   tailscaleReconnectScript = pkgs.writeShellScript "tailscale-reconnect" ''
-    #!/bin/bash
-
     # Logging function
     log() {
         echo "$(date '+%Y-%m-%d %H:%M:%S') [tailscale-dispatcher] $1" | ${pkgs.systemd}/bin/systemd-cat -t tailscale-dispatcher
@@ -100,6 +98,16 @@ in {
       secrets."tailscale/oauth/key" = {
       };
     };
+    environment.systemPackages =
+      lib.mkIf (config.qgroget.nixos.remote-access.tailscale.enable)
+      [
+        (pkgs.writeShellScriptBin "tailscale-reconnect" ''
+          #!${pkgs.bash}/bin/bash
+          tailscale down
+          ${tailscaleReconnectScript}
+        '')
+        pkgs.tailscale
+      ];
     services = {
       openssh = {
         enable = true;
@@ -148,14 +156,14 @@ in {
       };
     };
 
-    networking.networkmanager.dispatcherScripts = lib.mkIf config.qgroget.nixos.remote-access.tailscale.enable [
+    networking.networkmanager.dispatcherScripts = lib.mkIf config.qgroget.nixos.remote-access.tailscale.autoConnect [
       {
         source = networkManagerDispatcher;
         type = "basic";
       }
     ];
 
-    systemd.services.tailscale-autoconnect = lib.mkIf config.qgroget.nixos.remote-access.tailscale.enable {
+    systemd.services.tailscale-autoconnect = lib.mkIf config.qgroget.nixos.remote-access.tailscale.autoConnect {
       description = "Automatic connection to Tailscale";
       after = ["network-pre.target" "tailscale.service"];
       wants = ["network-pre.target" "tailscale.service"];
