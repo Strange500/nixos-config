@@ -35,6 +35,62 @@
   fileSystems."/var/log".neededForBoot = true;
   fileSystems."/var/lib/sops".neededForBoot = true;
 
+  # # If you use NetworkManager, keep it off the AP iface:
+  # networking.networkmanager.unmanaged = ["interface-name:wlp11s0"];
+
+  # # Static IP for the AP side
+  # networking.interfaces.wlp11s0.useDHCP = false;
+  # networking.interfaces.wlp11s0.ipv4.addresses = [
+  #   {
+  #     address = "192.168.50.1";
+  #     prefixLength = 24;
+  #   }
+  # ];
+
+  # # hostapd: 5 GHz on channel 36 (non-DFS), FR regulatory domain
+  # services.hostapd = {
+  #   enable = true;
+  #   radios.wlp11s0 = {
+  #     band = "5g";
+  #     channel = 36;
+  #     countryCode = "FR";
+  #     networks.wlp11s0 = {
+  #       ssid = "My5GHzAP";
+  #       authentication = {
+  #         mode = "wpa2-sha256"; # WPA2-Personal
+  #         wpaPassword = "StrongPass123";
+  #       };
+  #     };
+  #   };
+  # };
+
+  # # DHCP/DNS for clients on wlp11s0
+  # services.dnsmasq = {
+  #   enable = true;
+  #   settings = {
+  #     interface = ["wlp11s0"];
+  #     bind-interfaces = true;
+  #     dhcp-range = "192.168.50.10,192.168.50.100,12h";
+  #     dhcp-option = [
+  #       "option:router,192.168.50.1"
+  #       "option:dns-server,192.168.50.1"
+  #     ];
+  #   };
+  # };
+
+  # # Share internet from your uplink (replace enp3s0 with your real WAN iface)
+  # networking.nat = {
+  #   enable = true;
+  #   externalInterface = "enp3s0";
+  #   internalInterfaces = ["wlp11s0"];
+  # };
+
+  # # Allow DNS & DHCP from Wi-Fi clients
+  # networking.firewall.interfaces."wlp11s0" = {
+  #   allowedUDPPorts = [67 53];
+  #   allowedTCPPorts = [53];
+  # };
+
   environment.persistence = {
     "/persist" = {
       enable = true;
