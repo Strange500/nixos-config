@@ -47,6 +47,7 @@
     quadlet = {
       enable = true;
       autoEscape = true;
+      autoUpdate.enable = true;
     };
 
     containers.enable = true;
