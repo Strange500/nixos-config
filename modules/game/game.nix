@@ -43,7 +43,7 @@
     systemd.user.services.monado.environment = lib.mkIf config.qgroget.nixos.vr {
       STEAMVR_LH_ENABLE = "1";
       XRT_COMPOSITOR_COMPUTE = "1";
-      HAND_TRACKING_ENABLE = "0";
+      HAND_TRACKING_ENABLE = "1";
     };
 
     services.wivrn = lib.mkIf config.qgroget.nixos.vr {
