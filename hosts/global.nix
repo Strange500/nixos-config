@@ -22,6 +22,8 @@
     ../modules/logo
   ];
 
+  users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [config.qgroget.user.username];
+
   networking.networkmanager = {enable = true;};
   services = {
     xserver.xkb = {
@@ -35,6 +37,18 @@
   virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
     libvirtd.enable = true;
+    virtualbox = {
+      host = {
+        enable = true;
+        enableKvm = true;
+        enableExtensionPack = true;
+        addNetworkInterface = false;
+      };
+      guest = {
+        enable = true;
+        dragAndDrop = true;
+      };
+    };
   };
 
   xdg.portal = {
