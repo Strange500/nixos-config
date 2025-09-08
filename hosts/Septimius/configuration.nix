@@ -28,5 +28,7 @@
     brightnessctl
   ];
 
+  services.upower.enable = true;
+
   boot.kernelParams = ["acpi_enforce_resources=lax"];
 }
