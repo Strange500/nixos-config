@@ -70,6 +70,11 @@
           default = "/etc/containersConfig";
           description = "Directory for container configurations.";
         };
+        mediaDir = lib.mkOption {
+          type = lib.types.str;
+          default = "/mnt/media";
+          description = "Directory for media storage used by media services.";
+        };
       };
       nixos = {
         auto-update = lib.mkOption {
