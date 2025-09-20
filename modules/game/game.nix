@@ -24,6 +24,7 @@
       [
         protontricks
         steam-rom-manager
+        prismlauncher
       ]
       ++ lib.optionals config.qgroget.nixos.vr [
         opencomposite
