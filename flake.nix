@@ -59,11 +59,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    crowdsec = {
-      url = "git+https://codeberg.org/kampka/nix-flake-crowdsec.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
@@ -101,15 +96,12 @@
       inputs.impermanence.nixosModules.impermanence
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
-      inputs.crowdsec.nixosModules.crowdsec
-      inputs.crowdsec.nixosModules.crowdsec-firewall-bouncer
       inputs.portfolio.nixosModules.default
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       inputs.jovian-nixos.nixosModules.default
-      inputs.nixpkgs-xr.nixosModules.nixpkgs-xr
     ];
 
     # Helper function to create a NixOS system configuration

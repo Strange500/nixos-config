@@ -7,11 +7,9 @@
 }: let
   cfg = config.qgroget.services;
 
-  # Collection definitions with better organization
+  # Collections grouped by type
   collections = {
-    base = [
-      "crowdsecurity/linux"
-    ];
+    base = ["crowdsecurity/linux"];
     applications = [
       "LePresidente/jellyfin"
       "LePresidente/jellyseerr"
@@ -23,181 +21,59 @@
     ];
   };
 
-  # Flatten all collections into a single list
   allCollections = lib.flatten (lib.attrValues collections);
 
-  # Parser definitions
   parsers = [
     "crowdsecurity/syslog-logs"
     "crowdsecurity/dateparse-enrich"
   ];
 
-  # Generate acquisition configuration for a service
+  # Build acquisition entries per service
   generateAcquisition = service:
-    if service ? journalctl && service.journalctl == true
-    then ''
-      ---
-      journalctl_filter:
-        - "_SYSTEMD_UNIT=${service.unitName}"
-      labels:
-        type: ${service.name}
-    ''
-    else
-      lib.optionalString (service.logPath != "") ''
-        ---
-        filenames:
-          - "${service.logPath}"
-        labels:
-          type: ${service.name}
-        poll_without_inotify: true
-      '';
-
-  # Generate install command for collections/parsers
-  generateInstallCmd = type: item: "cscli ${type} install ${item}";
-
-  # Create the complete acquisitions configuration
-  acquisitionsConfig = lib.concatStringsSep "\n" (
-    map generateAcquisition (lib.attrValues cfg)
-  );
-
-  # Write acquisitions to a file
-  acquisitionsFile = pkgs.writeText "acquisitions.yaml" acquisitionsConfig;
-
-  # Create the setup script
-  setupScript = pkgs.writeScriptBin "crowdsec-setup" ''
-    #!${pkgs.runtimeShell}
-    set -euo pipefail
-
-    # Function to wait for CrowdSec API
-    wait_for_api() {
-      local max_attempts=30
-      local attempt=1
-
-      echo "Waiting for CrowdSec API to be ready..."
-
-      while [ $attempt -le $max_attempts ]; do
-        if cscli version >/dev/null 2>&1; then
-          echo "CrowdSec API is ready"
-          return 0
-        fi
-
-        echo "Attempt $attempt/$max_attempts: API not ready, waiting..."
-        sleep 2
-        ((attempt++))
-      done
-
-      echo "ERROR: CrowdSec API failed to start after $max_attempts attempts"
-      return 1
+    if (service ? journalctl && service.journalctl == true && service ? unitName)
+    then {
+      source = "journalctl";
+      journalctl_filter = ["_SYSTEMD_UNIT=${service.unitName}"];
+      labels = {type = service.name;};
     }
-
-    # Function to install collections
-    install_collections() {
-      echo "Installing collections..."
-      ${lib.concatStringsSep "\n    " (map (generateInstallCmd "collections") allCollections)}
-      echo "Collections installed successfully"
+    else if (service ? logPath && service.logPath != null)
+    then {
+      source = "file";
+      filenames = [service.logPath];
+      labels = {type = service.name;};
+      poll_without_inotify = false;
     }
+    else {};
 
-    # Function to install parsers
-    install_parsers() {
-      echo "Installing parsers..."
-      ${lib.concatStringsSep "\n    " (map (generateInstallCmd "parsers") parsers)}
-      echo "Parsers installed successfully"
-    }
-
-    # Main execution
-    main() {
-      wait_for_api || exit 1
-      install_collections
-      install_parsers
-      echo "CrowdSec setup completed successfully"
-    }
-
-    main "$@"
-  '';
+  acquisitionsConfig =
+    lib.filter (x: x != {}) (map generateAcquisition (lib.attrValues cfg));
 in {
   config = {
-    # SOPS secrets configuration
     sops.secrets."crowdsec/enrollKey" = {
-      group = "crowdsec";
       owner = "crowdsec";
-    };
-
-    nixpkgs.overlays = [inputs.crowdsec.overlays.default];
-    services.crowdsec-firewall-bouncer = {
-      enable = true;
-      settings = {
-        api_key = "ZEDCIHBIYUBZEF4145221544SFEFR514QDSRFV541";
-        api_url = "http://localhost:8887";
-      };
+      group = "crowdsec";
     };
 
     users.users.crowdsec.extraGroups = ["systemd-journal"];
 
-    # CrowdSec service configuration
     services.crowdsec = {
       enable = true;
-      enrollKeyFile = config.sops.secrets."crowdsec/enrollKey".path;
-      allowLocalJournalAccess = true;
 
-      settings = {
-        crowdsec_service.acquisition_path = acquisitionsFile;
-        api.server.listen_uri = "127.0.0.1:8887";
+      # Enroll key for console + LAPI
+      settings.console.tokenFile = config.sops.secrets."crowdsec/enrollKey".path;
+
+      localConfig = {
+        acquisitions = acquisitionsConfig;
       };
-    };
 
-    # Systemd service overrides
-    systemd.services.crowdsec = {
-      after = ["network.target"];
-      wants = ["network.target"];
-
-      serviceConfig = {
-        ExecStartPre = let
-          script = pkgs.writeScriptBin "register-bouncer" ''
-            #!${pkgs.runtimeShell}
-            set -eu
-            set -o pipefail
-
-            if ! cscli bouncers list | grep -q "firewall"; then
-              cscli bouncers add "firewall" --key "ZEDCIHBIYUBZEF4145221544SFEFR514QDSRFV541"
-            fi
-          '';
-        in ["${setupScript}/bin/crowdsec-setup" "${script}/bin/register-bouncer"];
-        # Add restart policies for better resilience
-        Restart = "on-failure";
-        RestartSec = "10s";
-
-        PrivateUsers = false;
-        SupplementaryGroups = ["systemd-journal"];
+      hub = {
+        collections = allCollections;
+        parsers = parsers;
       };
-    };
 
-    # Optional: Add a timer for periodic collection updates
-    systemd.services.crowdsec-update-collections = {
-      description = "Update CrowdSec collections and parsers";
-      serviceConfig = {
-        Type = "oneshot";
-        User = "crowdsec";
-        Group = "crowdsec";
-        ExecStart = pkgs.writeScript "update-collections" ''
-          #!${pkgs.runtimeShell}
-          set -euo pipefail
+      autoUpdateService = true;
 
-          echo "Updating CrowdSec collections..."
-          cscli collections upgrade --all || true
-          cscli parsers upgrade --all || true
-          echo "Update completed"
-        '';
-      };
-    };
-
-    systemd.timers.crowdsec-update-collections = {
-      description = "Update CrowdSec collections weekly";
-      wantedBy = ["timers.target"];
-      timerConfig = {
-        OnCalendar = "weekly";
-        Persistent = true;
-        RandomizedDelaySec = "1h";
-      };
+      #settings.general.api.server.enable = true;
     };
   };
 }
