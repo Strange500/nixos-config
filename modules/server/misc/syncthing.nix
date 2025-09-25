@@ -6,28 +6,34 @@
 }: let
   cfg = config.qgroget.syncthing;
 
-  # Extract server devices (devices that are NOT this server)
+  # keeps all devcices except the one named as this hostname
   serverDevices =
     lib.filterAttrs (
-      _name: device:
-        device.id != cfg.settings.devices.server.id
+      name: device:
+        lib.toLower device.name != lib.toLower hostname
     )
     cfg.settings.devices;
 
   # Build server folder configuration from options
+
   serverFolders =
-    lib.mapAttrs' (
-      name: folderCfg:
-        lib.nameValuePair name (lib.mkIf (folderCfg.enable && folderCfg.server.enable) {
-          inherit (folderCfg) id ignorePerms;
-          path = folderCfg.server.path;
-          type = folderCfg.server.type;
-          devices = map (deviceName: cfg.settings.devices.${deviceName}.id) folderCfg.server.devices;
-        })
+    lib.mapAttrs (
+      name: folder:
+        if folder ? server && folder.server.enable or false
+        then {
+          id = folder.server.id;
+          ignorePerms = folder.server.ignorePerms;
+          path = folder.server.path;
+          type = folder.server.type;
+          devices = folder.server.devices;
+        }
+        else null
     )
     cfg.settings.folders;
+
+  filteredServerFolders = lib.filterAttrs (_: v: v != null) serverFolders;
 in {
-  config = lib.mkIf (cfg.enable && cfg.server) {
+  config = lib.mkIf (cfg.server) {
     sops.secrets = {
       "syncthing/${hostname}/cert" = {};
       "syncthing/${hostname}/key" = {};
@@ -35,7 +41,7 @@ in {
 
     qgroget.services.syncthing = {
       name = "syncthing";
-      url = "http://127.0.0.1:8384";
+      url = "http://${config.services.syncthing.guiAddress}";
       type = "private";
     };
 
@@ -58,19 +64,22 @@ in {
       };
     };
 
-    systemd.tmpfiles.rules = [
-      "d /mnt/share/syncthing/computer - - - - syncthing syncthing 0700"
-      "d /mnt/share/syncthing/QGCube - - - - syncthing syncthing 0700"
-      "Z /mnt/share/syncthing/computer - - - - syncthing syncthing 0700"
-      "Z /mnt/share/syncthing/QGCube - - - - syncthing syncthing 0700"
-    ];
+    users.users.syncthing = {
+      isSystemUser = true;
+      group = "syncthing";
+      home = "/var/lib/syncthing";
+      createHome = true;
+      extraGroups = ["share"];
+    };
+    users.groups.syncthing = {};
 
     services.syncthing = {
       enable = true;
       cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
       key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
+      guiAddress = "0.0.0.0:8384";
       settings = {
-        folders = serverFolders;
+        folders = filteredServerFolders;
         devices = serverDevices;
         options = cfg.settings.options;
       };

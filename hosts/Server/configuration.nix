@@ -95,8 +95,10 @@
     ];
   };
   environment.etc."tmpfiles.d/share.conf".text = ''
-    Z /mnt/share 0750 nobody share -
+    Z /mnt/share/syncthing/computer 0700 syncthing share -
+    Z /mnt/share/syncthing/QGCube 0700 syncthing share -
   '';
+  users.groups.share = {};
   fileSystems."/mnt/immich" = {
     device = "immich";
     fsType = "virtiofs";

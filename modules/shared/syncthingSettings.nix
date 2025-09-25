@@ -3,9 +3,7 @@
   config,
   lib,
   ...
-}: let
-  cfg = config.qgroget.syncthing;
-in {
+}: {
   options = {
     qgroget.syncthing = {
       enable = lib.mkEnableOption "Enable Syncthing";
@@ -38,28 +36,22 @@ in {
         folders = lib.mkOption {
           type = lib.types.attrsOf (lib.types.submodule {
             options = {
-              id = lib.mkOption {
-                type = lib.types.str;
-                description = "Folder ID";
-              };
-
-              enable = lib.mkOption {
-                type = lib.types.bool;
-                default = true;
-                description = "Enable this folder";
-              };
-
-              ignorePerms = lib.mkOption {
-                type = lib.types.bool;
-                default = false;
-                description = "Ignore permissions";
-              };
-
               client = {
+                id = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Folder ID";
+                };
+
                 enable = lib.mkOption {
                   type = lib.types.bool;
                   default = true;
-                  description = "Enable on client";
+                  description = "Enable this folder";
+                };
+
+                ignorePerms = lib.mkOption {
+                  type = lib.types.bool;
+                  default = false;
+                  description = "Ignore permissions";
                 };
 
                 path = lib.mkOption {
@@ -80,10 +72,21 @@ in {
               };
 
               server = {
+                id = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Folder ID";
+                };
+
                 enable = lib.mkOption {
                   type = lib.types.bool;
                   default = true;
-                  description = "Enable on server";
+                  description = "Enable this folder";
+                };
+
+                ignorePerms = lib.mkOption {
+                  type = lib.types.bool;
+                  default = false;
+                  description = "Ignore permissions";
                 };
 
                 path = lib.mkOption {
@@ -163,29 +166,37 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    # Example configuration
+  config = {
+    qgroget.syncthing.server = true;
     qgroget.syncthing.settings = lib.mkDefault {
       devices = {
         computer = {
           id = "MIEGPSQ-YF5VPLB-JFCL4IO-ANCQE5V-3ED4YE2-JARMEHX-63N7N4I-UGDLPAT";
-          name = "Computer";
+          name = "computer";
+          addresses = ["dynamic"];
+        };
+
+        cube = {
+          id = "CTNRWX7-SVJNCAG-Q7TFCYP-QRUQ2JJ-2LZMVLU-HMF2GWA-2MKTZZN-FO5PBQQ";
+          name = "cube";
           addresses = ["dynamic"];
         };
 
         server = {
-          id = "THPSKZ7-45G7YFY-P566CM4-O5R3WMV-IVGFIXS-QPOP6VH-LIK7MGR-5G63BAY";
-          name = "Server";
+          id = "KRX6LMH-4XURSRV-HBBBYJR-FN3VGP3-BIKXM3I-MANABJO-6ACA26Z-JW5WOA3";
+          name = "server";
           addresses = ["dynamic"];
         };
       };
 
       folders = {
-        Documents = {
+        Documents = let
           id = "rglxv-6cyvw";
           ignorePerms = false;
-
+        in {
           client = {
+            id = id;
+            ignorePerms = ignorePerms;
             enable = true;
             path = "${config.home.homeDirectory}/Documents";
             type = "sendreceive";
@@ -193,6 +204,8 @@ in {
           };
 
           server = {
+            id = id;
+            ignorePerms = ignorePerms;
             enable = true;
             path = "/mnt/share/syncthing/computer/Documents";
             type = "sendreceive";
@@ -200,11 +213,13 @@ in {
           };
         };
 
-        QGCube = {
+        QGCube = let
           id = "pqmdn-esnyq";
           ignorePerms = false;
-
+        in {
           client = {
+            id = id;
+            ignorePerms = ignorePerms;
             enable = true;
             path = "${config.home.homeDirectory}/gameSync";
             type = "receiveonly";
@@ -212,10 +227,12 @@ in {
           };
 
           server = {
+            id = id;
+            ignorePerms = ignorePerms;
             enable = true;
             path = "/mnt/share/syncthing/QGCube";
             type = "sendonly";
-            devices = ["computer"];
+            devices = ["cube"];
           };
         };
       };

@@ -109,7 +109,6 @@
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       inputs.jovian-nixos.nixosModules.default
-      inputs.nixpkgs-xr.nixosModules.nixpkgs-xr
     ];
 
     # Helper function to create a NixOS system configuration

@@ -6,46 +6,44 @@
 }: let
   cfg = config.qgroget.syncthing;
 
-  # Extract client devices (devices that are NOT this client)
   clientDevices =
     lib.filterAttrs (
-      _name: device:
-        device.id != cfg.settings.devices.computer.id
+      name: device:
+        lib.toLower device.name != lib.toLower hostname
     )
     cfg.settings.devices;
 
-  # Build client folder configuration from options
   clientFolders =
-    lib.mapAttrs' (
-      name: folderCfg: let
-        # Map folder names to enable conditions
-        enableCondition =
-          if name == "Documents"
-          then config.qgroget.nixos.apps.sync.desktop.enable
-          else if name == "QGCube"
-          then config.qgroget.nixos.apps.sync.game.enable
-          else true; # Default to enabled for other folders
-      in
-        lib.nameValuePair name (lib.mkIf (folderCfg.enable && folderCfg.client.enable && enableCondition) {
-          inherit (folderCfg) id ignorePerms;
-          path = folderCfg.client.path;
-          type = folderCfg.client.type;
-          devices = map (deviceName: cfg.settings.devices.${deviceName}.id) folderCfg.client.devices;
-        })
+    lib.mapAttrs (
+      name: folder:
+        if folder ? client && folder.client.enable or false
+        then {
+          id = folder.client.id;
+          ignorePerms = folder.client.ignorePerms;
+          path = folder.client.path;
+          type = folder.client.type;
+          devices = folder.client.devices;
+        }
+        else null
     )
     cfg.settings.folders;
+
+  filteredClientFolders = lib.filterAttrs (_: v: v != null) clientFolders;
 in {
-  sops.secrets = {
-    "syncthing/${hostname}/cert" = {};
-    "syncthing/${hostname}/key" = {};
+  sops = {
+    secrets = {
+      "syncthing/${hostname}/cert" = {};
+      "syncthing/${hostname}/key" = {};
+    };
   };
 
   services.syncthing = {
     enable = true;
     cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
     key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
+    guiAddress = "127.0.0.1:8384";
     settings = {
-      folders = clientFolders;
+      folders = filteredClientFolders;
       devices = clientDevices;
       options = cfg.settings.options;
     };
