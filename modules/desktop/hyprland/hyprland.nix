@@ -14,7 +14,6 @@
       "$menu" = "wofi --show drun";
 
       exec-once = [
-        "blueman-tray"
         "nm-applet"
         "hyprpanel"
         "openrgb --startminimized -p default"
@@ -111,8 +110,6 @@
 
         touchpad = {natural_scroll = false;};
       };
-
-      gestures = {workspace_swipe = false;};
 
       device = {
         name = "epic-mouse-v1";
