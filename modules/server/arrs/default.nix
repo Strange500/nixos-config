@@ -207,6 +207,11 @@ in {
     port = 9117;
   };
 
+  services.flaresolverr = {
+    enable = true;
+    port = cfg.ports.flaresolverr;
+  };
+
   qgroget.services.jackett = {
     name = "jackett";
     url = "http://127.0.0.1:9117";
@@ -261,7 +266,6 @@ in {
           "${toString cfg.ports.sonarr}:9090"
           "${toString cfg.ports.radarr}:7877"
           "${toString cfg.ports.bazarr}:6767"
-          "${toString cfg.ports.flaresolverr}:8191"
           "${toString cfg.ports.prowlarr}:9696"
         ];
       };
@@ -351,37 +355,6 @@ in {
           // commonContainerConfig;
         serviceConfig = commonServiceConfig;
       };
-
-      flaresolverr = {
-        autoStart = true;
-        containerConfig = {
-          name = cfg.containers.flaresolverr;
-          pod = pods.${cfg.podName}.ref;
-          image = images.flaresolverr;
-          environments = {
-            no_sandbox = "true";
-            TZ = "Europe/Paris";
-          };
-          dns = [
-            "94.140.14.140"
-            "94.140.14.141"
-          ];
-        };
-        serviceConfig = commonServiceConfig;
-      };
-
-      # prowlarr = {
-      #   autoStart = true;
-      #   containerConfig = {
-      #     name = cfg.containers.prowlarr;
-      #     pod = pods.${cfg.podName}.ref;
-      #     image = images.prowlarr;
-      #     volumes = [
-      #       "${cfg.containerDir}/prowlarr/config:/config:Z"
-      #     ];
-      #   };
-      #   serviceConfig = commonServiceConfig;
-      # };
     };
   };
 }
