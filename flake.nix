@@ -59,12 +59,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    crowdsec = {
-      url = "git+https://codeberg.org/kampka/nix-flake-crowdsec.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
+    jovian-nixos.inputs.nixpkgs.follows = "nixpkgs";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
@@ -101,8 +97,6 @@
       inputs.impermanence.nixosModules.impermanence
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
-      inputs.crowdsec.nixosModules.crowdsec
-      inputs.crowdsec.nixosModules.crowdsec-firewall-bouncer
       inputs.portfolio.nixosModules.default
     ];
 

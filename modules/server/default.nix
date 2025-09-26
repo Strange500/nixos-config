@@ -18,7 +18,6 @@
   ];
 
   config = {
-    users.users.crowdsec.extraGroups = ["systemd-journal"];
     environment.persistence."/persist".directories = [
       "${config.qgroget.server.containerDir}"
       "/var/lib/postgresql"
