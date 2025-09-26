@@ -24,7 +24,7 @@
       };
       gaming = true;
       desktop.loginManager = lib.mkForce "none";
-      desktop.desktopEnvironment = lib.mkForce "gnome";
+      desktop.desktopEnvironment = lib.mkForce "kde";
       settings.bluetooth.enable = false;
     };
   };

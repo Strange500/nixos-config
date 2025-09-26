@@ -73,7 +73,8 @@
     ];
   };
   environment.etc."tmpfiles.d/media.conf".text = ''
-    Z /mnt/media 0775 arr jellyfin -
+    Z /mnt/media/torrents 0775 arr jellyfin -
+    Z /mnt/media/media 0775 arr jellyfin -
   '';
   fileSystems."/mnt/music" = {
     device = "music";

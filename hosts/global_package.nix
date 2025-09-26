@@ -14,15 +14,19 @@
       portalPackage =
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
-    virt-manager.enable = config.qgroget.nixos.isDesktop;
     zsh.enable = true;
     dconf.enable = true;
   };
 
   services = {
-    desktopManager.plasma6.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde";
-    desktopManager.gnome.enable = lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome";
+    desktopManager.plasma6 = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde") {
+      enable = true;
+    };
+    desktopManager.gnome = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome") {
+      enable = true;
+    };
   };
+  services.xserver.displayManager.startx.enable = true;
 
   xdg.portal.enable = true;
 

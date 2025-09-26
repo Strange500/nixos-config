@@ -15,25 +15,16 @@
 
   users.mutableUsers = false;
 
-  jovian.steamos.useSteamOSConfig = true;
-
+  services.crowdsec.enable = true;
   jovian = {
     steam = {
       enable = true;
       user = config.qgroget.user.username;
       autoStart = true;
-      desktopSession = "gnome";
-      updater.splash = "bgrt";
+      desktopSession = "plasmax11";
     };
-    decky-loader = {
-      enable = true;
-      user = "${config.qgroget.user.username}";
-    };
+
     hardware = {
-      amd.gpu = {
-        enableEarlyModesetting = true;
-        enableBacklightControl = true;
-      };
       has = {
         amd = {
           gpu = true;
