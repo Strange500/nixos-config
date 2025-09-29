@@ -10,6 +10,7 @@
         sunshine.enable = false;
       };
       apps = {
+        school = true;
         sync = {
           desktop.enable = true;
           game.enable = false;

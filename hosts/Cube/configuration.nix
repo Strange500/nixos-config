@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  pkgs,
   ...
 }: {
   imports = [
@@ -13,24 +14,20 @@
     ./hardware-configuration.nix
   ];
 
-  users.mutableUsers = false;
+  services.xserver.enable = true;
 
-  services.crowdsec.enable = true;
   jovian = {
     steam = {
       enable = true;
       user = config.qgroget.user.username;
       autoStart = true;
-      desktopSession = "plasmax11";
+      desktopSession = "gnome";
     };
-
-    hardware = {
-      has = {
-        amd = {
-          gpu = true;
-        };
-      };
+    decky-loader = {
+      enable = true;
+      user = config.qgroget.user.username;
     };
+    hardware.has.amd.gpu = true;
   };
 
   programs.gamemode = {
@@ -40,22 +37,15 @@
         renice = 10;
       };
       gpu = {
-        apply_gpu_optimisations = "accept-responsibility"; # For systems with AMD GPUs
+        apply_gpu_optimisations = "accept-responsibility";
         gpu_device = 0;
         amd_performance_level = "high";
       };
     };
   };
 
-  programs.steam = {
-    enable = true;
-    localNetworkGameTransfers.openFirewall = true;
-  };
-
-  boot = {
-    loader.grub = {
-      efiSupport = true;
-      efiInstallAsRemovable = true;
-    };
+  boot.loader.grub = {
+    efiSupport = true;
+    efiInstallAsRemovable = true;
   };
 }

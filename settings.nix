@@ -83,6 +83,11 @@
           description = "Enable basic apps (terminal, browser, file manager, etc.).";
         };
         apps = {
+          school = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Enable school-related apps.";
+          };
           basic = lib.mkOption {
             type = lib.types.bool;
             default = true;

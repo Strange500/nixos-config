@@ -15,7 +15,6 @@
     cfg.settings.devices;
 
   # Build server folder configuration from options
-
   serverFolders =
     lib.mapAttrs (
       name: folder:
@@ -43,25 +42,6 @@ in {
       name = "syncthing";
       url = "http://${config.services.syncthing.guiAddress}";
       type = "private";
-    };
-
-    fileSystems = {
-      "/mnt/share/syncthing/computer" = {
-        device = "syncthing-computer";
-        fsType = "virtiofs";
-        options = [
-          "rw"
-          "relatime"
-        ];
-      };
-      "/mnt/share/syncthing/QGCube" = {
-        device = "syncthing-qgcube";
-        fsType = "virtiofs";
-        options = [
-          "rw"
-          "relatime"
-        ];
-      };
     };
 
     users.users.syncthing = {

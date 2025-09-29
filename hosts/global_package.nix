@@ -52,6 +52,11 @@
       pkgs.kdePackages.ksystemlog
       pkgs.wayland-utils
     ]
+    ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "gnome") [
+      pkgs.gnome-session
+      pkgs.gnome-shell
+      pkgs.gnome-control-center
+    ]
     ++ lib.optionals (config.qgroget.nixos.remote-access.sunshine.enable) [
       pkgs.sunshine
     ]
