@@ -52,7 +52,7 @@
   };
 
   xdg.portal = {
-    enable = true;
+    enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
     wlr.enable = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") true;
     configPackages = [pkgs.xdg-desktop-portal-gtk];
   };

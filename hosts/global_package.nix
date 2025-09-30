@@ -28,8 +28,6 @@
   };
   services.xserver.displayManager.startx.enable = true;
 
-  xdg.portal.enable = true;
-
   environment.systemPackages = (
     [
       pkgs.git
