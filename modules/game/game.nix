@@ -3,7 +3,11 @@
   config,
   lib,
   ...
-}: {
+}: let
+  autoInstallScript = pkgs.writeShellScriptBin "auto-install" ''
+
+  '';
+in {
   config = lib.mkIf (config.qgroget.nixos.gaming) {
     programs = {
       steam = {
@@ -22,14 +26,20 @@
         binfmt = true;
       };
     };
-    environment.systemPackages = with pkgs;
+    environment.systemPackages =
       [
-        steam-rom-manager
-        prismlauncher
+        pkgs.steam-rom-manager
+        pkgs.prismlauncher
+        pkgs.wine
+        pkgs.winetricks
+        (import ./script.nix {inherit pkgs config;})
+        pkgs.python3
+        pkgs.proton-ge-custom
+        pkgs.protontricks
       ]
       ++ lib.optionals config.qgroget.nixos.vr [
-        opencomposite
-        wlx-overlay-s
+        pkgs.opencomposite
+        pkgs.wlx-overlay-s
       ];
     hardware.graphics = {
       enable = true;
