@@ -3,11 +3,7 @@
   config,
   lib,
   ...
-}: let
-  autoInstallScript = pkgs.writeShellScriptBin "auto-install" ''
-
-  '';
-in {
+}: {
   config = lib.mkIf (config.qgroget.nixos.gaming) {
     programs = {
       steam = {
@@ -33,6 +29,7 @@ in {
         pkgs.wine
         pkgs.winetricks
         (import ./script.nix {inherit pkgs config;})
+        (import ./steamImport.nix {inherit pkgs;})
         pkgs.python3
         pkgs.proton-ge-custom
         pkgs.protontricks

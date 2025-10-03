@@ -75,7 +75,7 @@ pkgs.writeShellApplication {
     echo ""
 
     export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.steam/steam"
-    export STEAM_COMPAT_DATA_PATH="$HOME/proton-prefixes/test"
+    export STEAM_COMPAT_DATA_PATH="$PROTON_PREFIX"
     export LD_LIBRARY_PATH="${pkgs.pkgsi686Linux.freetype}/lib:${pkgs.freetype}/lib"
 
     echo "STEAM_COMPAT_CLIENT_INSTALL_PATH=$STEAM_COMPAT_CLIENT_INSTALL_PATH"
@@ -86,7 +86,7 @@ pkgs.writeShellApplication {
     # Run installer with Proton inside Steam runtime (backgrounded)
     COMMAND="xvfb-run -a steam-run proton run \"$INSTALLER\" \
       /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP- \
-      /COMPONENTS=\"\" /TASKS=\"\" \"/DIR=Z:\\$TARGET_DIR\""
+      /COMPONENTS=\"\" /TASKS=\"\" \"/DIR=Z:$TARGET_DIR\""
 
     echo "→ Running command: $COMMAND"
     eval "$COMMAND" &
