@@ -1,6 +1,6 @@
 {pkgs, ...}:
 pkgs.writeShellApplication {
-  name = "steam-import";
+  name = "qgroget-steam-import";
   runtimeInputs = with pkgs; [
     steamtinkerlaunch
     steam-rom-manager
@@ -16,7 +16,7 @@ pkgs.writeShellApplication {
     EXE_PATH="$2"
     START_DIR="$3"
 
-    xvfb-run steamtinkerlaunch ansg -an="$GAME_NAME" -ep="$EXE_PATH" -sd="$START_DIR"
+    xvfb-run steamtinkerlaunch ansg -an="$GAME_NAME" -ep="$EXE_PATH" -sd="$START_DIR" || true
     xvfb-run steam-rom-manager add
   '';
 }

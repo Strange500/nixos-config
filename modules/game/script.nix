@@ -4,7 +4,7 @@
   ...
 }:
 pkgs.writeShellApplication {
-  name = "auto-install-game";
+  name = "qgroget-auto-install-firtgirl";
 
   runtimeInputs = with pkgs; [
     coreutils
@@ -135,5 +135,9 @@ pkgs.writeShellApplication {
     echo ""
     echo "Files installed:"
     ls -lh "$TARGET_DIR" 2>/dev/null || echo "  (unable to list files)"
+    echo "Please run qgroget-steam-import \"$GAME_NAME\" \"GAME EXE\" \"$TARGET_DIR\" to add the game to Steam."
+    echo "Replace \"GAME EXE\" with the actual game executable name."
+    echo ""
+    echo "============================"
   '';
 }
