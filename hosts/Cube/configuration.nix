@@ -23,9 +23,16 @@
       autoStart = true;
       desktopSession = "gnome";
     };
+    # needs touch ~/.steam/steam/.cef-enable-remote-debugging to work
     decky-loader = {
       enable = true;
-      user = config.qgroget.user.username;
+      package = pkgs.decky-loader-prerelease;
+      extraPackages = with pkgs; [
+        coreutils
+        bash
+        systemd
+        python3
+      ];
     };
     hardware.has.amd.gpu = true;
   };
