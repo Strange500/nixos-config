@@ -101,8 +101,23 @@ pkgs.writeShellApplication {
     stable_count=0
 
     while true; do
+      echo "=== Checking $TARGET_DIR at $(date) ==="
+
       # Compute a hash of all files in the target dir (size + mtime + names)
-      current_hash=$(find "$TARGET_DIR" -type f -printf "%p %s %T@\n" 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
+      current_hash=$(
+        find "$TARGET_DIR" -type f -printf "%p %s %T@\n" 2>/dev/null \
+          | sort 2>/dev/null \
+          | sha256sum 2>/dev/null \
+          | cut -d' ' -f1 2>/dev/null \
+          || true
+      )
+
+      if [ -z "$current_hash" ]; then
+        echo "⚠️  Warning: current_hash is empty (directory may be empty or inaccessible)."
+      fi
+
+      echo "Computed hash: ''${current_hash:-<none>}"
+      echo "Previous hash: ''${prev_hash:-<none>}"
 
       if [ "$current_hash" = "$prev_hash" ]; then
         stable_count=$((stable_count + 1))
@@ -114,13 +129,13 @@ pkgs.writeShellApplication {
 
       prev_hash="$current_hash"
 
-      # Require 3 consecutive stable checks (e.g. 3 × 20s = 1 minute of inactivity)
-      if [ $stable_count -ge 3 ]; then
+      # Require 3 consecutive stable checks (e.g. 3 × 100s = 5 minute of inactivity)
+      if [ "$stable_count" -ge 3 ]; then
         echo "✓ No changes in $TARGET_DIR for a while, assuming installation finished."
         break
       fi
 
-      sleep 20
+      sleep 100
     done
 
 
