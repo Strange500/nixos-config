@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  nixpkgs.config.pulseaudio = true;
+  # nixpkgs.config.pulseaudio = true;
 
   systemd.user.services.mpris-proxy = {
     # allow heaset button to control

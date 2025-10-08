@@ -13,6 +13,7 @@
         (import ./firefox/firefox.nix {inherit config lib pkgs inputs;})
         (import ./kitty/kitty.nix {inherit config lib pkgs inputs;})
         (import ./oh-my-zsh/oh-my-zsh.nix {inherit config lib pkgs inputs;})
+        (import ./kodi/kodi.nix {inherit config pkgs;})
       ])
     )
     (lib.mkIf config.qgroget.nixos.apps.school (import ./cours.nix {inherit config lib pkgs inputs;}))

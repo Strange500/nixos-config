@@ -122,11 +122,6 @@
     users."${config.qgroget.user.username}" = import ../home.nix;
   };
 
-  nixpkgs.config = {
-    allowUnfree = true;
-    allowUnfreePredicate = _: true;
-  };
-
   nix = {
     settings = {
       trusted-users = ["root" "${config.qgroget.user.username}"];

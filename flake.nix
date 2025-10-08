@@ -105,6 +105,14 @@
       inputs.jovian-nixos.nixosModules.default
     ];
 
+    pkgs = import nixpkgs {
+      system = system;
+      config.allowUnfree = true;
+      overlays = [
+        (final: prev: import ./pkgs {pkgs = prev;})
+      ];
+    };
+
     # Helper function to create a NixOS system configuration
     mkSystem = hostname: extraModules:
       nixpkgs.lib.nixosSystem {
@@ -113,6 +121,7 @@
           hostname = hostname;
         };
         inherit system;
+        pkgs = pkgs;
         modules =
           [
             ./hosts/${hostname}/configuration.nix
