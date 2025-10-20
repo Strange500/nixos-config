@@ -2,7 +2,9 @@
   description = "Nixos config flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "path:/home/strange/Documents/nixpkgs";
+    #nixpkgs.url = "github:strange500/nixpkgs/fix_bingie";
 
     home-manager = {
       url = "github:nix-community/home-manager";

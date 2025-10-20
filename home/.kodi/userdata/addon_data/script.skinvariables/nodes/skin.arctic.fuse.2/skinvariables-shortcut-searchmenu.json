@@ -1,0 +1,18 @@
+[
+    {
+        "label": "Movies",
+        "icon": "special://skin/extras/icons/film.png",
+        "path": "plugin://plugin.video.jellycon/?mode=NEW_SEARCH&item_type=movie&query=",
+        "target": "",
+        "widget_style": "Poster",
+        "guid": "guid-91c50d06"
+    },
+    {
+        "label": "TV Shows",
+        "icon": "special://skin/extras/icons/tv.png",
+        "path": "plugin://plugin.video.jellycon/?mode=NEW_SEARCH&item_type=series&query=",
+        "target": "",
+        "widget_style": "Poster",
+        "guid": "guid-f0f7519c"
+    }
+]

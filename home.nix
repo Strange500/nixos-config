@@ -32,9 +32,16 @@
         source = ./home/.local;
         recursive = true;
       };
+      ".kodi" = {
+        source = ./home/.kodi;
+        recursive = true;
+      };
       "wallpaper/${config.qgroget.nixos.theme}" = {
         source = ./home/wallpapers/${config.qgroget.nixos.theme};
         recursive = true;
+      };
+      "wallpaper/qgroget-background.png" = {
+        source = ./home/wallpapers/qgroget-background.png;
       };
       ".ssh/config".text = "Host *\n          User ${config.qgroget.user.username}\n          IdentityFile '${
         config.sops.secrets."git/ssh/private".path
