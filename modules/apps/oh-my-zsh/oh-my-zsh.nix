@@ -72,10 +72,11 @@
   programs.git = {
     enable = true;
 
-    userName = "Benjamin Roget";
-    userEmail = "benjamin.rogetpro@gmail.com";
-
-    extraConfig = {
+    settings = {
+      user = {
+        name = "Benjamin Roget";
+        email = "benjamin.rogetpro@gmail.com";
+      };
       init.defaultBranch = "main";
       credential.helper = "store";
       diff = {
