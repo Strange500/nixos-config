@@ -941,11 +941,11 @@
         "systems": "systems_5"
       },
       "locked": {
-        "lastModified": 1755972323,
-        "narHash": "sha256-Up+OOTlIPnz8XUp5AIXDwFszXMXIkz7pXrZwsFnmAVc=",
+        "lastModified": 1761247590,
+        "narHash": "sha256-riJh4x3Gks8rpeqwk7OsWU7CD4srhEhcjqH0MSMgGBw=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "68c8db3ceb2f4268dce4d21b859ed3564005cbac",
+        "rev": "42ad2ed485afb6e83a96b140ba44db83f4f00aae",
         "type": "github"
       },
       "original": {
