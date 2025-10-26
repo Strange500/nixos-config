@@ -52,7 +52,7 @@ in {
   };
 
   environment.persistence."/persist".directories = [
-    "${cfg.containerDir}/rotki"
+    "${cfg.containerDir}/rotki/data"
   ];
 
   virtualisation.quadlet = {
