@@ -10,7 +10,7 @@
     (
       lib.mkIf config.qgroget.nixos.apps.basic (lib.mkMerge [
         (import ./basics.nix {inherit config lib pkgs inputs;})
-        (import ./firefox/firefox.nix {inherit config lib pkgs inputs;})
+        (import ./browser {inherit config lib pkgs inputs;})
         (import ./kitty/kitty.nix {inherit config lib pkgs inputs;})
         (import ./oh-my-zsh/oh-my-zsh.nix {inherit config lib pkgs inputs;})
       ])
