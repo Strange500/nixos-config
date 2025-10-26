@@ -15,6 +15,7 @@
     ./SSO
     ./backup
     ./misc
+    ./crypto
   ];
 
   config = {
