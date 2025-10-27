@@ -21,7 +21,6 @@ in {
       nixd
       deadnix
       # Java
-      openjdk21
       maven
       gradle
       # Python
@@ -47,8 +46,10 @@ in {
   };
   programs = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     starship.enable = true;
+
     vscode = {
       enable = true;
+      package = pkgs.vscode-fhs;
       profiles.default = {
         enableExtensionUpdateCheck = true;
         enableUpdateCheck = true;
@@ -117,6 +118,12 @@ in {
             };
           };
           "java.gradle.buildServer.enabled" = "off";
+          "java.configuration.runtimes" = [
+            {
+              name = "JavaSE-21";
+              path = "${pkgs.openjdk21}";
+            }
+          ];
         };
       };
     };

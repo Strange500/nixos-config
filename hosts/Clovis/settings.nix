@@ -19,7 +19,7 @@
         };
         dev = {
           enable = true;
-          jetbrains.enable = false;
+          jetbrains.enable = true;
         };
         media = true;
         crypto = true;
