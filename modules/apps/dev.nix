@@ -49,7 +49,7 @@ in {
 
     vscode = {
       enable = true;
-      package = pkgs.vscode-fhs;
+      package = pkgs.vscode;
       profiles.default = {
         enableExtensionUpdateCheck = true;
         enableUpdateCheck = true;
@@ -118,12 +118,6 @@ in {
             };
           };
           "java.gradle.buildServer.enabled" = "off";
-          "java.configuration.runtimes" = [
-            {
-              name = "JavaSE-21";
-              path = "${pkgs.openjdk21}";
-            }
-          ];
         };
       };
     };
