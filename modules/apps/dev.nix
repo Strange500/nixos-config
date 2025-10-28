@@ -20,6 +20,17 @@ in {
       alejandra
       nixd
       deadnix
+      # Java
+      maven
+      gradle
+      # Python
+      python3
+      python3Packages.virtualenv
+      python3Packages.pip
+      # JS/TS
+      nodejs
+      yarn
+      pnpm
     ]
     ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
       (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
@@ -35,8 +46,10 @@ in {
   };
   programs = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     starship.enable = true;
+
     vscode = {
       enable = true;
+      package = pkgs.vscode;
       profiles.default = {
         enableExtensionUpdateCheck = true;
         enableUpdateCheck = true;
@@ -44,19 +57,36 @@ in {
           zainchen.json
           github.copilot
           github.copilot-chat
+
           ms-vscode.live-server
           oderwat.indent-rainbow
           esbenp.prettier-vscode
           dbaeumer.vscode-eslint
           codezombiech.gitignore
           yoavbls.pretty-ts-errors
-          vscjava.vscode-java-pack
           mechatroner.rainbow-csv
           bradlc.vscode-tailwindcss
           ms-azuretools.vscode-docker
           ms-vscode.cpptools-extension-pack
           ms-vscode-remote.remote-ssh
+
+          # nix
           jnoortheen.nix-ide
+          # java
+          redhat.java
+          vscjava.vscode-gradle
+          vscjava.vscode-maven
+          vscjava.vscode-java-pack
+          vscjava.vscode-java-debug
+          vscjava.vscode-java-test
+          vscjava.vscode-java-dependency
+          # python
+          ms-python.python
+          ms-python.vscode-pylance
+          ms-toolsai.jupyter
+          # js
+          dbaeumer.vscode-eslint
+          esbenp.prettier-vscode
         ];
         userSettings = {
           "files.autoSave" = "afterDelay";
@@ -87,6 +117,7 @@ in {
               };
             };
           };
+          "java.gradle.buildServer.enabled" = "off";
         };
       };
     };

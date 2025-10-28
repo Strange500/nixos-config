@@ -22,6 +22,11 @@
     ../modules/logo
   ];
 
+  programs.java = lib.mkIf config.qgroget.nixos.apps.dev.enable {
+    enable = true;
+    package = pkgs.openjdk21;
+  };
+
   users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [config.qgroget.user.username];
 
   networking.networkmanager = {enable = true;};
