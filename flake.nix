@@ -133,6 +133,8 @@
       # Another desktop/workstation
       Septimius = mkSystem "Septimius" desktopModules;
 
+      Clotaire = mkSystem "Clotaire" desktopModules;
+
       # Installer ISO
       installer = nixpkgs.lib.nixosSystem {
         specialArgs = {
