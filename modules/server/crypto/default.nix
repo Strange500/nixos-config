@@ -6,7 +6,7 @@
   # tmp files to ensure required directories exist
   systemd.tmpfiles.rules = [
     "Z /etc/nix-bitcoin-secrets 0700 bitcoin bitcoin -"
-    "Z ${config.services.bitcoind.dataDir} 0700 crypto crypto -"
+    "Z ${config.services.bitcoind.dataDir} 0700 bitcoin bitcoin -"
   ];
 
   # Automatically generate all secrets required by services.
@@ -21,8 +21,15 @@
   };
   #services.clightning.enable = true;
 
+  users.users.btc = {
+    isNormalUser = true;
+    home = "/nonexistent";
+    description = "Bitcoin User";
+    createHome = false;
+  };
+
   nix-bitcoin.operator = {
     enable = true;
-    name = "crypto";
+    name = "btc";
   };
 }

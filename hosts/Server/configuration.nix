@@ -118,15 +118,8 @@
     ];
   };
 
-  users.groups.crypto = {};
-  users.users.crypto = {
-    group = "crypto";
-    home = "/mnt/crypto";
-    description = "Crypto Service User";
-  };
-
   environment.etc."tmpfiles.d/crypto.conf".text = ''
-    Z /mnt/crypto 0700 crypto crypto -
+    Z /mnt/crypto 0700 bitcoin bitcoin -
   '';
 
   fileSystems."/persist" = {
