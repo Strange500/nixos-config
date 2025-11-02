@@ -16,7 +16,7 @@
   # Enable some services.
   # See ../configuration.nix for all available features.
   services.bitcoind = {
-    enable = true;
+    enable = false;
     dataDir = "/mnt/crypto/bitcoin";
   };
   #services.clightning.enable = true;
@@ -29,7 +29,7 @@
   };
 
   nix-bitcoin.operator = {
-    enable = true;
+    enable = false;
     name = "btc";
   };
 }
