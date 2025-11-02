@@ -14,7 +14,7 @@
     extraPackages = [
       pkgs.ffmpeg
       pkgs.chromaprint
-      pkgs.inotifyTools
+      pkgs.inotify-tools
       pkgs.util-linux
     ];
     settings = (pkgs.formats.yaml {}).generate "config.yaml" {
@@ -135,7 +135,7 @@ in {
         RestartSec = 2;
         Environment = ["MUSIC_DIR=${toString cfg.inboxDir}"];
         ExecStart = ''
-          ${pkgs.bash}/bin/bash -eu -o pipefail -c '${pkgs.inotifyTools}/bin/inotifywait -m -r -e close_write,move,create,delete "$MUSIC_DIR" | while read -r; do sleep 2; systemctl start beets-scan.service || true; done'
+          ${pkgs.bash}/bin/bash -eu -o pipefail -c '${pkgs.inotify-tools}/bin/inotifywait -m -r -e close_write,move,create,delete "$MUSIC_DIR" | while read -r; do sleep 2; systemctl start beets-scan.service || true; done'
         '';
       };
     };

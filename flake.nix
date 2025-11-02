@@ -14,6 +14,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-bitcoin = {
+      url = "github:fort-nix/nix-bitcoin/release";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -98,6 +103,7 @@
       inputs.declarative-jellyfin.nixosModules.default
       inputs.quadlet-nix.nixosModules.quadlet
       inputs.portfolio.nixosModules.default
+      inputs.nix-bitcoin.nixosModules.default
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)

@@ -108,6 +108,27 @@
   environment.etc."tmpfiles.d/immich.conf".text = ''
     Z /mnt/immich 0750 immich immich -
   '';
+
+  fileSystems."/mnt/crypto" = {
+    device = "crypto";
+    fsType = "virtiofs";
+    options = [
+      "rw"
+      "relatime"
+    ];
+  };
+
+  users.groups.crypto = {};
+  users.users.crypto = {
+    group = "crypto";
+    home = "/mnt/crypto";
+    description = "Crypto Service User";
+  };
+
+  environment.etc."tmpfiles.d/crypto.conf".text = ''
+    Z /mnt/crypto 0700 crypto crypto -
+  '';
+
   fileSystems."/persist" = {
     neededForBoot = true;
     device = "persist";
