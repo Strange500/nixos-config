@@ -1,6 +1,8 @@
 {...}: {
   config = {
     qgroget.nixos = {
+      auto-update = false;
+      theme = "wide";
       desktop = {
         monitors = [", preferred, auto, 1"];
       };
@@ -18,11 +20,13 @@
         dev = {
           enable = true;
           jetbrains.enable = true;
+          vbox.enable = false;
         };
-        media = false;
+        media = true;
         crypto = true;
       };
-      gaming = false;
+      gaming = true;
+      vr = true;
     };
   };
 }

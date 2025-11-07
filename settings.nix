@@ -116,6 +116,11 @@
               default = false;
               description = "Whether to enable JetBrains IDEs.";
             };
+            vbox.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = "Enable VirtualBox support.";
+            };
           };
           media = lib.mkOption {
             type = lib.types.bool;

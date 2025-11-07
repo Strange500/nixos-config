@@ -42,7 +42,7 @@
   virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
     libvirtd.enable = true;
-    virtualbox = {
+    virtualbox = lib.mkIf (config.qgroget.nixos.apps.dev.vbox.enable) {
       host = {
         enable = true;
         enableKvm = true;

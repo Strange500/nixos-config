@@ -153,8 +153,13 @@ in {
         autoStart = true;
         capSysAdmin = true;
         openFirewall = true;
+        settings = {
+          origin_web_ui_allowed = "lan";
+          port = 47989;
+        };
       };
     };
+    networking.firewall.allowedTCPPorts = lib.mkIf (config.qgroget.nixos.remote-access.sunshine.enable) [47989 47990];
 
     networking.networkmanager.dispatcherScripts = lib.mkIf config.qgroget.nixos.remote-access.tailscale.autoConnect [
       {
