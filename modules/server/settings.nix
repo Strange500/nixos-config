@@ -28,6 +28,9 @@
     ];
 
     qgroget.server = {
+      jellyseerr = {
+        enable = true;
+      };
       jellyfin = {
         enable = true;
         users = {
