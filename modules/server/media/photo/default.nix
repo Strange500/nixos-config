@@ -257,14 +257,13 @@ in {
       buffering = {
         maxRequestBodyBytes = traefikConfig.bufferLimits;
         maxResponseBodyBytes = traefikConfig.bufferLimits;
-        memResponseBodyBytes = traefikConfig.bufferLimits;
-        memRequestBodyBytes = traefikConfig.bufferLimits;
       };
     };
   };
 
   systemd.tmpfiles.rules = [
     "Z ${cfg.uploadLocation} 0700 immich immich -"
+    "Z ${config.qgroget.server.containerDir}/immich-pg/data 0700 immich immich -"
   ];
 
   qgroget.services.immich = {
@@ -284,7 +283,14 @@ in {
     mediaLocation = cfg.uploadLocation;
     machine-learning.enable = true;
     accelerationDevices = ["/dev/dri/renderD128"];
-
+    database = {
+      createDB = false;
+      host = "localhost";
+      port = 5433;
+      user = "immich";
+      name = "immich";
+    };
+    secretsFile = "${config.sops.secrets."server/immich/env".path}";
     # IMPORTANT: Don't emit a config.json into /nix/store; we'll write it at runtime.
     settings = null;
 
@@ -294,9 +300,37 @@ in {
     };
   };
 
-  sops.secrets."server/immich/oidc-client-secret" = {
-    owner = "root";
-    mode = "0400";
+  virtualisation.quadlet = {
+    containers = {
+      immich-pg = {
+        autoStart = true;
+        containerConfig = {
+          name = "immich-pg";
+          image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
+          publishPorts = [
+            "5433:5432"
+          ];
+          volumes = [
+            "${config.qgroget.server.containerDir}/immich-pg/data:/var/lib/postgresql/data:rw"
+          ];
+          environmentFiles = [
+            "${config.sops.secrets."server/immich/env".path}"
+          ];
+        };
+        serviceConfig = {
+          Restart = "always";
+        };
+      };
+    };
+  };
+
+  sops.secrets = {
+    "server/immich/oidc-client-secret" = {
+      owner = "root";
+      mode = "0400";
+    };
+    "server/immich/env" = {
+    };
   };
 
   #    Inject it into the immich-server service as a systemd credential and
@@ -304,6 +338,10 @@ in {
   systemd.services."immich-server" = {
     serviceConfig.LoadCredential = lib.mkAfter [
       "oidc_secret:${config.sops.secrets."server/immich/oidc-client-secret".path}"
+    ];
+
+    serviceConfig.Wants = lib.mkAfter [
+      "immich-pg.service"
     ];
 
     preStart = lib.mkAfter ''
