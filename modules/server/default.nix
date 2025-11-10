@@ -14,5 +14,6 @@
     ./backup
     ./misc
     ./crypto
+    ./homeAssistant
   ];
 }
