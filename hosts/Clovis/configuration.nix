@@ -15,10 +15,6 @@
   # add kernel modules
   boot.kernelModules = [
     "kvm-amd"
-    "vboxdrv"
-    "vboxnetadp"
-    "vboxnetflt"
-    "vboxpci"
   ];
 
   users.mutableUsers = false;

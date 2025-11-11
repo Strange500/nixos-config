@@ -1,182 +1,133 @@
 {lib, ...}: {
   disko.devices = {
-    disk = {
-      disk1 = {
-        device = lib.mkDefault "/dev/vda";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            boot = {
-              name = "boot";
-              size = "1M";
-              type = "EF02";
+    # ================================================================
+    # 1. NVMe – EFI + Btrfs system (exactly your original layout)
+    # ================================================================
+    disk.nvme = {
+      device = lib.mkDefault "/dev/sda";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          # ----- 1M GRUB boot partition (BIOS) --------------------
+          boot = {
+            name = "boot";
+            size = "1M";
+            type = "EF02";
+          };
+
+          # ----- EFI (vfat) ---------------------------------------
+          esp = {
+            name = "ESP";
+            size = "500M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
             };
-            esp = {
-              name = "ESP";
-              size = "500M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-              };
-            };
-            system = {
-              name = "system";
-              size = "100%";
-              content = {
-                type = "btrfs";
-                extraArgs = ["-L" "nixos-system" "-f"];
-                # Don't set mountpoint here since tmpfs handles root
-                subvolumes = {
-                  # Create a root subvolume but don't mount it at /
-                  "@root" = {
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@nix" = {
-                    mountpoint = "/nix";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@var-log" = {
-                    mountpoint = "/var/log";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@home" = {
-                    mountpoint = "/home";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
+          };
+
+          # ----- Btrfs system (your exact sub-volumes) ------------
+          system = {
+            name = "system";
+            size = "7G"; # use full disk (cache will be on RAID)
+            content = {
+              type = "btrfs";
+              extraArgs = ["-L" "nixos-system" "-f"];
+              subvolumes = {
+                "@nix" = {
+                  mountpoint = "/nix";
+                  mountOptions = ["compress=zstd" "noatime"];
+                };
+                "@var-log" = {
+                  mountpoint = "/var/log";
+                  mountOptions = ["compress=zstd" "noatime"];
+                };
+                "@home" = {
+                  mountpoint = "/home";
+                  mountOptions = ["compress=zstd" "noatime"];
+                };
+                "@persist" = {
+                  mountpoint = "/persist";
+                  mountOptions = ["compress=zstd" "noatime"];
                 };
               };
             };
           };
-        };
-      };
-
-      # New disk for Podman
-      disk2 = {
-        device = lib.mkDefault "/dev/vdb"; # change if your new disk has another path
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            podman = {
-              name = "podman";
-              size = "100%";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/var/lib/containers";
-                mountOptions = ["noatime"];
-              };
+          cache = {
+            name = "cache";
+            size = "100%"; # everything left
+            content = {
+              type = "filesystem";
+              format = "xfs";
+              mountpoint = "/mnt/cache";
             };
           };
         };
       };
     };
 
-    # Tmpfs for root - this takes precedence
-    nodev = {
-      root-tmpfs = {
-        type = "nodev";
-        fsType = "tmpfs";
-        mountpoint = "/";
-        mountOptions = ["mode=755" "size=4G"];
+    # ================================================================
+    # 2. HDDs – data-only RAID-1 components
+    # ================================================================
+    disk.hdd-data = {
+      device = lib.mkDefault "/dev/sdb"; # ← EXISTING XFS WITH DATA
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          mdadm = {
+            size = "100%";
+            content = {
+              type = "mdraid";
+              name = "raid1";
+            };
+          };
+        };
       };
     };
+
+    disk.hdd-mirror = {
+      device = lib.mkDefault "/dev/sdc"; # ← EMPTY
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          mdadm = {
+            size = "100%";
+            content = {
+              type = "mdraid";
+              name = "raid1";
+            };
+          };
+        };
+      };
+    };
+
+    # ================================================================
+    # 3. RAID-1 array – data only, degraded, data-preserving
+    # ================================================================
+    mdadm.raid1 = {
+      type = "mdadm";
+      level = 1;
+      metadata = "1.2";
+      content = {
+        type = "filesystem";
+        format = "xfs";
+        mountpoint = "/mnt/raid";
+      };
+    };
+
+    # ================================================================
+    # 4. tmpfs root (your existing behavior)
+    # ================================================================
+    nodev.root-tmpfs = {
+      fsType = "tmpfs";
+      mountpoint = "/";
+      mountOptions = ["mode=755" "size=4G"];
+    };
   };
-  # boot = {
-  #   initrd = {
-  #     systemd = {
-  #       enable = true;
-  #       services.rollback = {
-  #         description = "Rollback BTRFS root subvolume to a pristine state";
-  #         wantedBy = ["initrd.target"];
-  #         before = ["sysroot.mount"];
-  #         after = ["systemd-udev-settle.service"];
-  #         wants = ["systemd-udev-settle.service"];
-  #         unitConfig.DefaultDependencies = "no";
-  #         serviceConfig = {
-  #           Type = "oneshot";
-  #           RemainAfterExit = true;
-  #         };
-  #         script = ''
-  #           set -euo pipefail
-
-  #           # Wait for device to be available
-  #           for i in {1..30}; do
-  #             if [ -e /dev/disk/by-label/nixos-system ]; then
-  #               break
-  #             fi
-  #             echo "Waiting for nixos-system device... ($i/30)"
-  #             sleep 1
-  #           done
-
-  #           if [ ! -e /dev/disk/by-label/nixos-system ]; then
-  #             echo "Error: nixos-system device not found"
-  #             exit 1
-  #           fi
-
-  #           # Create temporary mount point
-  #           mkdir -p /btrfs_tmp
-
-  #           # Mount the btrfs filesystem (without subvol to access all subvolumes)
-  #           mount -t btrfs /dev/disk/by-label/nixos-system /btrfs_tmp
-
-  #           # Check if root subvolume exists
-  #           if [ -d /btrfs_tmp/root ]; then
-  #             echo "Found existing root subvolume, creating backup..."
-
-  #             # Create old_roots directory if it doesn't exist
-  #             mkdir -p /btrfs_tmp/old_roots
-
-  #             # Create timestamp for backup
-  #             timestamp=$(date "+%Y-%m-%d_%H:%M:%S")
-
-  #             # Move current root to backup location
-  #             mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-  #             echo "Moved root subvolume to old_roots/$timestamp"
-  #           fi
-
-  #           # Function to recursively delete subvolumes
-  #           delete_subvolume_recursively() {
-  #             local subvol_path="$1"
-  #             if [ ! -d "$subvol_path" ]; then
-  #               return
-  #             fi
-
-  #             # Delete child subvolumes first
-  #             while IFS= read -r -d ''' subvol; do
-  #               [ -n "$subvol" ] && delete_subvolume_recursively "/btrfs_tmp/$subvol"
-  #             done < <(btrfs subvolume list -o "$subvol_path" 2>/dev/null | cut -f 9- -d ' ' | tr '\n' '\0' || true)
-
-  #             echo "Deleting subvolume: $subvol_path"
-  #             btrfs subvolume delete "$subvol_path" || echo "Warning: Failed to delete $subvol_path"
-  #           }
-
-  #           # Clean up old backups (older than 30 days)
-  #           if [ -d /btrfs_tmp/old_roots ]; then
-  #             echo "Cleaning up old backups..."
-  #             find /btrfs_tmp/old_roots/ -maxdepth 1 -type d -mtime +30 | while read -r old_backup; do
-  #               if [ "$old_backup" != "/btrfs_tmp/old_roots" ]; then
-  #                 echo "Removing old backup: $old_backup"
-  #                 delete_subvolume_recursively "$old_backup"
-  #               fi
-  #             done
-  #           fi
-
-  #           # Create new pristine root subvolume
-  #           echo "Creating new root subvolume..."
-  #           btrfs subvolume create /btrfs_tmp/root
-
-  #           # Unmount
-  #           umount /btrfs_tmp
-  #           echo "Rollback completed successfully"
-  #         '';
-  #       };
-  #     };
-  #   };
-  # };
 
   environment.persistence = {
     "/persist" = {

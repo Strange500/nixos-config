@@ -118,7 +118,6 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       portfolio.nixosModules.default
-      nix-bitcoin.nixosModules.default
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)
