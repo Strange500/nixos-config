@@ -1,9 +1,4 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}: {
+{...}: {
   services.home-assistant = {
     enable = true;
 

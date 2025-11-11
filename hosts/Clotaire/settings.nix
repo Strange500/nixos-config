@@ -20,7 +20,7 @@
         dev = {
           enable = true;
           jetbrains.enable = true;
-          vbox.enable = false;
+          vbox.enable = true;
         };
         media = true;
         crypto = true;
