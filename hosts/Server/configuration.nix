@@ -116,6 +116,18 @@ in {
     autoSubUidGidRange = true;
   };
 
+  # -----------------------------------------------------------------
+  # ZFS global options (kernel modules, host-id, etc.)
+  # -----------------------------------------------------------------
+  boot.supportedFilesystems = ["zfs"];
+  networking.hostId = "8425e3c1"; # <-- generate with `head -c4 /dev/urandom | od -An -t u4`
+  services.zfs = {
+    trim.enable = true;
+    autoSnapshot.enable = false; # we manage our own blank snapshot
+  };
+  boot.kernelPackages = pkgs.linuxPackages_latest; # newest ZFS
+  boot.initrd.kernelModules = ["zfs" "xfs" "btrfs" "nvme"];
+
   boot.swraid.enable = true;
 
   # === DEPENDENCY-SAFE SCRIPT: cache-cleaner ===
@@ -258,19 +270,18 @@ in {
   #   Z /mnt/crypto 0700 bitcoin bitcoin -
   # '';
 
-  fileSystems."/persist" = {
-    neededForBoot = true;
-  };
+  # fileSystems."/persist" = {
+  #   neededForBoot = true;
+  # };
 
   networking.firewall.allowedTCPPorts = [
     22
   ];
 
-  fileSystems."/var/log".neededForBoot = true;
-  fileSystems."/var/lib/sops".neededForBoot = true;
+  # fileSystems."/var/log".neededForBoot = true;
+  # fileSystems."/var/lib/sops".neededForBoot = true;
 
   boot = {
-    initrd.availableKernelModules = ["virtiofs" "xfs" "btrfs" "nvme"];
     loader.grub = {
       efiSupport = true;
       efiInstallAsRemovable = true;

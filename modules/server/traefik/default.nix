@@ -140,7 +140,7 @@ in {
             http = {
               middlewares = [
                 "googlenoindex"
-                "geoblock-fr"
+                # "geoblock-fr"
               ];
             };
             transport = {
