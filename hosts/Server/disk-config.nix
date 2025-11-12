@@ -9,14 +9,14 @@
       content = {
         type = "gpt";
         partitions = {
-          # ----- 1M GRUB boot partition (BIOS) --------------------
+          # ----- 1M GRUB BIOS boot (kept for legacy BIOS) -----
           boot = {
             name = "boot";
             size = "1M";
             type = "EF02";
           };
 
-          # ----- EFI (vfat) ---------------------------------------
+          # ----- EFI (vfat) ---------------------------------
           esp = {
             name = "ESP";
             size = "500M";
@@ -28,106 +28,99 @@
             };
           };
 
-          # ----- Btrfs system (your exact sub-volumes) ------------
-          system = {
-            name = "system";
-            size = "7G"; # use full disk (cache will be on RAID)
+          # ----- ZFS pool (takes the rest of the NVMe) ------
+          l2arc = {
+            size = "256G"; # Adjust: 64G–1T depending on NVMe size
             content = {
-              type = "btrfs";
-              extraArgs = ["-L" "nixos-system" "-f"];
-              subvolumes = {
-                "@nix" = {
-                  mountpoint = "/nix";
-                  mountOptions = ["compress=zstd" "noatime"];
-                };
-                "@var-log" = {
-                  mountpoint = "/var/log";
-                  mountOptions = ["compress=zstd" "noatime"];
-                };
-                "@home" = {
-                  mountpoint = "/home";
-                  mountOptions = ["compress=zstd" "noatime"];
-                };
-                "@persist" = {
-                  mountpoint = "/persist";
-                  mountOptions = ["compress=zstd" "noatime"];
-                };
-              };
-            };
-          };
-          cache = {
-            name = "cache";
-            size = "100%"; # everything left
-            content = {
-              type = "filesystem";
-              format = "xfs";
-              mountpoint = "/mnt/cache";
+              type = "zfs";
+              pool = "rpool";
             };
           };
         };
       };
     };
 
-    # ================================================================
-    # 2. HDDs – data-only RAID-1 components
-    # ================================================================
     disk.hdd-data = {
-      device = lib.mkDefault "/dev/sdb"; # ← EXISTING XFS WITH DATA
+      device = lib.mkDefault "/dev/disk/by-id/ata-YOUR_EXISTING_HDD"; # /dev/sdb
       type = "disk";
       content = {
-        type = "gpt";
-        partitions = {
-          mdadm = {
-            size = "100%";
-            content = {
-              type = "mdraid";
-              name = "raid1";
-            };
-          };
-        };
+        type = "zfs";
+        pool = "rpool";
       };
     };
-
     disk.hdd-mirror = {
-      device = lib.mkDefault "/dev/sdc"; # ← EMPTY
+      device = lib.mkDefault "/dev/disk/by-id/ata-YOUR_EMPTY_HDD"; # /dev/sdc
       type = "disk";
       content = {
-        type = "gpt";
-        partitions = {
-          mdadm = {
-            size = "100%";
-            content = {
-              type = "mdraid";
-              name = "raid1";
-            };
-          };
+        type = "zfs";
+        pool = "rpool";
+      };
+    };
+
+    # 3. ZFS Pool: Mirror HDDs + NVMe L2ARC
+    zpool.rpool = {
+      type = "zpool";
+      mode = "mirror"; # RAID-1 on the two HDDs
+      rootFsOptions = {
+        compression = "lz4";
+        "com.sun:auto-snapshot" = "false";
+        ashift = "12"; # 4K sectors
+      };
+      datasets = {
+        "local/root" = {
+          type = "zfs_fs";
+          options.mountpoint = "legacy";
+          mountpoint = "/";
+          postCreateHook = ''
+            zfs snapshot rpool/local/root@blank
+          '';
+        };
+        "local/nix" = {
+          type = "zfs_fs";
+          options.mountpoint = "legacy";
+          mountpoint = "/nix";
+        };
+        "safe/persist" = {
+          type = "zfs_fs";
+          options.mountpoint = "legacy";
+          mountpoint = "/persist";
+        };
+        "data/cache" = {
+          # Your large cache (persistent, mirrored + L2ARC)
+          type = "zfs_fs";
+          options.mountpoint = "legacy";
+          mountpoint = "/mnt/cache";
         };
       };
-    };
-
-    # ================================================================
-    # 3. RAID-1 array – data only, degraded, data-preserving
-    # ================================================================
-    mdadm.raid1 = {
-      type = "mdadm";
-      level = 1;
-      metadata = "1.2";
-      content = {
-        type = "filesystem";
-        format = "xfs";
-        mountpoint = "/mnt/raid";
-      };
-    };
-
-    # ================================================================
-    # 4. tmpfs root (your existing behavior)
-    # ================================================================
-    nodev.root-tmpfs = {
-      fsType = "tmpfs";
-      mountpoint = "/";
-      mountOptions = ["mode=755" "size=4G"];
     };
   };
+
+  fileSystems = {
+    "/" = {
+      device = "rpool/local/root";
+      fsType = "zfs";
+    };
+    "/nix" = {
+      device = "rpool/local/nix";
+      fsType = "zfs";
+      neededForBoot = true;
+    };
+    "/persist" = {
+      device = "rpool/safe/persist";
+      fsType = "zfs";
+      neededForBoot = true;
+    };
+    "/mnt/cache" = {
+      device = "rpool/data/cache";
+      fsType = "zfs";
+    };
+  };
+
+  # Rollback root on boot
+  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zpool import -a
+    zfs rollback -r rpool/local/root@blank
+  '';
 
   environment.persistence = {
     "/persist" = {
