@@ -1,22 +1,17 @@
 {lib, ...}: {
   disko.devices = {
-    # ================================================================
-    # 1. NVMe – EFI + Btrfs system (exactly your original layout)
-    # ================================================================
     disk.nvme = {
       device = lib.mkDefault "/dev/sda";
       type = "disk";
       content = {
         type = "gpt";
         partitions = {
-          # ----- 1M GRUB BIOS boot (kept for legacy BIOS) -----
           boot = {
             name = "boot";
             size = "1M";
             type = "EF02";
           };
 
-          # ----- EFI (vfat) ---------------------------------
           esp = {
             name = "ESP";
             size = "500M";
@@ -28,9 +23,50 @@
             };
           };
 
-          # ----- ZFS pool (takes the rest of the NVMe) ------
-          l2arc = {
-            size = "256G"; # Adjust: 64G–1T depending on NVMe size
+          zfs = {
+            size = "5G";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+
+          system = {
+            name = "system";
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "bpool";
+            };
+          };
+        };
+      };
+    };
+
+    disk.data1 = {
+      device = lib.mkDefault "/dev/sdb"; # /dev/sdb
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          zfs = {
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+        };
+      };
+    };
+    disk.data2 = {
+      device = lib.mkDefault "/dev/sdc"; # /dev/sdc
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          zfs = {
+            size = "100%";
             content = {
               type = "zfs";
               pool = "rpool";
@@ -40,56 +76,74 @@
       };
     };
 
-    disk.hdd-data = {
-      device = lib.mkDefault "/dev/disk/by-id/ata-YOUR_EXISTING_HDD"; # /dev/sdb
-      type = "disk";
-      content = {
-        type = "zfs";
-        pool = "rpool";
-      };
-    };
-    disk.hdd-mirror = {
-      device = lib.mkDefault "/dev/disk/by-id/ata-YOUR_EMPTY_HDD"; # /dev/sdc
-      type = "disk";
-      content = {
-        type = "zfs";
-        pool = "rpool";
-      };
-    };
+    zpool = {
+      rpool = {
+        type = "zpool";
+        mode = {
+          topology = {
+            type = "topology";
+            vdev = [
+              {
+                mode = "mirror";
+                members = ["data1" "data2"];
+              }
+            ];
+            special = [
+              {
+                members = ["nvme"];
+              }
+            ];
+          };
+        };
+        rootFsOptions = {
+          compression = "zstd";
+          "com.sun:auto-snapshot" = "false";
+        };
 
-    # 3. ZFS Pool: Mirror HDDs + NVMe L2ARC
-    zpool.rpool = {
-      type = "zpool";
-      mode = "mirror"; # RAID-1 on the two HDDs
-      rootFsOptions = {
-        compression = "lz4";
-        "com.sun:auto-snapshot" = "false";
-        ashift = "12"; # 4K sectors
+        datasets = {
+          "safe/data" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/mnt/data";
+          };
+        };
       };
-      datasets = {
-        "local/root" = {
-          type = "zfs_fs";
-          options.mountpoint = "legacy";
-          mountpoint = "/";
-          postCreateHook = ''
-            zfs snapshot rpool/local/root@blank
-          '';
+      bpool = {
+        type = "zpool";
+        rootFsOptions = {
+          compression = "zstd";
+          "com.sun:auto-snapshot" = "false";
         };
-        "local/nix" = {
-          type = "zfs_fs";
-          options.mountpoint = "legacy";
-          mountpoint = "/nix";
-        };
-        "safe/persist" = {
-          type = "zfs_fs";
-          options.mountpoint = "legacy";
-          mountpoint = "/persist";
-        };
-        "data/cache" = {
-          # Your large cache (persistent, mirrored + L2ARC)
-          type = "zfs_fs";
-          options.mountpoint = "legacy";
-          mountpoint = "/mnt/cache";
+        datasets = {
+          "local/root" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/";
+            postCreateHook = ''
+              zfs snapshot bpool/local/root@blank
+            '';
+          };
+          "safe/persist" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/persist";
+          };
+          "safe/nix" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/nix";
+          };
         };
       };
     };
@@ -97,21 +151,21 @@
 
   fileSystems = {
     "/" = {
-      device = "rpool/local/root";
+      device = "bpool/local/root";
       fsType = "zfs";
     };
     "/nix" = {
-      device = "rpool/local/nix";
+      device = "bpool/safe/nix";
       fsType = "zfs";
       neededForBoot = true;
     };
     "/persist" = {
-      device = "rpool/safe/persist";
+      device = "bpool/safe/persist";
       fsType = "zfs";
       neededForBoot = true;
     };
-    "/mnt/cache" = {
-      device = "rpool/data/cache";
+    "/mnt/data" = {
+      device = "rpool/safe/data";
       fsType = "zfs";
     };
   };
@@ -119,7 +173,7 @@
   # Rollback root on boot
   boot.initrd.postDeviceCommands = lib.mkAfter ''
     zpool import -a
-    zfs rollback -r rpool/local/root@blank
+    zfs rollback -r bpool/local/root@blank
   '';
 
   environment.persistence = {
@@ -135,12 +189,6 @@
         "/var/lib/systemd"
         "/etc/NetworkManager"
         "/root/.ssh"
-        {
-          directory = "/var/lib/colord";
-          user = "colord";
-          group = "colord";
-          mode = "u=rwx,g=rx,o=";
-        }
       ];
       files = [
         "/etc/machine-id"
