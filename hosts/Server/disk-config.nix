@@ -24,7 +24,7 @@
           };
 
           zfs = {
-            size = "5G";
+            size = "64G";
             content = {
               type = "zfs";
               pool = "rpool";
