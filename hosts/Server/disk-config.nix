@@ -1,7 +1,7 @@
 {lib, ...}: {
   disko.devices = {
     disk.nvme = {
-      device = lib.mkDefault "/dev/sda";
+      device = lib.mkDefault "/dev/disk/by-id/nvme-CT1000P3PSSD8_240746F944B7";
       type = "disk";
       content = {
         type = "gpt";
@@ -44,7 +44,7 @@
     };
 
     disk.data1 = {
-      device = lib.mkDefault "/dev/sdb"; # /dev/sdb
+      device = lib.mkDefault "/dev/disk/by-id/ata-ST16000VE002-3BR101_ZR700R8Z"; # /dev/sdb
       type = "disk";
       content = {
         type = "gpt";
@@ -59,22 +59,22 @@
         };
       };
     };
-    disk.data2 = {
-      device = lib.mkDefault "/dev/sdc"; # /dev/sdc
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          zfs = {
-            size = "100%";
-            content = {
-              type = "zfs";
-              pool = "rpool";
-            };
-          };
-        };
-      };
-    };
+    # disk.data2 = {
+    #   device = lib.mkDefault "/dev/sdc"; # /dev/sdc
+    #   type = "disk";
+    #   content = {
+    #     type = "gpt";
+    #     partitions = {
+    #       zfs = {
+    #         size = "100%";
+    #         content = {
+    #           type = "zfs";
+    #           pool = "rpool";
+    #         };
+    #       };
+    #     };
+    #   };
+    # };
 
     zpool = {
       rpool = {
@@ -85,7 +85,8 @@
             vdev = [
               {
                 mode = "mirror";
-                members = ["data1" "data2"];
+                #members = ["data1" "data2"];
+                members = ["data1"];
               }
             ];
             special = [
