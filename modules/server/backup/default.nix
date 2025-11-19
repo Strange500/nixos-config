@@ -47,51 +47,6 @@
       })
     backupsList);
 in {
-  #### Options
-  options.qgroget.backups = lib.mkOption {
-    type = lib.types.attrsOf (lib.types.submodule {
-      options = {
-        paths = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          description = "Paths to include in this backup.";
-        };
-        exclude = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [];
-          description = "Patterns or paths to exclude (restic --exclude / --exclude-file).";
-        };
-        preBackup = lib.mkOption {
-          type = lib.types.nullOr lib.types.lines;
-          default = null;
-          description = "Script to run before the backup.";
-        };
-        postBackup = lib.mkOption {
-          type = lib.types.nullOr lib.types.lines;
-          default = null;
-          description = "Script to run after the backup.";
-        };
-        systemdUnits = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
-          default = [];
-          description = "Units to stop while this backup runs.";
-        };
-        priority = lib.mkOption {
-          type = lib.types.int;
-          default = 1000;
-          description = "Lower runs earlier in the coordinator chain.";
-        };
-        # Optional: require network for this backup (e.g., remote repos)
-        requireNetwork = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "If true, add Wants/After=network-online.target to this backup.";
-        };
-      };
-    });
-    default = {};
-    description = "Declarative restic backups keyed by service name.";
-  };
-
   config = {
     users.groups.restic = {};
     users.users.restic = {

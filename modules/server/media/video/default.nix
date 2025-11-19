@@ -44,11 +44,11 @@ in {
     mediaPaths = lib.mkOption {
       type = lib.types.attrsOf (lib.types.listOf lib.types.str);
       default = {
-        movies = ["/mnt/media/media/movies"];
-        animeMovies = ["/mnt/media/media/anime_movies"];
-        tv = ["/mnt/media/media/tv"];
-        anime = ["/mnt/media/media/anime"];
-        music = ["/mnt/music/media/library"];
+        movies = ["/mnt/data/media/media/movies"];
+        animeMovies = ["/mnt/data/media/media/anime_movies"];
+        tv = ["/mnt/data/media/media/tv"];
+        anime = ["/mnt/data/media/media/anime"];
+        music = ["/mnt/data/media/media/music/library"];
       };
       description = "Paths for media libraries.";
     };
@@ -72,14 +72,14 @@ in {
           hashedPasswordSecret = "server/jellyfin/user/admin/password";
           permissions = {isAdministrator = true;};
         };
-        strange = {
-          mutable = true;
-          hashedPasswordSecret = "server/jellyfin/user/strange/password";
-          permissions = {
-            isAdministrator = false;
-            enableAllFolders = false;
-          };
-        };
+        # strange = {
+        #   mutable = true;
+        #   hashedPasswordSecret = "server/jellyfin/user/strange/password";
+        #   permissions = {
+        #     isAdministrator = false;
+        #     enableAllFolders = false;
+        #   };
+        # };
       };
     };
     allowDLNA = lib.mkOption {
@@ -111,8 +111,17 @@ in {
         "/var/cache/jellyfin"
         "/var/lib/jellyfin"
       ];
-      backupDirectories = [
+      # backupDirectories = [
+      #   "/var/lib/jellyfin"
+      # ];
+    };
+
+    qgroget.backups.jellyfin = {
+      paths = [
         "/var/lib/jellyfin"
+      ];
+      systemdUnits = [
+        "jellyfin.service"
       ];
     };
 
@@ -188,7 +197,7 @@ in {
           enabled = true;
           contentType = "movies";
           pathInfos = cfg.mediaPaths.movies;
-          enableTrickplayImageExtraction = true;
+          enableTrickplayImageExtraction = false;
           preferredMetadataLanguage = "fr";
           saveTrickplayWithMedia = true;
           typeOptions.Movies = {
@@ -200,7 +209,7 @@ in {
           enabled = true;
           contentType = "movies";
           pathInfos = cfg.mediaPaths.animeMovies;
-          enableTrickplayImageExtraction = true;
+          enableTrickplayImageExtraction = false;
           preferredMetadataLanguage = "fr";
           saveTrickplayWithMedia = true;
           typeOptions.Movies = {
@@ -212,7 +221,7 @@ in {
           enabled = true;
           contentType = "tvshows";
           pathInfos = cfg.mediaPaths.tv;
-          enableTrickplayImageExtraction = true;
+          enableTrickplayImageExtraction = false;
           preferredMetadataLanguage = "fr";
           saveTrickplayWithMedia = true;
           typeOptions.TvShows = {
@@ -224,7 +233,7 @@ in {
           enabled = true;
           contentType = "tvshows";
           pathInfos = cfg.mediaPaths.anime;
-          enableTrickplayImageExtraction = true;
+          enableTrickplayImageExtraction = false;
           preferredMetadataLanguage = "fr";
           saveTrickplayWithMedia = true;
           typeOptions.TvShows = {

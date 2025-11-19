@@ -24,7 +24,7 @@
         )
         (config.qgroget.services or {})
       ))
-      ["${config.qgroget.server.containerDir}" "/var/lib/postgresql"]
+      ["${config.qgroget.server.containerDir}" "/var/lib/postgresql" "/var/lib/containers"]
     ];
 
     qgroget.server = {
@@ -50,21 +50,5 @@
         };
       };
     };
-
-    qgroget.backups = lib.mapAttrs (
-      name: service: {
-        paths =
-          lib.optionals (service ? backupDirectories && service.backupDirectories != null)
-          (
-            if builtins.isList service.backupDirectories
-            then service.backupDirectories
-            else [service.backupDirectories]
-          );
-
-        systemdUnits =
-          lib.optionals (service ? unitName && service.unitName != "" && service.unitName != null)
-          [service.unitName];
-      }
-    ) (config.qgroget.services or {});
   };
 }

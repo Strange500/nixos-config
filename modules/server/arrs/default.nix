@@ -6,7 +6,7 @@
 }: let
   cfg = {
     containerDir = "${config.qgroget.server.containerDir}";
-    mediaDir = "/mnt/media";
+    mediaDir = "/mnt/data/media";
     podName = "arr";
 
     ports = {
@@ -169,7 +169,6 @@ in {
       "${cfg.containerDir}/sonarr-anime"
       "${cfg.containerDir}/radarr-anime"
       "${cfg.containerDir}/bazarr"
-      "${cfg.containerDir}/prowlarr"
     ];
     systemdUnits = [
       "${cfg.podName}-pod.service"
@@ -196,10 +195,6 @@ in {
     };
   };
 
-  environment.persistence."/persist".directories = [
-    "${config.services.jackett.dataDir}"
-  ];
-
   services.jackett = {
     enable = true;
     user = "arr";
@@ -217,6 +212,14 @@ in {
     url = "http://127.0.0.1:9117";
     type = "private";
     middlewares = ["SSO"];
+    persistedData = [
+      {
+        directory = "${config.services.jackett.dataDir}";
+        user = "arr";
+        group = "media";
+        mode = "u=rwx,g=rx,o=";
+      }
+    ];
   };
 
   networking.firewall.allowedTCPPorts = [
