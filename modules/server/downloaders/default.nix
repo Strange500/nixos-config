@@ -91,7 +91,7 @@
       "Session\\DisableAutoTMMByDefault" = false;
       "Session\\DisableAutoTMMTriggers\\CategorySavePathChanged" = false;
       "Session\\DisableAutoTMMTriggers\\DefaultSavePathChanged" = false;
-
+      "Session\\GlobalMaxRatio" = 5;
       # Disk / cache tuning (big memory lever)
       # Disk cache in MiB: set small to save RAM
       "Session\\DiskCache" = 256;
@@ -121,8 +121,8 @@
       "Session\\ShareLimitAction" = "Stop";
       "Session\\SubcategoriesEnabled" = true;
       "Session\\Tags" = "cross-seed";
-      "Session\\TempPath" = "/media/torrents/incomplete";
-      "Session\\TempPathEnabled" = false;
+      "Session\\TempPath" = "/temp/torrents";
+      "Session\\TempPathEnabled" = true;
       "Session\\TorrentExportDirectory" = "";
       "Session\\UseAlternativeGlobalSpeedLimit" = false;
       "Session\\uTPRateLimited" = true;
@@ -251,7 +251,10 @@ in {
     Z ${config.qgroget.server.containerDir}/qbittorrent 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 arr downloaders -
-    Z ${config.qgroget.server.containerDir}/nicotine 0700 beets music -
+    Z /persist/temp/torrent1 0700 arr downloaders -
+    Z /persist/temp/torrent2 0700 arr downloaders -
+    Z /persist/temp/torrent3 0700 arr downloaders -
+
   '';
   services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
     {
@@ -275,13 +278,13 @@ in {
         "group:admin"
       ];
     }
-    {
-      domain = "nicotine.${config.qgroget.server.domain}";
-      policy = "two_factor";
-      subject = [
-        "group:admin"
-      ];
-    }
+    # {
+    #   domain = "nicotine.${config.qgroget.server.domain}";
+    #   policy = "two_factor";
+    #   subject = [
+    #     "group:admin"
+    #   ];
+    # }
   ];
   users.groups.downloaders = {
     gid = 972;
@@ -295,7 +298,7 @@ in {
       "${config.qgroget.server.containerDir}/qbittorrent"
       "${config.qgroget.server.containerDir}/qbittorrent_bis"
       "${config.qgroget.server.containerDir}/qbittorrent_nyaa"
-      "${config.qgroget.server.containerDir}/nicotine"
+      #"${config.qgroget.server.containerDir}/nicotine"
       "${config.qgroget.server.containerDir}/gluetun"
     ];
     systemdUnits = [
@@ -330,7 +333,7 @@ in {
       podConfig = {
         name = cfg.podName;
         publishPorts = [
-          "${toString cfg.ports.nicotine}:6080"
+          #"${toString cfg.ports.nicotine}:6080"
           "${toString cfg.ports.qbittorrent1}:8112"
           "${toString cfg.ports.qbittorrent2}:8113"
           "${toString cfg.ports.qbittorrent3}:8114"
@@ -378,8 +381,9 @@ in {
               // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent/config:/config:Z"
-              "/mnt/media/torrents:/data/torrents:Z"
-              "/mnt/media/torrents:/media/torrents:Z"
+              "/mnt/data/media/torrents:/data/torrents:Z"
+              "/mnt/data/media/torrents:/media/torrents:Z"
+              "/persist/temp/torrent1:/temp/torrents:Z"
             ];
           }
           // commonContainerConfig;
@@ -411,8 +415,9 @@ in {
               // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent_bis/config:/config:Z"
-              "/mnt/media:/data:Z"
-              "/mnt/media:/media:Z"
+              "/mnt/data/media:/data:Z"
+              "/mnt/data/media:/media:Z"
+              "/persist/temp/torrent2:/temp/torrents:Z"
             ];
           }
           // commonContainerConfig;
@@ -444,8 +449,9 @@ in {
               // qbitEnv;
             volumes = [
               "${cfg.containerDir}/qbittorrent_nyaa/config:/config:Z"
-              "/mnt/media:/data:Z"
-              "/mnt/media:/media:Z"
+              "/mnt/data/media:/data:Z"
+              "/mnt/data/media:/media:Z"
+              "/persist/temp/torrent3:/temp/torrents:Z"
             ];
           }
           // commonContainerConfig;
@@ -462,30 +468,30 @@ in {
         };
       };
 
-      nicotine-plus = {
-        autoStart = true;
-        containerConfig = {
-          name = cfg.containers.nicotinePlus;
-          image = images.nicotinePlus;
-          pod = pods.${cfg.podName}.ref;
-          environments =
-            commonEnv
-            // {
-              PUID = toString config.users.users.beets.uid;
-              PGID = toString config.users.groups.music.gid;
-            };
-          volumes = [
-            "${cfg.containerDir}/nicotine:/config:Z"
-            "/mnt/music:/music:Z"
-          ];
-          #user = "${toString config.users.users.nicotine.uid}:${toString config.users.groups.music.gid}";
-        };
-        serviceConfig = commonServiceConfig;
-        unitConfig = {
-          Requires = [containers.gluetun.ref];
-          After = [containers.gluetun.ref];
-        };
-      };
+      # nicotine-plus = {
+      #   autoStart = true;
+      #   containerConfig = {
+      #     name = cfg.containers.nicotinePlus;
+      #     image = images.nicotinePlus;
+      #     pod = pods.${cfg.podName}.ref;
+      #     environments =
+      #       commonEnv
+      #       // {
+      #         PUID = toString config.users.users.beets.uid;
+      #         PGID = toString config.users.groups.music.gid;
+      #       };
+      #     volumes = [
+      #       "${cfg.containerDir}/nicotine:/config:Z"
+      #       "/mnt/data/music:/music:Z"
+      #     ];
+      #     #user = "${toString config.users.users.nicotine.uid}:${toString config.users.groups.music.gid}";
+      #   };
+      #   serviceConfig = commonServiceConfig;
+      #   unitConfig = {
+      #     Requires = [containers.gluetun.ref];
+      #     After = [containers.gluetun.ref];
+      #   };
+      # };
     };
   };
 

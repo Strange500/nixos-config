@@ -4,7 +4,7 @@
   ...
 }: let
   cfg = {
-    uploadLocation = "/mnt/immich";
+    uploadLocation = "/mnt/data/immich";
     port = 2283;
   };
 
@@ -263,7 +263,7 @@ in {
 
   systemd.tmpfiles.rules = [
     "Z ${cfg.uploadLocation} 0700 immich immich -"
-    "Z ${config.qgroget.server.containerDir}/immich-pg/data 0700 immich immich -"
+    "Z ${config.qgroget.server.containerDir}/immich-pg/data 0700 immich-pg immich -"
   ];
 
   qgroget.services.immich = {
@@ -285,6 +285,7 @@ in {
     accelerationDevices = ["/dev/dri/renderD128"];
     database = {
       createDB = false;
+      enable = false;
       host = "localhost";
       port = 5433;
       user = "immich";
@@ -300,12 +301,25 @@ in {
     };
   };
 
+  users.users.immich-pg = {
+    isSystemUser = true;
+    description = "User for running Immich Postgres";
+    uid = 985;
+    home = "/nonexistent";
+    createHome = false;
+    group = "immich";
+  };
+  users.groups.immich = {
+    gid = 985;
+  };
+
   virtualisation.quadlet = {
     containers = {
       immich-pg = {
         autoStart = true;
         containerConfig = {
           name = "immich-pg";
+          user = "${toString config.users.users.immich-pg.uid}:${toString config.users.groups.immich.gid}";
           image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
           publishPorts = [
             "5433:5432"
@@ -319,6 +333,9 @@ in {
         };
         serviceConfig = {
           Restart = "always";
+        };
+        unitConfig = {
+          Before = ["immich-server.service"];
         };
       };
     };
@@ -338,10 +355,6 @@ in {
   systemd.services."immich-server" = {
     serviceConfig.LoadCredential = lib.mkAfter [
       "oidc_secret:${config.sops.secrets."server/immich/oidc-client-secret".path}"
-    ];
-
-    serviceConfig.Wants = lib.mkAfter [
-      "immich-pg.service"
     ];
 
     preStart = lib.mkAfter ''
@@ -368,12 +381,6 @@ in {
   };
 
   services.authelia.instances.qgroget.settings = {
-    access_control.rules = lib.mkAfter [
-      {
-        domain = "immich.${config.qgroget.server.domain}";
-        policy = "two_factor";
-      }
-    ];
     identity_providers.oidc = {
       clients = [
         {
@@ -383,7 +390,7 @@ in {
           public = false;
           consent_mode = "auto";
           pre_configured_consent_duration = "1 week";
-          authorization_policy = "two_factor";
+          authorization_policy = "immich";
           require_pkce = false;
           pkce_challenge_method = "";
           redirect_uris = [
@@ -412,6 +419,19 @@ in {
       cors.allowed_origins = lib.mkMerge [
         "https://immich.${config.qgroget.server.domain}"
       ];
+      authorization_policies = {
+        immich = {
+          default_policy = "deny";
+          rules = [
+            {
+              policy = "two_factor";
+              subject = [
+                "group:immich"
+              ];
+            }
+          ];
+        };
+      };
     };
   };
 }

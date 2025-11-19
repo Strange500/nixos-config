@@ -14,11 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-bitcoin = {
-      url = "github:fort-nix/nix-bitcoin/release";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -61,7 +56,6 @@
 
     declarative-jellyfin = {
       url = "github:Sveske-Juice/declarative-jellyfin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
@@ -87,7 +81,6 @@
     impermanence,
     quadlet-nix,
     portfolio,
-    nix-bitcoin,
     jovian-nixos,
     ...
   } @ inputs: let
@@ -118,6 +111,17 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       portfolio.nixosModules.default
+      {
+        nixpkgs.overlays = [
+          (final: prev: {
+            jellyfin =
+              (import (builtins.fetchTarball {
+                url = "https://github.com/NixOS/nixpkgs/archive/nixos-25.05.tar.gz";
+                sha256 = "sha256:0bz1qwd1fw9v4hmxi6h2qfgvxpv4kwdiz7xd9p7j1msr0b8d54h3";
+              }) {inherit system;}).jellyfin;
+          })
+        ];
+      }
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)

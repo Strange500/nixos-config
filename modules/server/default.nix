@@ -4,7 +4,7 @@
     ./settings.nix
     ./media
     ./arrs
-    ./security
+    # ./security
     ./downloaders
     ./traefik
     ./dashboard
@@ -13,7 +13,6 @@
     ./SSO
     ./backup
     ./misc
-    ./crypto
-    ./homeAssistant
+    # ./homeAssistant
   ];
 }
