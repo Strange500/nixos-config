@@ -177,6 +177,8 @@
     zfs rollback -r bpool/local/root@blank
   '';
 
+  fileSystems."/var/lib/sops".neededForBoot = true;
+
   environment.persistence = {
     "/persist" = {
       enable = true;

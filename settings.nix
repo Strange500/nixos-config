@@ -52,7 +52,7 @@
       server = {
         network.ip = lib.mkOption {
           type = lib.types.str;
-          default = "192.168.0.34";
+          default = "192.168.0.28";
           description = "The IP address of the qgroget server.";
         };
         domain = lib.mkOption {

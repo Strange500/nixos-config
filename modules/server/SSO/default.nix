@@ -2,12 +2,8 @@
   authelia = "authelia-qgroget";
 in {
   systemd.tmpfiles.rules = [
-    "d /var/lib/${authelia}logs 0700 ${authelia} ${authelia} - -"
+    "d /var/lib/${authelia}/logs 0700 ${authelia} ${authelia} - -"
     "Z /var/lib/${authelia} 0700 ${authelia} ${authelia} - -"
-  ];
-
-  environment.persistence."/persist".directories = [
-    "/var/lib/${authelia}"
   ];
 
   sops.secrets = {
@@ -34,6 +30,22 @@ in {
     "server/authelia/users" = {
       owner = authelia;
       group = authelia;
+    };
+    "server/authelia/ldap/password" = {
+      owner = authelia;
+      group = authelia;
+    };
+    "server/lldap/admin_password" = {
+      owner = "lldap";
+      group = "lldap";
+    };
+    "server/lldap/jwt_secret" = {
+      owner = "lldap";
+      group = "lldap";
+    };
+    "server/lldap/env" = {
+      owner = "lldap";
+      group = "lldap";
     };
   };
 
@@ -81,27 +93,13 @@ in {
 
       authentication_backend = {
         refresh_interval = "5m";
-        password_change.disable = true;
-        password_reset.disable = true;
-
-        file = {
-          path = config.sops.secrets."server/authelia/users".path;
-          watch = false;
-          search = {
-            email = true;
-            case_insensitive = false;
-          };
-          password = {
-            algorithm = "argon2";
-            argon2 = {
-              variant = "argon2id";
-              iterations = 3;
-              memory = 65536;
-              parallelism = 4;
-              key_length = 32;
-              salt_length = 16;
-            };
-          };
+        password_change.disable = false;
+        password_reset.disable = false;
+        ldap = {
+          address = "ldap://127.0.0.1:6743";
+          implementation = "lldap";
+          base_dn = "dc=qgroget,dc=com";
+          user = "uid=authelia,ou=people,dc=qgroget,dc=com";
         };
       };
 
@@ -147,6 +145,7 @@ in {
     };
     environmentVariables = {
       AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE = config.sops.secrets."server/authelia/smtp/password".path;
+      AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE = config.sops.secrets."server/authelia/ldap/password".path;
     };
     secrets = {
       jwtSecretFile = config.sops.secrets."server/authelia/jwt-secret".path;
@@ -228,4 +227,80 @@ in {
       ];
     };
   };
+
+  qgroget.services.lldap = {
+    name = "lldap";
+    url = "http://127.0.0.1:7080";
+    type = "public";
+    persistedData = [
+      {
+        directory = "/var/lib/${authelia}";
+        user = "${authelia}";
+        group = "${authelia}";
+        mode = "u=rwx,g=rx,o=";
+      }
+    ];
+  };
+
+  qgroget.backups.lldap = {
+    paths = [
+      "${config.qgroget.server.containerDir}/lldap-pg"
+    ];
+    systemdUnits = [
+      "lldap-pg.service"
+      "lldap.service"
+    ];
+  };
+
+  virtualisation.quadlet = {
+    containers = {
+      lldap-pg = {
+        autoStart = true;
+        containerConfig = {
+          name = "lldap-pg";
+          image = "postgres:15-alpine";
+          publishPorts = [
+            "5434:5432"
+          ];
+          volumes = [
+            "${config.qgroget.server.containerDir}/lldap-pg/data:/var/lib/postgresql/data:rw"
+          ];
+          environmentFiles = [
+            config.sops.secrets."server/lldap/env".path
+          ];
+        };
+        serviceConfig = {
+          Restart = "always";
+        };
+        unitConfig = {
+          Before = ["lldap.service"];
+        };
+      };
+    };
+  };
+
+  services.lldap = {
+    enable = true;
+    settings = {
+      ldap_base_dn = "dc=qgroget,dc=com";
+      ldap_user_email = "qgroget@gmail.com";
+      ldap_port = 6743;
+      ldap_host = "127.0.0.1";
+      http_url = "https://lldap.${config.qgroget.server.domain}";
+      http_port = 7080;
+      http_host = "0.0.0.0";
+      jwt_secret_file = config.sops.secrets."server/lldap/jwt_secret".path;
+      ldap_user_pass_file = config.sops.secrets."server/lldap/admin_password".path;
+      force_ldap_user_pass_reset = "always";
+    };
+
+    environmentFile = config.sops.secrets."server/lldap/env".path;
+    silenceForceUserPassResetWarning = true;
+  };
+
+  users.users.lldap = {
+    isSystemUser = true;
+    group = "lldap";
+  };
+  users.groups.lldap = {};
 }
