@@ -2,61 +2,59 @@
   config,
   lib,
   ...
-}: {
-  systemd.tmpfiles.rules = [
-    "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
-    "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
-    "d ${config.services.jellyseerr.configDir}/logs 0755 jellyseerr jellyseerr -"
-    "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
-  ];
+}:
+with lib; let
+  cfg = config.qgroget.server.jellyseerr;
+in {
+  options.qgroget.server.jellyseerr = {
+    enable = mkEnableOption "Custom Jellyseerr setup with persistent config and Traefik integration";
 
-  qgroget.backups.jellyseerr = {
-    paths = [
-      "${config.services.jellyseerr.configDir}"
-    ];
-    systemdUnits = [
-      "jellyseerr.service"
-    ];
-  };
-
-  qgroget.services = {
-    jellyseer = {
-      name = "jellyseer";
-      url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
-      type = "public";
-      journalctl = true;
-      unitName = "jellyseerr.service";
-    };
-    jellyseerr = {
-      name = "jellyseerr";
-      url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
-      type = "public";
-      journalctl = true;
-      unitName = "jellyseerr.service";
+    port = mkOption {
+      type = types.port;
+      default = 5055;
+      description = "Internal port for Jellyseerr web UI.";
     };
   };
 
-  environment.persistence."/persist".directories = [
-    "/var/lib/jellyseerr/config/db"
-  ];
-  environment.persistence."/persist".files = [
-    "${config.services.jellyseerr.configDir}/settings.json"
-  ];
+  config = mkIf cfg.enable {
+    systemd.tmpfiles.rules = [
+      "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
+      "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
+      "d ${config.services.jellyseerr.configDir}/logs 0755 jellyseerr jellyseerr -"
+      "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
+    ];
 
-  users.users.jellyseerr = {
-    isSystemUser = true;
-    description = "Jellyseerr user";
-    group = "jellyseerr";
-  };
-  users.groups.jellyseerr = {
-  };
+    qgroget.services = {
+      jellyseerr = {
+        name = "jellyseerr";
+        url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
+        type = "public";
+        journalctl = true;
+        unitName = "jellyseerr.service";
+        persistedData = [
+          "${config.services.jellyseerr.configDir}"
+        ];
+        backupDirectories = [
+          "${config.services.jellyseerr.configDir}"
+        ];
+      };
+    };
 
-  services.jellyseerr = {
-    openFirewall = false;
-    enable = true;
-    port = 5055;
-  };
+    users.users.jellyseerr = {
+      isSystemUser = true;
+      description = "Jellyseerr user";
+      group = "jellyseerr";
+    };
+    users.groups.jellyseerr = {
+    };
 
-  systemd.services.jellyseerr.serviceConfig.DynamicUser = lib.mkForce false;
-  systemd.services.jellyseerr.serviceConfig.User = "jellyseerr";
+    services.jellyseerr = {
+      openFirewall = false;
+      enable = true;
+      port = cfg.port;
+    };
+
+    systemd.services.jellyseerr.serviceConfig.DynamicUser = lib.mkForce false;
+    systemd.services.jellyseerr.serviceConfig.User = "jellyseerr";
+  };
 }
