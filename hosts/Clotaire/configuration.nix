@@ -18,12 +18,6 @@
     efiInstallAsRemovable = true;
   };
 
-  # boot.initrd.luks.devices = {
-  #   cryptsystem = {
-  #     device = lib.mkForce "/dev/nvme0n1p3";
-  #   };
-  # };
-
   environment.systemPackages = with pkgs; [
     brightnessctl
   ];
