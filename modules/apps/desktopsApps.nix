@@ -15,7 +15,7 @@
         (import ./oh-my-zsh/oh-my-zsh.nix {inherit config lib pkgs inputs;})
       ])
     )
-    (lib.mkIf config.qgroget.nixos.apps.school (import ./cours.nix {inherit config lib pkgs inputs;}))
+    # (lib.mkIf config.qgroget.nixos.apps.school (import ./cours.nix {inherit config lib pkgs inputs;}))
     (lib.mkIf (config.qgroget.nixos.apps.sync.desktop.enable || config.qgroget.nixos.apps.sync.game.enable) (import ./syncthing/syncthing.nix {
       inherit config lib pkgs inputs hostname;
     }))
