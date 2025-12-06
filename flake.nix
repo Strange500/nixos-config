@@ -182,5 +182,22 @@
         ];
       };
     };
+
+    # pi with system in arm
+    nixosConfigurations.pi = let
+      system = "aarch64-linux";
+    in
+      nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "pi";
+        };
+        inherit system;
+        modules =
+          [
+            ./hosts/pi/configuration.nix
+          ]
+          ++ commonModules ++ desktopModules;
+      };
   };
 }
