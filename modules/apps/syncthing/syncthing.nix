@@ -41,7 +41,7 @@ in {
     enable = true;
     cert = "${config.sops.secrets."syncthing/${hostname}/cert".path}";
     key = "${config.sops.secrets."syncthing/${hostname}/key".path}";
-    guiAddress = "127.0.0.1:8384";
+    guiAddress = "0.0.0.0:8384";
     settings = {
       folders = filteredClientFolders;
       devices = clientDevices;

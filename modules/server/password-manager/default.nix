@@ -58,9 +58,6 @@
           INVITATIONS_ALLOWED = "false"; # Allow invitations
           LOG_FILE = "/data/bitwarden.log";
         };
-        environmentFiles = lib.mkIf (config.qgroget.server.test.enable) [
-          "${config.sops.secrets."server/vaultwarden/env".path}"
-        ];
 
         # Volume mounts
         volumes = [

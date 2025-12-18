@@ -8,24 +8,24 @@
       remote-access = {
         enable = true;
         tailscale.enable = false;
-        sunshine.enable = true;
+        sunshine.enable = false;
       };
       apps = {
         sync = {
           desktop.enable = false;
-          game.enable = true;
+          game.enable = false;
         };
         dev = {
-          enable = true;
+          enable = false;
           jetbrains.enable = false;
         };
-        media = true;
+        media = false;
         crypto = false;
       };
-      gaming = true;
-      vr = true;
+      gaming = false;
+      vr = false;
       desktop.loginManager = lib.mkForce "none";
-      desktop.desktopEnvironment = lib.mkForce "gnome";
+      desktop.desktopEnvironment = lib.mkForce "none";
       settings.bluetooth.enable = false;
     };
   };

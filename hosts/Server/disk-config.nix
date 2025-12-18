@@ -1,182 +1,183 @@
 {lib, ...}: {
   disko.devices = {
-    disk = {
-      disk1 = {
-        device = lib.mkDefault "/dev/vda";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            boot = {
-              name = "boot";
-              size = "1M";
-              type = "EF02";
-            };
-            esp = {
-              name = "ESP";
-              size = "500M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-              };
-            };
-            system = {
-              name = "system";
-              size = "100%";
-              content = {
-                type = "btrfs";
-                extraArgs = ["-L" "nixos-system" "-f"];
-                # Don't set mountpoint here since tmpfs handles root
-                subvolumes = {
-                  # Create a root subvolume but don't mount it at /
-                  "@root" = {
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@nix" = {
-                    mountpoint = "/nix";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@var-log" = {
-                    mountpoint = "/var/log";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@home" = {
-                    mountpoint = "/home";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                };
-              };
+    disk.nvme = {
+      device = lib.mkDefault "/dev/disk/by-id/nvme-CT1000P3PSSD8_240746F944B7";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          boot = {
+            name = "boot";
+            size = "1M";
+            type = "EF02";
+          };
+
+          esp = {
+            name = "ESP";
+            size = "500M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
             };
           };
-        };
-      };
 
-      # New disk for Podman
-      disk2 = {
-        device = lib.mkDefault "/dev/vdb"; # change if your new disk has another path
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            podman = {
-              name = "podman";
-              size = "100%";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/var/lib/containers";
-                mountOptions = ["noatime"];
-              };
+          zfs = {
+            size = "64G";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+
+          system = {
+            name = "system";
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "bpool";
             };
           };
         };
       };
     };
 
-    # Tmpfs for root - this takes precedence
-    nodev = {
-      root-tmpfs = {
-        type = "nodev";
-        fsType = "tmpfs";
-        mountpoint = "/";
-        mountOptions = ["mode=755" "size=4G"];
+    disk.data1 = {
+      device = lib.mkDefault "/dev/disk/by-id/ata-ST16000VE002-3BR101_ZR700R8Z"; # /dev/sdb
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          zfs = {
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+        };
+      };
+    };
+    # disk.data2 = {
+    #   device = lib.mkDefault "/dev/sdc"; # /dev/sdc
+    #   type = "disk";
+    #   content = {
+    #     type = "gpt";
+    #     partitions = {
+    #       zfs = {
+    #         size = "100%";
+    #         content = {
+    #           type = "zfs";
+    #           pool = "rpool";
+    #         };
+    #       };
+    #     };
+    #   };
+    # };
+
+    zpool = {
+      rpool = {
+        type = "zpool";
+        mode = {
+          topology = {
+            type = "topology";
+            vdev = [
+              {
+                mode = "mirror";
+                #members = ["data1" "data2"];
+                members = ["data1"];
+              }
+            ];
+            special = [
+              {
+                members = ["nvme"];
+              }
+            ];
+          };
+        };
+        rootFsOptions = {
+          compression = "zstd";
+          "com.sun:auto-snapshot" = "false";
+        };
+
+        datasets = {
+          "safe/data" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/mnt/data";
+          };
+        };
+      };
+      bpool = {
+        type = "zpool";
+        rootFsOptions = {
+          compression = "zstd";
+          "com.sun:auto-snapshot" = "false";
+        };
+        datasets = {
+          "local/root" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/";
+            postCreateHook = ''
+              zfs snapshot bpool/local/root@blank
+            '';
+          };
+          "safe/persist" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/persist";
+          };
+          "safe/nix" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+              special_small_blocks = "128K";
+            };
+            mountpoint = "/nix";
+          };
+        };
       };
     };
   };
-  # boot = {
-  #   initrd = {
-  #     systemd = {
-  #       enable = true;
-  #       services.rollback = {
-  #         description = "Rollback BTRFS root subvolume to a pristine state";
-  #         wantedBy = ["initrd.target"];
-  #         before = ["sysroot.mount"];
-  #         after = ["systemd-udev-settle.service"];
-  #         wants = ["systemd-udev-settle.service"];
-  #         unitConfig.DefaultDependencies = "no";
-  #         serviceConfig = {
-  #           Type = "oneshot";
-  #           RemainAfterExit = true;
-  #         };
-  #         script = ''
-  #           set -euo pipefail
 
-  #           # Wait for device to be available
-  #           for i in {1..30}; do
-  #             if [ -e /dev/disk/by-label/nixos-system ]; then
-  #               break
-  #             fi
-  #             echo "Waiting for nixos-system device... ($i/30)"
-  #             sleep 1
-  #           done
+  fileSystems = {
+    "/" = {
+      device = "bpool/local/root";
+      fsType = "zfs";
+    };
+    "/nix" = {
+      device = "bpool/safe/nix";
+      fsType = "zfs";
+      neededForBoot = true;
+    };
+    "/persist" = {
+      device = "bpool/safe/persist";
+      fsType = "zfs";
+      neededForBoot = true;
+    };
+    "/mnt/data" = {
+      device = "rpool/safe/data";
+      fsType = "zfs";
+    };
+  };
 
-  #           if [ ! -e /dev/disk/by-label/nixos-system ]; then
-  #             echo "Error: nixos-system device not found"
-  #             exit 1
-  #           fi
+  # Rollback root on boot
+  boot.initrd.postDeviceCommands = lib.mkAfter ''
+    zpool import -a
+    zfs rollback -r bpool/local/root@blank
+  '';
 
-  #           # Create temporary mount point
-  #           mkdir -p /btrfs_tmp
-
-  #           # Mount the btrfs filesystem (without subvol to access all subvolumes)
-  #           mount -t btrfs /dev/disk/by-label/nixos-system /btrfs_tmp
-
-  #           # Check if root subvolume exists
-  #           if [ -d /btrfs_tmp/root ]; then
-  #             echo "Found existing root subvolume, creating backup..."
-
-  #             # Create old_roots directory if it doesn't exist
-  #             mkdir -p /btrfs_tmp/old_roots
-
-  #             # Create timestamp for backup
-  #             timestamp=$(date "+%Y-%m-%d_%H:%M:%S")
-
-  #             # Move current root to backup location
-  #             mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-  #             echo "Moved root subvolume to old_roots/$timestamp"
-  #           fi
-
-  #           # Function to recursively delete subvolumes
-  #           delete_subvolume_recursively() {
-  #             local subvol_path="$1"
-  #             if [ ! -d "$subvol_path" ]; then
-  #               return
-  #             fi
-
-  #             # Delete child subvolumes first
-  #             while IFS= read -r -d ''' subvol; do
-  #               [ -n "$subvol" ] && delete_subvolume_recursively "/btrfs_tmp/$subvol"
-  #             done < <(btrfs subvolume list -o "$subvol_path" 2>/dev/null | cut -f 9- -d ' ' | tr '\n' '\0' || true)
-
-  #             echo "Deleting subvolume: $subvol_path"
-  #             btrfs subvolume delete "$subvol_path" || echo "Warning: Failed to delete $subvol_path"
-  #           }
-
-  #           # Clean up old backups (older than 30 days)
-  #           if [ -d /btrfs_tmp/old_roots ]; then
-  #             echo "Cleaning up old backups..."
-  #             find /btrfs_tmp/old_roots/ -maxdepth 1 -type d -mtime +30 | while read -r old_backup; do
-  #               if [ "$old_backup" != "/btrfs_tmp/old_roots" ]; then
-  #                 echo "Removing old backup: $old_backup"
-  #                 delete_subvolume_recursively "$old_backup"
-  #               fi
-  #             done
-  #           fi
-
-  #           # Create new pristine root subvolume
-  #           echo "Creating new root subvolume..."
-  #           btrfs subvolume create /btrfs_tmp/root
-
-  #           # Unmount
-  #           umount /btrfs_tmp
-  #           echo "Rollback completed successfully"
-  #         '';
-  #       };
-  #     };
-  #   };
-  # };
+  fileSystems."/var/lib/sops".neededForBoot = true;
 
   environment.persistence = {
     "/persist" = {
@@ -191,12 +192,6 @@
         "/var/lib/systemd"
         "/etc/NetworkManager"
         "/root/.ssh"
-        {
-          directory = "/var/lib/colord";
-          user = "colord";
-          group = "colord";
-          mode = "u=rwx,g=rx,o=";
-        }
       ];
       files = [
         "/etc/machine-id"

@@ -14,11 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-bitcoin = {
-      url = "github:fort-nix/nix-bitcoin/release";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +41,7 @@
     };
 
     disko = {
-      url = "github:nix-community/disko/latest";
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -61,7 +56,6 @@
 
     declarative-jellyfin = {
       url = "github:Sveske-Juice/declarative-jellyfin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
@@ -75,18 +69,32 @@
     };
   };
 
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    nixpkgs,
+    declarative-jellyfin,
+    home-manager,
+    stylix,
+    disko,
+    sops-nix,
+    nur,
+    chaotic,
+    impermanence,
+    quadlet-nix,
+    portfolio,
+    jovian-nixos,
+    ...
+  } @ inputs: let
     system = "x86_64-linux";
 
     # Common modules used by most hosts
     commonModules = [
-      inputs.home-manager.nixosModules.default
-      inputs.stylix.nixosModules.stylix
-      inputs.disko.nixosModules.disko
-      inputs.sops-nix.nixosModules.sops
-      inputs.nur.modules.nixos.default
-      inputs.chaotic.nixosModules.default
-      inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
+      home-manager.nixosModules.default
+      stylix.nixosModules.stylix
+      disko.nixosModules.disko
+      sops-nix.nixosModules.sops
+      nur.modules.nixos.default
+      chaotic.nixosModules.default
+      nur.legacyPackages.${system}.repos.iopq.modules.xraya
       ({pkgs, ...}: {
         environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
       })
@@ -94,21 +102,31 @@
 
     # Desktop-specific modules
     desktopModules = [
-      inputs.impermanence.nixosModules.impermanence
+      impermanence.nixosModules.impermanence
     ];
 
     # Server-specific modules
     serverModules = [
-      inputs.impermanence.nixosModules.impermanence
-      inputs.declarative-jellyfin.nixosModules.default
-      inputs.quadlet-nix.nixosModules.quadlet
-      inputs.portfolio.nixosModules.default
-      inputs.nix-bitcoin.nixosModules.default
+      impermanence.nixosModules.impermanence
+      declarative-jellyfin.nixosModules.default
+      quadlet-nix.nixosModules.quadlet
+      portfolio.nixosModules.default
+      {
+        nixpkgs.overlays = [
+          (final: prev: {
+            jellyfin =
+              (import (builtins.fetchTarball {
+                url = "https://github.com/NixOS/nixpkgs/archive/nixos-25.05.tar.gz";
+                sha256 = "sha256:0bz1qwd1fw9v4hmxi6h2qfgvxpv4kwdiz7xd9p7j1msr0b8d54h3";
+              }) {inherit system;}).jellyfin;
+          })
+        ];
+      }
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
-      inputs.jovian-nixos.nixosModules.default
+      jovian-nixos.nixosModules.default
     ];
 
     # Helper function to create a NixOS system configuration
@@ -126,6 +144,17 @@
           ++ commonModules ++ extraModules;
       };
   in {
+    checks.${system} = let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      jellyfinTest = import ./tests/jellyfin {
+        inherit pkgs;
+        inherit declarative-jellyfin;
+      };
+      jellyseerrTest = import ./tests/jellyseerr {
+        inherit pkgs;
+      };
+    };
     nixosConfigurations = {
       # Desktop workstation
       Clovis = mkSystem "Clovis" desktopModules;
@@ -153,5 +182,22 @@
         ];
       };
     };
+
+    # pi with system in arm
+    nixosConfigurations.pi = let
+      system = "aarch64-linux";
+    in
+      nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+          hostname = "pi";
+        };
+        inherit system;
+        modules =
+          [
+            ./hosts/pi/configuration.nix
+          ]
+          ++ commonModules ++ desktopModules;
+      };
   };
 }
