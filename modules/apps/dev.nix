@@ -6,15 +6,19 @@
   ...
 }: let
   pluginListInte = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.1"."com.github.copilot"
+    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.2"."com.github.copilot"
   ];
   pluginListWeb = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.1"."com.github.copilot"
+    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.2"."com.github.copilot"
+  ];
+  pluginListRust = [
+    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".rust-rover."2025.2"."com.github.copilot"
   ];
 in {
   home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (with pkgs;
     [
       devbox
+      devenv
       libnotify
       pre-commit
       alejandra
@@ -35,6 +39,7 @@ in {
     ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
       (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
       (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
+      (jetbrains.plugins.addPlugins jetbrains.rust-rover pluginListRust)
     ]);
 
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {

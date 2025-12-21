@@ -1,8 +1,7 @@
 {...}: {
   imports = [
     ./obsidian.nix
-    # ./fileServer.nix
-    # ./syncthing.nix
+    ./fileServer.nix
     ./portfolio.nix
     # ./forgero.nix
   ];
