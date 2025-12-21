@@ -151,102 +151,103 @@ in {
       extraGroups = ["video" "render" "media" "music"];
     };
 
-    services.declarative-jellyfin = {
+    # services.declarative-jellyfin = {
+    services.jellyfin = {
       enable = true;
-      serverId = cfg.serverId;
-      backups = cfg.enableBackups;
+      # serverId = cfg.serverId;
+      #  backups = cfg.enableBackups;
       user = cfg.user;
       group = cfg.group;
 
-      users =
-        lib.mapAttrs (name: user: {
-          mutable = user.mutable;
-          hashedPasswordFile = user.hashedPasswordSecret;
-          permissions = user.permissions;
-        })
-        cfg.users;
+      # users =
+      #   lib.mapAttrs (name: user: {
+      #     mutable = user.mutable;
+      #     hashedPasswordFile = user.hashedPasswordSecret;
+      #     permissions = user.permissions;
+      #   })
+      #   cfg.users;
 
-      network.knownProxies = cfg.knownProxies;
+      # network.knownProxies = cfg.knownProxies;
 
-      system = {
-        UICulture = "fr-FR";
-        activityLogRetentionDays = 30;
-        allowClientLogUpload = true;
-        serverName = cfg.serverName;
-        trickplayOptions = {
-          enableHwAcceleration = true;
-          enableHwEncoding = true;
-        };
-      };
+      # system = {
+      #   UICulture = "fr-FR";
+      #   activityLogRetentionDays = 30;
+      #   allowClientLogUpload = true;
+      #   serverName = cfg.serverName;
+      #   trickplayOptions = {
+      #     enableHwAcceleration = true;
+      #     enableHwEncoding = true;
+      #   };
+      # };
 
-      encoding = {
-        enableHardwareEncoding = true;
-        hardwareAccelerationType = "vaapi";
-        hardwareDecodingCodecs = [
-          "h264"
-          "hevc"
-          "mpeg2video"
-          "vc1"
-        ];
-        enableTonemapping = true;
-        enableThrottling = true;
-      };
+      # encoding = {
+      #   enableHardwareEncoding = true;
+      #   hardwareAccelerationType = "vaapi";
+      #   hardwareDecodingCodecs = [
+      #     "h264"
+      #     "hevc"
+      #     "mpeg2video"
+      #     "vc1"
+      #   ];
+      #   enableTonemapping = true;
+      #   enableThrottling = true;
+      # };
 
-      libraries = {
-        Movies = {
-          enabled = true;
-          contentType = "movies";
-          pathInfos = cfg.mediaPaths.movies;
-          enableTrickplayImageExtraction = false;
-          preferredMetadataLanguage = "fr";
-          saveTrickplayWithMedia = true;
-          typeOptions.Movies = {
-            metadataFetchers = commonFetchers.metadata;
-            imageFetchers = commonFetchers.images;
-          };
-        };
-        Anime_Movies = {
-          enabled = true;
-          contentType = "movies";
-          pathInfos = cfg.mediaPaths.animeMovies;
-          enableTrickplayImageExtraction = false;
-          preferredMetadataLanguage = "fr";
-          saveTrickplayWithMedia = true;
-          typeOptions.Movies = {
-            metadataFetchers = commonFetchers.metadata;
-            imageFetchers = commonFetchers.images;
-          };
-        };
-        tv = {
-          enabled = true;
-          contentType = "tvshows";
-          pathInfos = cfg.mediaPaths.tv;
-          enableTrickplayImageExtraction = false;
-          preferredMetadataLanguage = "fr";
-          saveTrickplayWithMedia = true;
-          typeOptions.TvShows = {
-            metadataFetchers = commonFetchers.metadata;
-            imageFetchers = commonFetchers.images;
-          };
-        };
-        anime = {
-          enabled = true;
-          contentType = "tvshows";
-          pathInfos = cfg.mediaPaths.anime;
-          enableTrickplayImageExtraction = false;
-          preferredMetadataLanguage = "fr";
-          saveTrickplayWithMedia = true;
-          typeOptions.TvShows = {
-            metadataFetchers = commonFetchers.metadata;
-            imageFetchers = commonFetchers.images;
-          };
-        };
-        music = {
-          enabled = true;
-          contentType = "music";
-          pathInfos = cfg.mediaPaths.music;
-        };
-      };
+      # libraries = {
+      #   Movies = {
+      #     enabled = true;
+      #     contentType = "movies";
+      #     pathInfos = cfg.mediaPaths.movies;
+      #     enableTrickplayImageExtraction = false;
+      #     preferredMetadataLanguage = "fr";
+      #     saveTrickplayWithMedia = true;
+      #     typeOptions.Movies = {
+      #       metadataFetchers = commonFetchers.metadata;
+      #       imageFetchers = commonFetchers.images;
+      #     };
+      #   };
+      #   Anime_Movies = {
+      #     enabled = true;
+      #     contentType = "movies";
+      #     pathInfos = cfg.mediaPaths.animeMovies;
+      #     enableTrickplayImageExtraction = false;
+      #     preferredMetadataLanguage = "fr";
+      #     saveTrickplayWithMedia = true;
+      #     typeOptions.Movies = {
+      #       metadataFetchers = commonFetchers.metadata;
+      #       imageFetchers = commonFetchers.images;
+      #     };
+      #   };
+      #   tv = {
+      #     enabled = true;
+      #     contentType = "tvshows";
+      #     pathInfos = cfg.mediaPaths.tv;
+      #     enableTrickplayImageExtraction = false;
+      #     preferredMetadataLanguage = "fr";
+      #     saveTrickplayWithMedia = true;
+      #     typeOptions.TvShows = {
+      #       metadataFetchers = commonFetchers.metadata;
+      #       imageFetchers = commonFetchers.images;
+      #     };
+      #   };
+      #   anime = {
+      #     enabled = true;
+      #     contentType = "tvshows";
+      #     pathInfos = cfg.mediaPaths.anime;
+      #     enableTrickplayImageExtraction = false;
+      #     preferredMetadataLanguage = "fr";
+      #     saveTrickplayWithMedia = true;
+      #     typeOptions.TvShows = {
+      #       metadataFetchers = commonFetchers.metadata;
+      #       imageFetchers = commonFetchers.images;
+      #     };
+      #   };
+      #   music = {
+      #     enabled = true;
+      #     contentType = "music";
+      #     pathInfos = cfg.mediaPaths.music;
+      #   };
+      # };
     };
   };
 }

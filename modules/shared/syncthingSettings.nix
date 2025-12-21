@@ -207,7 +207,7 @@
             id = id;
             ignorePerms = ignorePerms;
             enable = true;
-            path = "/mnt/media/Sync/Documents";
+            path = "/mnt/data/Sync/Documents";
             type = "sendreceive";
             devices = ["computer"];
           };
@@ -230,7 +230,7 @@
             id = id;
             ignorePerms = ignorePerms;
             enable = true;
-            path = "/mnt/media/gameSync";
+            path = "/mnt/data/Sync/gameSync";
             type = "sendonly";
             devices = ["cube"];
           };

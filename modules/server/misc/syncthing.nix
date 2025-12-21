@@ -6,7 +6,6 @@
 }: let
   cfg = config.qgroget.syncthing;
 
-  # keeps all devcices except the one named as this hostname
   serverDevices =
     lib.filterAttrs (
       name: device:
@@ -14,7 +13,6 @@
     )
     cfg.settings.devices;
 
-  # Build server folder configuration from options
   serverFolders =
     lib.mapAttrs (
       name: folder:
@@ -42,6 +40,7 @@ in {
       name = "syncthing";
       url = "http://${config.services.syncthing.guiAddress}";
       type = "private";
+      persistedData = ["/var/lib/syncthing"];
     };
 
     users.users.syncthing = {
