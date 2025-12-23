@@ -6,7 +6,7 @@
 }: let
   cfg = {
     containerDir = "${config.qgroget.server.containerDir}";
-    mediaDir = "/mnt/media";
+    mediaDir = config.qgroget.server.mediaDir;
     podName = "arr";
 
     ports = {
