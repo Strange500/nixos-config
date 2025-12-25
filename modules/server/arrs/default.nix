@@ -182,6 +182,7 @@ in {
     Z ${cfg.containerDir}/sonarr-anime 0700 arr media -
     Z ${cfg.containerDir}/radarr-anime 0700 arr media -
     Z ${cfg.containerDir}/bazarr 0700 arr media -
+    Z ${cfg.containerDir}/prowlarr 0700 arr media -
   '';
 
   sops.secrets = {
@@ -194,37 +195,6 @@ in {
       group = "traefik";
     };
   };
-
-  services.jackett = {
-    enable = true;
-    user = "arr";
-    group = "media";
-    port = 9117;
-  };
-
-  services.flaresolverr = {
-    enable = true;
-    port = cfg.ports.flaresolverr;
-  };
-
-  qgroget.services.jackett = {
-    name = "jackett";
-    url = "http://127.0.0.1:9117";
-    type = "private";
-    middlewares = ["SSO"];
-    persistedData = [
-      {
-        directory = "${config.services.jackett.dataDir}";
-        user = "arr";
-        group = "media";
-        mode = "u=rwx,g=rx,o=";
-      }
-    ];
-  };
-
-  networking.firewall.allowedTCPPorts = [
-    9117
-  ];
 
   # inject secret basic token into config file at startup
   systemd.services.traefik = {
@@ -336,6 +306,22 @@ in {
             image = images.radarrAnime;
             volumes = [
               "${cfg.containerDir}/radarr-anime/config:/config:Z"
+              "${cfg.mediaDir}:/media:Z"
+            ];
+          }
+          // commonContainerConfig;
+        serviceConfig = commonServiceConfig;
+      };
+
+      prowlarr = {
+        autoStart = true;
+        containerConfig =
+          {
+            name = cfg.containers.prowlarr;
+            pod = pods.${cfg.podName}.ref;
+            image = images.prowlarr;
+            volumes = [
+              "${cfg.containerDir}/prowlarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
             ];
           }
