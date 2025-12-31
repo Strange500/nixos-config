@@ -92,12 +92,7 @@
       stylix.nixosModules.stylix
       disko.nixosModules.disko
       sops-nix.nixosModules.sops
-      nur.modules.nixos.default
       chaotic.nixosModules.default
-      nur.legacyPackages.${system}.repos.iopq.modules.xraya
-      ({pkgs, ...}: {
-        environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-      })
     ];
 
     # Desktop-specific modules
@@ -184,20 +179,19 @@
     };
 
     # pi with system in arm
-    nixosConfigurations.pi = let
+    nixosConfigurations.pi = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
-    in
-      nixpkgs.lib.nixosSystem {
-        specialArgs = {
-          inherit inputs;
-          hostname = "pi";
-        };
-        inherit system;
-        modules =
-          [
-            ./hosts/pi/configuration.nix
-          ]
-          ++ commonModules ++ desktopModules;
+
+      specialArgs = {
+        inherit inputs;
+        hostname = "pi";
       };
+
+      modules =
+        [
+          ./hosts/pi/configuration.nix
+        ]
+        ++ commonModules;
+    };
   };
 }

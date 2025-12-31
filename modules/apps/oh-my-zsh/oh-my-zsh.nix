@@ -1,5 +1,5 @@
 {pkgs, ...}: {
-  home.packages = with pkgs; [fzf fastfetch delta neovide];
+  home.packages = with pkgs; [fastfetch];
 
   programs.fastfetch = {
     enable = true;
@@ -116,7 +116,10 @@
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    sessionVariables = {EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";};
+    sessionVariables = {
+      EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
+      TERM = "xterm-256color";
+    };
     initContent = ''
       fastfetch
       function y() {

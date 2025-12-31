@@ -29,14 +29,14 @@
 
   users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [config.qgroget.user.username];
 
-  networking.networkmanager = {enable = true;};
+  networking.networkmanager = {enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;};
   services = {
     xserver.xkb = {
       layout = "fr";
       variant = "";
     };
-    printing.enable = true;
-    gvfs.enable = true;
+    printing.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+    gvfs.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
   };
 
   boot.kernelModules = lib.mkIf (config.qgroget.nixos.apps.dev.vbox.enable) [
@@ -63,8 +63,8 @@
     };
   };
 
-  xdg.portal = {
-    enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+  xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
+    enable = true;
     wlr.enable = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") true;
     configPackages = [pkgs.xdg-desktop-portal-gtk];
   };
