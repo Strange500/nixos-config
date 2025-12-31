@@ -6,6 +6,11 @@
       #   test.enable = false;
       # };
       nixos = {
+        settings = {
+          bluetooth = {
+            enable = false;
+          };
+        };
         auto-update = false;
         isDesktop = false;
         theme = "wide";

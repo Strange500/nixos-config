@@ -9,7 +9,6 @@
     inputs.home-manager.nixosModules.default
     inputs.sops-nix.nixosModules.sops
     inputs.jovian-nixos.nixosModules.default
-    ./hardware-configuration.nix
   ];
 
   boot = {
@@ -43,4 +42,7 @@
   };
 
   hardware.enableRedistributableFirmware = true;
+
+  nixpkgs.buildPlatform = "x86_64-linux";
+  nixpkgs.hostPlatform = "aarch64-linux";
 }

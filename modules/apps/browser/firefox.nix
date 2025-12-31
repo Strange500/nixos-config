@@ -1,13 +1,14 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }: {
-  sops.secrets."firefox/certFilePKCS12.p12" = {
+  sops.secrets."firefox/certFilePKCS12.p12" = lib.mkIf config.qgroget.nixos.apps.basic {
     format = "binary";
     sopsFile = ../../../secrets/client.p12;
   };
-  programs.firefox = {
+  programs.firefox = lib.mkIf config.qgroget.nixos.apps.basic {
     enable = true;
     languagePacks = ["fr_FR"];
     policies = {

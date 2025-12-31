@@ -44,11 +44,6 @@
     };
     services.xserver.videoDrivers = ["amdgpu"];
 
-    programs.git = {
-      enable = true;
-      lfs.enable = true;
-    };
-
     systemd.user.services.monado.environment = lib.mkIf config.qgroget.nixos.vr {
       STEAMVR_LH_ENABLE = "1";
       XRT_COMPOSITOR_COMPUTE = "1";
