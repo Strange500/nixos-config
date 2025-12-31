@@ -26,20 +26,20 @@
       fsType = "ext4";
       options = ["noatime"];
     };
-  };
-
-  environment.systemPackages = with pkgs; [vim];
-
-  services.openssh.enable = true;
-
-  users = {
-    mutableUsers = false;
-    users."guest" = {
-      isNormalUser = true;
-      password = "guest";
-      extraGroups = ["wheel"];
+    "/mnt/data" = {
+      device = "/dev/disk/by-label/data";
+      fsType = "ext4";
+      options = [
+        "nofail"
+        "noatime"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=60"
+      ];
     };
   };
+
+  environment.systemPackages = [pkgs.borgbackup];
+  services.openssh.enable = true;
 
   hardware.enableRedistributableFirmware = true;
 

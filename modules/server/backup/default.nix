@@ -46,6 +46,21 @@
         backupCleanupCommand = backup.postBackup;
       })
     backupsList);
+
+  ####### BORGBACKUP #########
+  remote_directories = [
+    "/persist/backup"
+    "/mnt/data/immich/upload"
+    "/mnt/data/media/media/anime/A Certain Scientific Railgun (2009) [tvdbid-114921]"
+    "/mnt/data/media/media/anime/Kaguya-sama - Love Is War (2019) [tvdbid-354198]"
+    "/mnt/data/media/media/anime/Kaguya-sama - Love Is War - The First Kiss That Never Ends (2023) [tvdbid-443648]"
+    "/mnt/data/media/media/anime/Mushoku Tensei - Jobless Reincarnation (2021) [tvdbid-371310]"
+    "/mnt/data/media/media/anime/Shadows House (2021) [tvdbid-396876]"
+    "/mnt/data/media/media/anime/Summer Time Rendering (2022) [tvdbid-407306]"
+    "/mnt/data/media/media/tv/Wednesday (2022) [tvdbid-397060]"
+  ];
+  backupServerIp = config.qgroget.backup.network.ip;
+  backupUser = "strange";
 in {
   users.groups.restic = {
     gid = 980;
@@ -68,10 +83,18 @@ in {
     capabilities = "cap_dac_read_search=+ep";
   };
 
-  sops.secrets."server/restic/repoPassword" = {
-    mode = "0600";
-    owner = "restic";
-    group = "restic";
+  sops.secrets = {
+    "server/restic/repoPassword" = {
+      mode = "0600";
+      owner = "restic";
+      group = "restic";
+    };
+    "server/borg/repoPassword" = {
+      mode = "0600";
+    };
+    "git/ssh/private" = {
+      mode = "0600";
+    };
   };
 
   services.restic.backups = backupsAttrset;
@@ -191,4 +214,31 @@ in {
           wantedBy = lib.mkForce [];
         })
       backupsList);
+
+  services.borgbackup.jobs."sunday-backup" = {
+    paths = map (dir: "${dir}") remote_directories;
+
+    repo = "ssh://${backupUser}@${backupServerIp}/mnt/data/backups/borg-repo";
+
+    # 3. HOW to encrypt
+    encryption = {
+      mode = "repokey-blake2";
+      passCommand = "cat ${config.sops.secrets."server/borg/repoPassword".path}";
+    };
+
+    compression = "auto,zstd";
+
+    startAt = "Mon *-*-* 08:00:00";
+
+    prune.keep = {
+      daily = 10;
+    };
+
+    environment = {
+      BORG_RSH = "ssh -i ${config.sops.secrets."git/ssh/private".path} -o StrictHostKeyChecking=accept-new";
+    };
+
+    user = "root";
+    group = "root";
+  };
 }

@@ -49,6 +49,13 @@
         default = "strange";
         description = "The username for the qgroget user.";
       };
+      backup.network = {
+        ip = lib.mkOption {
+          type = lib.types.str;
+          default = "192.168.0.119";
+          description = "The IP address of the backup server.";
+        };
+      };
       server = {
         network.ip = lib.mkOption {
           type = lib.types.str;
