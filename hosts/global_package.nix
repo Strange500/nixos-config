@@ -15,7 +15,7 @@
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
     zsh.enable = true;
-    dconf.enable = true;
+    dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
   };
 
   services = {
@@ -26,20 +26,22 @@
       enable = true;
     };
   };
-  services.xserver.displayManager.startx.enable = true;
+  services.xserver.displayManager.startx.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
 
   environment.systemPackages = (
     [
       pkgs.git
       pkgs.wget
-      pkgs.blueman
-      pkgs.nix-prefetch-git
       pkgs.home-manager
-      pkgs.gparted
-      pkgs.cachix
-      pkgs.nixd
+    ]
+    ++ lib.optionals (config.qgroget.nixos.isDesktop) [
       pkgs.plymouth
       pkgs.wl-clipboard
+      pkgs.gparted
+      pkgs.blueman
+    ]
+    ++ lib.optionals (config.qgroget.nixos.apps.dev.enable) [
+      pkgs.nixd
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
