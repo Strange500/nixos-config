@@ -16,6 +16,12 @@
     };
     zsh.enable = true;
     dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+    dankMaterialShell.enable = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") true;
+  };
+
+  programs.niri = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") {
+    enable = true;
+    package = pkgs.niri;
   };
 
   services = {
@@ -56,6 +62,10 @@
       pkgs.gnome-session
       pkgs.gnome-shell
       pkgs.gnome-control-center
+    ]
+    ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "niri") [
+      pkgs.pywalfox-native
+      pkgs.xwayland-satellite
     ]
   );
 }

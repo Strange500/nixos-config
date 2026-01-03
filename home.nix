@@ -12,6 +12,7 @@
     ./modules/apps/desktopsApps.nix
     ./modules/shared
     inputs.sops-nix.homeManagerModule
+    inputs.dms.homeModules.dankMaterialShell.default
   ];
 
   home = {
@@ -22,17 +23,9 @@
       pkgs.discord
       pkgs.moonlight-qt
       pkgs.nautilus
-
-      pkgs.kdePackages.kirigami
-      pkgs.kdePackages.kirigami-addons # Often required alongside kirigami
-      pkgs.kdePackages.qqc2-desktop-style # Helps with theming
-
-      inputs.quickshell.packages.${pkgs.system}.default # Quickshell from flake input
+      pkgs.dejavu_fonts
+      pkgs.nerd-fonts.jetbrains-mono
     ];
-
-    sessionVariables = lib.mkIf (config.qgroget.nixos.isDesktop) {
-      QML2_IMPORT_PATH = "${pkgs.kdePackages.kirigami}/lib/qt-6/qml:${pkgs.kdePackages.kirigami-addons}/lib/qt-6/qml:${pkgs.kdePackages.qqc2-desktop-style}/lib/qt-6/qml";
-    };
     file = {
       ".config" = {
         source = ./home/.config;

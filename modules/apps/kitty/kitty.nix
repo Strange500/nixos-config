@@ -1,18 +1,13 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{lib, ...}: {
   programs.kitty = {
     enable = true;
 
     font = lib.mkDefault {
-      name = "Meslo LGS NF";
-      package = pkgs.meslo-lgs-nf;
+      name = "JetBrainsMono Nerd Font";
       size = 13;
     };
 
-    themeFile = "GruvboxMaterialDarkMedium";
+    extraConfig = "include dank-tabs.conf\ninclude dank-theme.conf";
 
     settings = {
       background_opacity = lib.mkForce "0.90";
@@ -27,10 +22,6 @@
       inactive_tab_font_style = "normal";
       tab_bar_style = "powerline";
       tab_powerline_style = "slanted";
-      active_tab_foreground = "#1e1e2e";
-      active_tab_background = "#cc241d";
-      inactive_tab_foreground = "#bac2de";
-      inactive_tab_background = "#313244";
     };
 
     keybindings = {

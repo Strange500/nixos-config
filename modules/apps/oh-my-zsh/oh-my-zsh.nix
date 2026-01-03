@@ -134,8 +134,8 @@
       y = "yazi";
       cat = "bat";
       lg = "lazygit";
-      nano = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
-      vim = "lvim";
+      #nano = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
+      #vim = "lvim";
       ls = "eza";
       update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
 

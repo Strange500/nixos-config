@@ -12,5 +12,9 @@
       (import ./hyprland/addons/hyprpanel/config.nix {inherit config inputs pkgs lib;})
       (import ./hyprland/addons/hyprlock/config.nix {inherit config inputs pkgs lib;})
     ]))
+
+    (lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "niri") (lib.mkMerge [
+      (import ./niri.nix {inherit config inputs pkgs lib;})
+    ]))
   ];
 }

@@ -68,12 +68,8 @@
       url = "github:strange500/nextPortfolio";
     };
 
-    quickshell = {
-      # add ?ref=<tag> to track a tag
-      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
-
-      # THIS IS IMPORTANT
-      # Mismatched system dependencies will lead to crashes and other issues.
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -91,7 +87,6 @@
     quadlet-nix,
     portfolio,
     jovian-nixos,
-    quickshell,
     ...
   } @ inputs: let
     system = "x86_64-linux";

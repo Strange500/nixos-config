@@ -12,7 +12,6 @@
     ../modules/system/audio/audio.nix
     ../modules/system/login/login.nix
     ../modules/system/bluetooth/bluetooth.nix
-    ../modules/desktop/stylix/stylix.nix
     ../modules/system/boot/plymouth.nix
     ../modules/system/update/update.nix
     ../modules/game/game.nix
@@ -20,6 +19,7 @@
     ./setting.nix
     ../modules/shared
     ../modules/logo
+    inputs.dms.nixosModules.dankMaterialShell
   ];
 
   programs.java = lib.mkIf config.qgroget.nixos.apps.dev.enable {

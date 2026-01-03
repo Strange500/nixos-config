@@ -9,7 +9,7 @@
       user.username = "strange";
       nixos = {
         desktop = {
-          desktopEnvironment = "hyprland";
+          desktopEnvironment = "niri";
           loginManager = "ly";
           theme = "atelier-cave";
         };
@@ -23,8 +23,9 @@
           == "hyprland"
           || config.qgroget.nixos.desktop.desktopEnvironment == "kde"
           || config.qgroget.nixos.desktop.desktopEnvironment == "gnome"
+          || config.qgroget.nixos.desktop.desktopEnvironment == "niri"
           || config.qgroget.nixos.desktop.desktopEnvironment == "none";
-        message = "Only Hyprland, KDE, and GNOME are supported as desktop environments.";
+        message = "Only Hyprland, KDE, GNOME or niri are supported as desktop environments.";
       }
       {
         assertion =
@@ -148,7 +149,7 @@
         desktop = {
           desktopEnvironment = lib.mkOption {
             type = lib.types.str;
-            default = "hyprland";
+            default = "niri";
             description = "The desktop environment to use.";
           };
           loginManager = lib.mkOption {

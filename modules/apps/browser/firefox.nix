@@ -41,6 +41,7 @@
           ublock-origin
           bitwarden
           metamask
+          pywalfox
         ];
         settings."uBlock0@raymondhill.net".settings = {
           selectedFilterLists = [
@@ -94,39 +95,35 @@
                     bookmarks = [
                       {
                         name = "Series - Bazarr";
-                        url = "https://bazarr.local.qgroget.com/series";
+                        url = "https://bazarr.qgroget.com/series";
                       }
                       {
                         name = "Nicotine";
-                        url = "https://nicotine.local.qgroget.com/";
+                        url = "https://nicotine.qgroget.com/";
                       }
                       {
                         name = "Pi-hole - piholeunbound";
-                        url = "https://pihole.local.qgroget.com/admin/";
+                        url = "https://pihole.qgroget.com/admin/";
                       }
                       {
                         name = "Radarr";
-                        url = "https://radarr-anime.local.qgroget.com/";
+                        url = "https://radarr-anime.qgroget.com/";
                       }
                       {
                         name = "Indexers - Prowlarr";
-                        url = "https://prowlarr.local.qgroget.com/";
+                        url = "https://prowlarr.qgroget.com/";
                       }
                       {
                         name = "Radarr";
-                        url = "https://radarr.local.qgroget.com/";
+                        url = "https://radarr.qgroget.com/";
                       }
                       {
                         name = "Sonarr";
-                        url = "https://sonarr-serie.local.qgroget.com/";
+                        url = "https://sonarr-serie.qgroget.com/";
                       }
                       {
                         name = "Sonarr";
-                        url = "https://sonarr.local.qgroget.com/";
-                      }
-                      {
-                        name = "server/Login";
-                        url = "https://unraid.local.qgroget.com/login";
+                        url = "https://sonarr.qgroget.com/";
                       }
                     ];
                   }

@@ -6,7 +6,6 @@
 }: {
   home = lib.mkIf config.qgroget.nixos.apps.basic {
     packages = with pkgs; [
-      lunarvim
       unzip
       unrar
       zip

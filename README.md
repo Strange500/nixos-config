@@ -64,3 +64,11 @@ sudo nixos-rebuild switch --flake ~/nixos#your-hostname
 ---
 
 *For detailed installation and customization instructions, check the configuration files or open an issue for specific questions.*
+
+
+
+setting up
+
+pywalfox install
+
+ln -sf ~/.cache/wal/dank-pywalfox.json ~/.cache/wal/colors.json
