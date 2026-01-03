@@ -101,8 +101,8 @@ in {
         };
 
         api = {
-          dashboard = false;
-          insecure = false;
+          dashboard = true;
+          insecure = true;
         };
 
         experimental = {

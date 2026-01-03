@@ -217,36 +217,6 @@
 
   inherit (config.virtualisation.quadlet) containers pods;
 in {
-  qgroget.services = {
-    torrent = {
-      name = "torrent";
-      url = "http://127.0.0.1:${toString cfg.ports.qbittorrent1}";
-      type = "private";
-      middlewares = ["SSO"];
-    };
-
-    torrent2 = {
-      name = "torrent2";
-      url = "http://127.0.0.1:${toString cfg.ports.qbittorrent2}";
-      type = "private";
-      middlewares = ["SSO"];
-    };
-
-    torrent3 = {
-      name = "torrent3";
-      url = "http://127.0.0.1:${toString cfg.ports.qbittorrent3}";
-      type = "private";
-      middlewares = ["SSO"];
-    };
-
-    nicotine = {
-      name = "nicotine";
-      url = "http://127.0.0.1:${toString cfg.ports.nicotine}";
-      type = "private";
-      middlewares = ["SSO"];
-    };
-  };
-
   environment.etc."tmpfiles.d/downloaders.conf".text = ''
     Z ${config.qgroget.server.containerDir}/qbittorrent 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 arr downloaders -
@@ -256,36 +226,7 @@ in {
     Z /persist/temp/torrent3 0700 arr downloaders -
 
   '';
-  services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
-    {
-      domain = "torrent.${config.qgroget.server.domain}";
-      policy = "two_factor";
-      subject = [
-        "group:admin"
-      ];
-    }
-    {
-      domain = "torrent2.${config.qgroget.server.domain}";
-      policy = "two_factor";
-      subject = [
-        "group:admin"
-      ];
-    }
-    {
-      domain = "torrent3.${config.qgroget.server.domain}";
-      policy = "two_factor";
-      subject = [
-        "group:admin"
-      ];
-    }
-    # {
-    #   domain = "nicotine.${config.qgroget.server.domain}";
-    #   policy = "two_factor";
-    #   subject = [
-    #     "group:admin"
-    #   ];
-    # }
-  ];
+
   users.groups.downloaders = {
     gid = 972;
   };

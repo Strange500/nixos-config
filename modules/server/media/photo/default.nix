@@ -416,7 +416,7 @@ in {
           token_endpoint_auth_method = "client_secret_post";
         }
       ];
-      cors.allowed_origins = lib.mkMerge [
+      cors.allowed_origins = [
         "https://immich.${config.qgroget.server.domain}"
       ];
       authorization_policies = {

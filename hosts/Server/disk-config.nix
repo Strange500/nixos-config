@@ -1,169 +1,173 @@
 {lib, ...}: {
-  disko.devices = {
-    disk.nvme = {
-      device = lib.mkDefault "/dev/disk/by-id/nvme-CT1000P3PSSD8_240746F944B7";
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          boot = {
-            name = "boot";
-            size = "1M";
-            type = "EF02";
-          };
+  # disko.devices = {
+  #   # disk.nvme = {
+  #   #   device = lib.mkDefault "/dev/disk/by-id/nvme-CT1000P3PSSD8_240746F944B7";
+  #   #   type = "disk";
+  #   #   content = {
+  #   #     type = "gpt";
+  #   #     partitions = {
+  #   #       # boot = {
+  #   #       #   name = "boot";
+  #   #       #   size = "1M";
+  #   #       #   type = "EF02";
+  #   #       # };
 
-          esp = {
-            name = "ESP";
-            size = "500M";
-            type = "EF00";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-            };
-          };
+  #   #       # esp = {
+  #   #       #   name = "ESP";
+  #   #       #   size = "500M";
+  #   #       #   type = "EF00";
+  #   #       #   content = {
+  #   #       #     type = "filesystem";
+  #   #       #     format = "vfat";
+  #   #       #     mountpoint = "/boot";
+  #   #       #   };
+  #   #       # };
 
-          zfs = {
-            size = "64G";
-            content = {
-              type = "zfs";
-              pool = "rpool";
-            };
-          };
+  #   #       zfs = {
+  #   #         size = "64G";
+  #   #         content = {
+  #   #           type = "zfs";
+  #   #           pool = "rpool";
+  #   #         };
+  #   #       };
 
-          system = {
-            name = "system";
-            size = "100%";
-            content = {
-              type = "zfs";
-              pool = "bpool";
-            };
-          };
-        };
-      };
-    };
+  #   #       system = {
+  #   #         name = "system";
+  #   #         size = "100%";
+  #   #         content = {
+  #   #           type = "zfs";
+  #   #           pool = "bpool";
+  #   #         };
+  #   #       };
+  #   #     };
+  #   #   };
+  #   # };
 
-    disk.data1 = {
-      device = lib.mkDefault "/dev/disk/by-id/ata-ST16000VE002-3BR101_ZR700R8Z"; # /dev/sdb
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          zfs = {
-            size = "100%";
-            content = {
-              type = "zfs";
-              pool = "rpool";
-            };
-          };
-        };
-      };
-    };
-    # disk.data2 = {
-    #   device = lib.mkDefault "/dev/sdc"; # /dev/sdc
-    #   type = "disk";
-    #   content = {
-    #     type = "gpt";
-    #     partitions = {
-    #       zfs = {
-    #         size = "100%";
-    #         content = {
-    #           type = "zfs";
-    #           pool = "rpool";
-    #         };
-    #       };
-    #     };
-    #   };
-    # };
+  #   disk.data1 = {
+  #     device = lib.mkDefault "/dev/disk/by-id/ata-ST16000VE002-3BR101_ZR700R8Z"; # /dev/sdb
+  #     type = "disk";
+  #     content = {
+  #       type = "gpt";
+  #       partitions = {
+  #         zfs = {
+  #           size = "100%";
+  #           content = {
+  #             type = "zfs";
+  #             pool = "rpool";
+  #           };
+  #         };
+  #       };
+  #     };
+  #   };
+  #   # disk.data2 = {
+  #   #   device = lib.mkDefault "/dev/sdc"; # /dev/sdc
+  #   #   type = "disk";
+  #   #   content = {
+  #   #     type = "gpt";
+  #   #     partitions = {
+  #   #       zfs = {
+  #   #         size = "100%";
+  #   #         content = {
+  #   #           type = "zfs";
+  #   #           pool = "rpool";
+  #   #         };
+  #   #       };
+  #   #     };
+  #   #   };
+  #   # };
 
-    zpool = {
-      rpool = {
-        type = "zpool";
-        mode = {
-          topology = {
-            type = "topology";
-            vdev = [
-              {
-                mode = "mirror";
-                #members = ["data1" "data2"];
-                members = ["data1"];
-              }
-            ];
-            special = [
-              {
-                members = ["nvme"];
-              }
-            ];
-          };
-        };
-        rootFsOptions = {
-          compression = "zstd";
-          "com.sun:auto-snapshot" = "false";
-        };
+  #   zpool = {
+  #     rpool = {
+  #       type = "zpool";
+  #       mode = {
+  #         topology = {
+  #           type = "topology";
+  #           vdev = [
+  #             {
+  #               mode = "mirror";
+  #               #members = ["data1" "data2"];
+  #               members = ["data1"];
+  #             }
+  #           ];
+  #           special = [
+  #             {
+  #               members = ["nvme"];
+  #             }
+  #           ];
+  #         };
+  #       };
+  #       rootFsOptions = {
+  #         compression = "zstd";
+  #         "com.sun:auto-snapshot" = "false";
+  #       };
 
-        datasets = {
-          "safe/data" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "legacy";
-              special_small_blocks = "128K";
-            };
-            mountpoint = "/mnt/data";
-          };
-        };
-      };
-      bpool = {
-        type = "zpool";
-        rootFsOptions = {
-          compression = "zstd";
-          "com.sun:auto-snapshot" = "false";
-        };
-        datasets = {
-          "local/root" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "legacy";
-            };
-            mountpoint = "/";
-            postCreateHook = ''
-              zfs snapshot bpool/local/root@blank
-            '';
-          };
-          "safe/persist" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "legacy";
-              special_small_blocks = "128K";
-            };
-            mountpoint = "/persist";
-          };
-          "safe/nix" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "legacy";
-              special_small_blocks = "128K";
-            };
-            mountpoint = "/nix";
-          };
-        };
-      };
-    };
-  };
+  #       datasets = {
+  #         "safe/data" = {
+  #           type = "zfs_fs";
+  #           options = {
+  #             mountpoint = "legacy";
+  #             special_small_blocks = "128K";
+  #           };
+  #           mountpoint = "/mnt/data";
+  #         };
+  #       };
+  #     };
+  #     # bpool = {
+  #     #   type = "zpool";
+  #     #   rootFsOptions = {
+  #     #     compression = "zstd";
+  #     #     "com.sun:auto-snapshot" = "false";
+  #     #   };
+  #     #   datasets = {
+  #     #     "local/root" = {
+  #     #       type = "zfs_fs";
+  #     #       options = {
+  #     #         mountpoint = "legacy";
+  #     #       };
+  #     #       mountpoint = "/";
+  #     #       postCreateHook = ''
+  #     #         zfs snapshot bpool/local/root@blank
+  #     #       '';
+  #     #     };
+  #     #     "safe/persist" = {
+  #     #       type = "zfs_fs";
+  #     #       options = {
+  #     #         mountpoint = "legacy";
+  #     #         special_small_blocks = "128K";
+  #     #       };
+  #     #       mountpoint = "/persist";
+  #     #     };
+  #     #     "safe/nix" = {
+  #     #       type = "zfs_fs";
+  #     #       options = {
+  #     #         mountpoint = "legacy";
+  #     #         special_small_blocks = "128K";
+  #     #       };
+  #     #       mountpoint = "/nix";
+  #     #     };
+  #     #   };
+  #     # };
+  #   };
+  # };
 
   fileSystems = {
     "/" = {
-      device = "bpool/local/root";
+      device = "bpool_sata/local/root";
       fsType = "zfs";
     };
     "/nix" = {
-      device = "bpool/safe/nix";
+      device = "bpool_sata/safe/nix";
       fsType = "zfs";
       neededForBoot = true;
     };
     "/persist" = {
-      device = "bpool/safe/persist";
+      device = "bpool_sata/safe/persist";
       fsType = "zfs";
       neededForBoot = true;
+    };
+    "/boot" = {
+      device = "/dev/disk/by-uuid/E2E0-85F9";
+      fsType = "vfat";
     };
     "/mnt/data" = {
       device = "rpool/safe/data";
@@ -172,10 +176,10 @@
   };
 
   # Rollback root on boot
-  boot.initrd.postDeviceCommands = lib.mkAfter ''
-    zpool import -a
-    zfs rollback -r bpool/local/root@blank
-  '';
+  # boot.initrd.postDeviceCommands = lib.mkAfter ''
+  #   zpool import -a
+  #   zfs rollback -r bpool/local/root@blank
+  # '';
 
   fileSystems."/var/lib/sops".neededForBoot = true;
 

@@ -92,6 +92,7 @@
       "nix-users"
       "libvirtd"
       "kvm"
+      "media"
     ];
   };
 

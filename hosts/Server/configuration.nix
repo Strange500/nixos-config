@@ -83,10 +83,16 @@
   # fileSystems."/var/log".neededForBoot = true;
   # fileSystems."/var/lib/sops".neededForBoot = true;
 
-  boot = {
-    loader.grub = {
-      efiSupport = true;
-      efiInstallAsRemovable = true;
-    };
+  boot.loader.grub = {
+    enable = true;
+    zfsSupport = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true; # Often helps with NVMe/SATA swaps
+
+    # For UEFI, we do NOT list the disk ID here.
+    devices = ["nodev"];
+
+    # Ensure this matches the mirrors if you are doing mirrored booting,
+    # but for now, "nodev" is sufficient for a single UEFI bootloader.
   };
 }
