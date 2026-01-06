@@ -27,6 +27,19 @@
 
   boot.kernelModules = ["fuse"];
 
+  # -----------------------------------------------------------------
+  # ZFS global options (kernel modules, host-id, etc.)
+  # -----------------------------------------------------------------
+  boot.supportedFilesystems = ["zfs"];
+  networking.hostId = "8425e3c1"; # <-- generate with `head -c4 /dev/urandom | od -An -t u4`
+  services.zfs = {
+    trim.enable = true;
+    autoSnapshot.enable = false; # we manage our own blank snapshot
+  };
+
+  boot.kernelPackages = pkgs.linuxPackages_6_12; # newest ZFS
+  boot.initrd.kernelModules = ["zfs" "xfs" "nvme"];
+
   hardware.graphics = {
     enable = true;
   };
@@ -61,89 +74,25 @@
     };
   };
 
-  fileSystems."/mnt/media" = {
-    device = "media";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-  environment.etc."tmpfiles.d/media.conf".text = ''
-    Z /mnt/media/torrents 0775 arr jellyfin -
-    Z /mnt/media/media 0775 arr jellyfin -
-  '';
-  fileSystems."/mnt/music" = {
-    device = "music";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-  environment.etc."tmpfiles.d/music.conf".text = ''
-    Z /mnt/music 0770 beets music -
-  '';
-  fileSystems."/mnt/share" = {
-    device = "share";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-  environment.etc."tmpfiles.d/share.conf".text = ''
-    Z /mnt/share/syncthing/computer 0700 syncthing share -
-    Z /mnt/share/syncthing/QGCube 0700 syncthing share -
-  '';
-  users.groups.share = {};
-  fileSystems."/mnt/immich" = {
-    device = "immich";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-  environment.etc."tmpfiles.d/immich.conf".text = ''
-    Z /mnt/immich 0750 immich immich -
-  '';
-
-  fileSystems."/mnt/crypto" = {
-    device = "crypto";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-
-  environment.etc."tmpfiles.d/crypto.conf".text = ''
-    Z /mnt/crypto 0700 bitcoin bitcoin -
-  '';
-
-  fileSystems."/persist" = {
-    neededForBoot = true;
-    device = "persist";
-    fsType = "virtiofs";
-    options = [
-      "rw"
-      "relatime"
-    ];
-  };
-
   networking.firewall.allowedTCPPorts = [
     22
   ];
 
-  fileSystems."/var/log".neededForBoot = true;
-  fileSystems."/var/lib/sops".neededForBoot = true;
+  nixpkgs.config.allowBroken = true;
 
-  boot = {
-    initrd.availableKernelModules = ["virtiofs"];
-    loader.grub = {
-      efiSupport = true;
-      efiInstallAsRemovable = true;
-    };
+  # fileSystems."/var/log".neededForBoot = true;
+  # fileSystems."/var/lib/sops".neededForBoot = true;
+
+  boot.loader.grub = {
+    enable = true;
+    zfsSupport = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true; # Often helps with NVMe/SATA swaps
+
+    # For UEFI, we do NOT list the disk ID here.
+    devices = ["nodev"];
+
+    # Ensure this matches the mirrors if you are doing mirrored booting,
+    # but for now, "nodev" is sufficient for a single UEFI bootloader.
   };
 }

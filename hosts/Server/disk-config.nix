@@ -1,182 +1,299 @@
 {lib, ...}: {
+  # =============================================================================
+  # DISKO CONFIGURATION - Reverse-engineered from running system state
+  # =============================================================================
+  # WARNING: This configuration is DESCRIPTIVE, not prescriptive.
+  # It documents the EXISTING state of the ZFS pools and should NOT be used
+  # to format/recreate the disks (would cause data loss).
+  #
+  # To test this generates correct fileSystems without formatting:
+  #   nix build '.#nixosConfigurations.Server.config.system.build.diskoScript' --dry-run
+  #
+  # Physical Layout:
+  # ----------------
+  # sda (Samsung SSD 860 EVO 500GB) - System/Boot drive
+  #   ├─ sda1: 512M EFI (BOOT_SATA) - mounted at /boot
+  #   ├─ sda2: 199.5G ZFS (rpool special vdev mirror-1)
+  #   └─ sda3: 265.8G ZFS (bpool_sata)
+  #
+  # sdb (Seagate 16TB ST16000VE002) - Data drive
+  #   └─ sdb1: 14.6T ZFS (rpool mirror-0)
+  #
+  # sdc (Seagate 16TB ST16000NM001G) - Data drive
+  #   └─ sdc1: 14.6T ZFS (rpool mirror-0)
+  #
+  # nvme0n1 (Crucial P3 Plus 1TB) - NVMe special vdev
+  #   ├─ nvme0n1p1: 1M BIOS boot (unused)
+  #   ├─ nvme0n1p2: 500M EFI (unused)
+  #   └─ nvme0n1p3: 199.5G ZFS (rpool special vdev mirror-1)
+  #
+  # ZFS Pools:
+  # ----------
+  # rpool: Main data pool with mirror + special vdev
+  #   - mirror-0: sdb1 + sdc1 (14.6T each, main storage)
+  #   - special mirror-1: nvme0n1p3 + sda2 (199.5G each, metadata/small blocks)
+  #   - Datasets: rpool/safe/data → /mnt/data
+  #
+  # bpool_sata: Boot/system pool (single disk)
+  #   - sda3 (265.8G)
+  #   - Datasets:
+  #     - bpool_sata/local/root → / (root filesystem)
+  #     - bpool_sata/safe/nix → /nix
+  #     - bpool_sata/safe/persist → /persist
+  # =============================================================================
+
   disko.devices = {
-    disk = {
-      disk1 = {
-        device = lib.mkDefault "/dev/vda";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            boot = {
-              name = "boot";
-              size = "1M";
-              type = "EF02";
-            };
-            esp = {
-              name = "ESP";
-              size = "500M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-              };
-            };
-            system = {
-              name = "system";
-              size = "100%";
-              content = {
-                type = "btrfs";
-                extraArgs = ["-L" "nixos-system" "-f"];
-                # Don't set mountpoint here since tmpfs handles root
-                subvolumes = {
-                  # Create a root subvolume but don't mount it at /
-                  "@root" = {
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@nix" = {
-                    mountpoint = "/nix";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@var-log" = {
-                    mountpoint = "/var/log";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                  "@home" = {
-                    mountpoint = "/home";
-                    mountOptions = ["compress=zstd" "noatime"];
-                  };
-                };
-              };
+    # =========================================================================
+    # DISK DEFINITIONS
+    # =========================================================================
+
+    # Samsung SSD 860 EVO 500GB - Boot/System drive
+    disk.sata_ssd = {
+      device = lib.mkDefault "/dev/disk/by-id/ata-Samsung_SSD_860_EVO_500GB_S3Z2NB0NA15609K";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          esp = {
+            label = "esp-sata";
+            size = "512M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
+              mountOptions = ["defaults"];
             };
           };
-        };
-      };
-
-      # New disk for Podman
-      disk2 = {
-        device = lib.mkDefault "/dev/vdb"; # change if your new disk has another path
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            podman = {
-              name = "podman";
-              size = "100%";
-              content = {
-                type = "filesystem";
-                format = "ext4";
-                mountpoint = "/var/lib/containers";
-                mountOptions = ["noatime"];
-              };
+          rpool_special = {
+            label = "special_mirror";
+            size = "199.5G";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+          bpool = {
+            label = "bpool_sata";
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "bpool_sata";
             };
           };
         };
       };
     };
 
-    # Tmpfs for root - this takes precedence
-    nodev = {
-      root-tmpfs = {
-        type = "nodev";
-        fsType = "tmpfs";
-        mountpoint = "/";
-        mountOptions = ["mode=755" "size=4G"];
+    # Seagate 16TB ST16000VE002 - Data mirror disk 1
+    disk.data1 = {
+      device = lib.mkDefault "/dev/disk/by-id/ata-ST16000VE002-3BR101_ZR700R8Z";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          zfs = {
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+        };
+      };
+    };
+
+    # Seagate 16TB ST16000NM001G - Data mirror disk 2
+    disk.data2 = {
+      device = lib.mkDefault "/dev/disk/by-id/ata-ST16000NM001G-2KK103_ZL2EZ7VR";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          zfs = {
+            size = "100%";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+        };
+      };
+    };
+
+    # Crucial P3 Plus 1TB NVMe - Special vdev for metadata
+    disk.nvme = {
+      device = lib.mkDefault "/dev/disk/by-id/nvme-CT1000P3PSSD8_240746F944B7";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          bios_boot = {
+            size = "1M";
+            type = "EF02"; # BIOS boot partition
+          };
+          esp_unused = {
+            size = "500M";
+            type = "EF00"; # EFI System Partition (not mounted)
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              # Not mounted - boot uses SATA SSD ESP
+            };
+          };
+          rpool_special = {
+            size = "199.5G";
+            content = {
+              type = "zfs";
+              pool = "rpool";
+            };
+          };
+        };
+      };
+    };
+
+    # =========================================================================
+    # ZFS POOL DEFINITIONS
+    # =========================================================================
+
+    zpool = {
+      # -----------------------------------------------------------------------
+      # rpool - Main data pool
+      # Topology: mirror (2x16TB HDD) + special mirror (NVMe + SATA SSD)
+      # -----------------------------------------------------------------------
+      rpool = {
+        type = "zpool";
+        mode = {
+          topology = {
+            type = "topology";
+            vdev = [
+              {
+                mode = "mirror";
+                members = ["data1" "data2"];
+              }
+            ];
+            special = {
+              members = ["nvme" "sata_ssd"];
+            };
+          };
+        };
+        rootFsOptions = {
+          compression = "zstd";
+          atime = "on";
+          relatime = "on";
+          xattr = "on";
+          acltype = "off";
+          dnodesize = "legacy";
+        };
+        # Note: ashift is auto-detected per vdev, no need to set explicitly
+
+        datasets = {
+          "safe" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              canmount = "off";
+            };
+          };
+          "safe/data" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/mnt/data";
+          };
+        };
+      };
+
+      # -----------------------------------------------------------------------
+      # bpool_sata - Boot/System pool
+      # Single disk (SATA SSD partition 3)
+      # Contains root, /nix, and /persist datasets
+      # -----------------------------------------------------------------------
+      bpool_sata = {
+        type = "zpool";
+        rootFsOptions = {
+          compression = "zstd";
+          atime = "on";
+          relatime = "on";
+          xattr = "on";
+          acltype = "off";
+          dnodesize = "legacy";
+        };
+        options = {
+          ashift = "12";
+        };
+
+        datasets = {
+          "local" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              canmount = "off";
+            };
+          };
+          "local/root" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/";
+            postCreateHook = ''
+              zfs snapshot bpool_sata/local/root@blank
+            '';
+          };
+          "safe" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "none";
+              canmount = "off";
+            };
+          };
+          "safe/nix" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/nix";
+          };
+          "safe/persist" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "legacy";
+            };
+            mountpoint = "/persist";
+          };
+        };
       };
     };
   };
-  # boot = {
-  #   initrd = {
-  #     systemd = {
-  #       enable = true;
-  #       services.rollback = {
-  #         description = "Rollback BTRFS root subvolume to a pristine state";
-  #         wantedBy = ["initrd.target"];
-  #         before = ["sysroot.mount"];
-  #         after = ["systemd-udev-settle.service"];
-  #         wants = ["systemd-udev-settle.service"];
-  #         unitConfig.DefaultDependencies = "no";
-  #         serviceConfig = {
-  #           Type = "oneshot";
-  #           RemainAfterExit = true;
-  #         };
-  #         script = ''
-  #           set -euo pipefail
 
-  #           # Wait for device to be available
-  #           for i in {1..30}; do
-  #             if [ -e /dev/disk/by-label/nixos-system ]; then
-  #               break
-  #             fi
-  #             echo "Waiting for nixos-system device... ($i/30)"
-  #             sleep 1
-  #           done
+  # =============================================================================
+  # FILESYSTEM OVERRIDES
+  # =============================================================================
+  # Note: disko generates fileSystems entries from the datasets above.
+  # These overrides ensure boot-critical mounts have neededForBoot = true,
+  # and /boot uses the same UUID as the current running system.
+  # =============================================================================
 
-  #           if [ ! -e /dev/disk/by-label/nixos-system ]; then
-  #             echo "Error: nixos-system device not found"
-  #             exit 1
-  #           fi
+  fileSystems = {
+    "/".neededForBoot = true;
+    "/nix".neededForBoot = true;
+    "/persist".neededForBoot = true;
+    "/var/lib/sops".neededForBoot = true;
+    # Override /boot to use UUID (matches current fstab) instead of partlabel
+    "/boot".device = lib.mkForce "/dev/disk/by-uuid/E2E0-85F9";
+  };
 
-  #           # Create temporary mount point
-  #           mkdir -p /btrfs_tmp
-
-  #           # Mount the btrfs filesystem (without subvol to access all subvolumes)
-  #           mount -t btrfs /dev/disk/by-label/nixos-system /btrfs_tmp
-
-  #           # Check if root subvolume exists
-  #           if [ -d /btrfs_tmp/root ]; then
-  #             echo "Found existing root subvolume, creating backup..."
-
-  #             # Create old_roots directory if it doesn't exist
-  #             mkdir -p /btrfs_tmp/old_roots
-
-  #             # Create timestamp for backup
-  #             timestamp=$(date "+%Y-%m-%d_%H:%M:%S")
-
-  #             # Move current root to backup location
-  #             mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-  #             echo "Moved root subvolume to old_roots/$timestamp"
-  #           fi
-
-  #           # Function to recursively delete subvolumes
-  #           delete_subvolume_recursively() {
-  #             local subvol_path="$1"
-  #             if [ ! -d "$subvol_path" ]; then
-  #               return
-  #             fi
-
-  #             # Delete child subvolumes first
-  #             while IFS= read -r -d ''' subvol; do
-  #               [ -n "$subvol" ] && delete_subvolume_recursively "/btrfs_tmp/$subvol"
-  #             done < <(btrfs subvolume list -o "$subvol_path" 2>/dev/null | cut -f 9- -d ' ' | tr '\n' '\0' || true)
-
-  #             echo "Deleting subvolume: $subvol_path"
-  #             btrfs subvolume delete "$subvol_path" || echo "Warning: Failed to delete $subvol_path"
-  #           }
-
-  #           # Clean up old backups (older than 30 days)
-  #           if [ -d /btrfs_tmp/old_roots ]; then
-  #             echo "Cleaning up old backups..."
-  #             find /btrfs_tmp/old_roots/ -maxdepth 1 -type d -mtime +30 | while read -r old_backup; do
-  #               if [ "$old_backup" != "/btrfs_tmp/old_roots" ]; then
-  #                 echo "Removing old backup: $old_backup"
-  #                 delete_subvolume_recursively "$old_backup"
-  #               fi
-  #             done
-  #           fi
-
-  #           # Create new pristine root subvolume
-  #           echo "Creating new root subvolume..."
-  #           btrfs subvolume create /btrfs_tmp/root
-
-  #           # Unmount
-  #           umount /btrfs_tmp
-  #           echo "Rollback completed successfully"
-  #         '';
-  #       };
-  #     };
-  #   };
-  # };
+  # ---------------------------------------------------------------------------
+  # Impermanence: Rollback root to blank snapshot on every boot
+  # ---------------------------------------------------------------------------
+  # This wipes / on each boot, keeping only what's persisted in /persist.
+  # The snapshot bpool_sata/local/root@blank was created on Nov 14, 2025.
+  # ---------------------------------------------------------------------------
+  boot.initrd.postResumeCommands = lib.mkAfter ''
+    zfs rollback -r bpool_sata/local/root@blank
+  '';
 
   environment.persistence = {
     "/persist" = {
@@ -191,12 +308,6 @@
         "/var/lib/systemd"
         "/etc/NetworkManager"
         "/root/.ssh"
-        {
-          directory = "/var/lib/colord";
-          user = "colord";
-          group = "colord";
-          mode = "u=rwx,g=rx,o=";
-        }
       ];
       files = [
         "/etc/machine-id"

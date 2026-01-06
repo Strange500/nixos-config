@@ -12,6 +12,7 @@
     ./modules/apps/desktopsApps.nix
     ./modules/shared
     inputs.sops-nix.homeManagerModule
+    inputs.dms.homeModules.dankMaterialShell.default
   ];
 
   home = {
@@ -22,6 +23,8 @@
       pkgs.discord
       pkgs.moonlight-qt
       pkgs.nautilus
+      pkgs.dejavu_fonts
+      pkgs.nerd-fonts.jetbrains-mono
     ];
     file = {
       ".config" = {

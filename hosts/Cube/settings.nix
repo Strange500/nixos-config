@@ -20,9 +20,10 @@
           jetbrains.enable = false;
         };
         media = true;
-        crypto = true;
+        crypto = false;
       };
       gaming = true;
+      vr = true;
       desktop.loginManager = lib.mkForce "none";
       desktop.desktopEnvironment = lib.mkForce "gnome";
       settings.bluetooth.enable = false;

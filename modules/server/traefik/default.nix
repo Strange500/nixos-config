@@ -42,10 +42,6 @@ in {
   config = {
     systemd.services.qgroget.serviceConfig.WorkingDirectory = "/var/lib/traefik";
 
-    environment.persistence."/persist".directories = [
-      "${config.services.traefik.dataDir}"
-    ];
-
     systemd.tmpfiles.rules = [
       "d /plugins-storage 0755 traefik traefik -"
       "d /var/lib/traefik 0700 traefik traefik -"
@@ -63,6 +59,14 @@ in {
         name = "proxy";
         url = "http://127.0.0.1:8080";
         type = "private";
+        persistedData = [
+          {
+            directory = "${config.services.traefik.dataDir}";
+            user = "traefik";
+            group = "traefik";
+            mode = "u=rwx,g=rx,o=";
+          }
+        ];
       };
     };
 
@@ -97,8 +101,8 @@ in {
         };
 
         api = {
-          dashboard = false;
-          insecure = false;
+          dashboard = true;
+          insecure = true;
         };
 
         experimental = {
@@ -140,7 +144,7 @@ in {
             http = {
               middlewares = [
                 "googlenoindex"
-                "geoblock-fr"
+                #"geoblock-fr"
               ];
             };
             transport = {

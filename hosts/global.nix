@@ -12,7 +12,6 @@
     ../modules/system/audio/audio.nix
     ../modules/system/login/login.nix
     ../modules/system/bluetooth/bluetooth.nix
-    ../modules/desktop/stylix/stylix.nix
     ../modules/system/boot/plymouth.nix
     ../modules/system/update/update.nix
     ../modules/game/game.nix
@@ -20,6 +19,7 @@
     ./setting.nix
     ../modules/shared
     ../modules/logo
+    inputs.dms.nixosModules.dankMaterialShell
   ];
 
   programs.java = lib.mkIf config.qgroget.nixos.apps.dev.enable {
@@ -29,15 +29,22 @@
 
   users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [config.qgroget.user.username];
 
-  networking.networkmanager = {enable = true;};
+  networking.networkmanager = {enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;};
   services = {
     xserver.xkb = {
       layout = "fr";
       variant = "";
     };
-    printing.enable = true;
-    gvfs.enable = true;
+    printing.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+    gvfs.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
   };
+
+  boot.kernelModules = lib.mkIf (config.qgroget.nixos.apps.dev.vbox.enable) [
+    "vboxdrv"
+    "vboxnetadp"
+    "vboxnetflt"
+    "vboxpci"
+  ];
 
   virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
@@ -56,8 +63,8 @@
     };
   };
 
-  xdg.portal = {
-    enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+  xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
+    enable = true;
     wlr.enable = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") true;
     configPackages = [pkgs.xdg-desktop-portal-gtk];
   };
@@ -85,6 +92,7 @@
       "nix-users"
       "libvirtd"
       "kvm"
+      "media"
     ];
   };
 

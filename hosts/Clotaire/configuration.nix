@@ -18,17 +18,10 @@
     efiInstallAsRemovable = true;
   };
 
-  # boot.initrd.luks.devices = {
-  #   cryptsystem = {
-  #     device = lib.mkForce "/dev/nvme0n1p3";
-  #   };
-  # };
-
   environment.systemPackages = with pkgs; [
     brightnessctl
   ];
 
-  services.upower.enable = true;
-
   boot.kernelParams = ["acpi_enforce_resources=lax"];
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
 }

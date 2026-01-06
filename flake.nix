@@ -14,11 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-bitcoin = {
-      url = "github:fort-nix/nix-bitcoin/release";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     stylix = {
       url = "github:danth/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -46,7 +41,7 @@
     };
 
     disko = {
-      url = "github:nix-community/disko/latest";
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -61,7 +56,6 @@
 
     declarative-jellyfin = {
       url = "github:Sveske-Juice/declarative-jellyfin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
@@ -73,42 +67,91 @@
     portfolio = {
       url = "github:strange500/nextPortfolio";
     };
+
+    dms = {
+      url = "github:AvengeMedia/DankMaterialShell/stable";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nvf = {
+      url = "github:NotAShelf/nvf";
+      # You can override the input nixpkgs to follow your system's
+      # instance of nixpkgs. This is safe to do as nvf does not depend
+      # on a binary cache.
+      inputs.nixpkgs.follows = "nixpkgs";
+      # Optionally, you can also override individual plugins
+      # for example:
+      #inputs.obsidian-nvim.follows = "obsidian-nvim"; # <- this will use the obsidian-nvim from your inputs
+    };
   };
 
-  outputs = {nixpkgs, ...} @ inputs: let
+  outputs = {
+    nixpkgs,
+    declarative-jellyfin,
+    home-manager,
+    stylix,
+    disko,
+    sops-nix,
+    nur,
+    chaotic,
+    impermanence,
+    quadlet-nix,
+    portfolio,
+    jovian-nixos,
+    nvf,
+    ...
+  } @ inputs: let
     system = "x86_64-linux";
 
     # Common modules used by most hosts
     commonModules = [
-      inputs.home-manager.nixosModules.default
-      inputs.stylix.nixosModules.stylix
-      inputs.disko.nixosModules.disko
-      inputs.sops-nix.nixosModules.sops
+      home-manager.nixosModules.default
+      stylix.nixosModules.stylix
+      disko.nixosModules.disko
+      sops-nix.nixosModules.sops
+      chaotic.nixosModules.default
       inputs.nur.modules.nixos.default
-      inputs.chaotic.nixosModules.default
       inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
-      ({pkgs, ...}: {
-        environment.systemPackages = [pkgs.nur.repos.mic92.hello-nur];
-      })
+      {
+        # Add nvf neovim to all systems
+        environment.systemPackages = [
+          (inputs.nvf.lib.neovimConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            modules = [
+              ./modules/apps/nvim.nix
+            ];
+          }).neovim
+        ];
+      }
     ];
 
     # Desktop-specific modules
     desktopModules = [
-      inputs.impermanence.nixosModules.impermanence
+      impermanence.nixosModules.impermanence
     ];
 
     # Server-specific modules
     serverModules = [
-      inputs.impermanence.nixosModules.impermanence
-      inputs.declarative-jellyfin.nixosModules.default
-      inputs.quadlet-nix.nixosModules.quadlet
-      inputs.portfolio.nixosModules.default
-      inputs.nix-bitcoin.nixosModules.default
+      impermanence.nixosModules.impermanence
+      declarative-jellyfin.nixosModules.default
+      quadlet-nix.nixosModules.quadlet
+      portfolio.nixosModules.default
+      # {
+      #   nixpkgs.overlays = [
+      #     (final: prev: {
+      #       jellyfin =
+      #         (import (builtins.fetchTarball {
+      #           url = "https://github.com/NixOS/nixpkgs/archive/nixos-25.05.tar.gz";
+      #           sha256 = "sha256:0bz1qwd1fw9v4hmxi6h2qfgvxpv4kwdiz7xd9p7j1msr0b8d54h3";
+      #         }) {inherit system;}).jellyfin;
+      #     })
+      #   ];
+      # }
     ];
 
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
-      inputs.jovian-nixos.nixosModules.default
+      jovian-nixos.nixosModules.default
     ];
 
     # Helper function to create a NixOS system configuration
@@ -126,6 +169,25 @@
           ++ commonModules ++ extraModules;
       };
   in {
+    checks.${system} = let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      jellyfinTest = import ./tests/jellyfin {
+        inherit pkgs;
+        inherit declarative-jellyfin;
+      };
+      jellyseerrTest = import ./tests/jellyseerr {
+        inherit pkgs;
+      };
+    };
+
+    packages."x86_64-linux".default =
+      (nvf.lib.neovimConfiguration {
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        modules = [
+          ./modules/apps/nvim.nix
+        ];
+      }).neovim;
     nixosConfigurations = {
       # Desktop workstation
       Clovis = mkSystem "Clovis" desktopModules;
@@ -150,8 +212,35 @@
         inherit system;
         modules = [
           ./hosts/installer/configuration.nix
+          {
+            # use the neovim package from the flake inputs
+            environment.systemPackages = [
+              (inputs.nvf.lib.neovimConfiguration {
+                pkgs = nixpkgs.legacyPackages.${system};
+                modules = [
+                  ./modules/apps/nvim.nix
+                ];
+              }).neovim
+            ];
+          }
         ];
       };
+    };
+
+    # pi with system in arm
+    nixosConfigurations.pi = nixpkgs.lib.nixosSystem {
+      system = "aarch64-linux";
+
+      specialArgs = {
+        inherit inputs;
+        hostname = "pi";
+      };
+
+      modules =
+        [
+          ./hosts/pi/configuration.nix
+        ]
+        ++ commonModules;
     };
   };
 }

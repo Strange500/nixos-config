@@ -15,31 +15,50 @@
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
     zsh.enable = true;
-    dconf.enable = true;
+    dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+    dankMaterialShell.enable =
+      lib.mkIf (
+        config.qgroget.nixos.desktop.desktopEnvironment == "niri"
+      )
+      true;
+  };
+
+  programs.niri = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") {
+    enable = true;
+    package = pkgs.niri;
   };
 
   services = {
-    desktopManager.plasma6 = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde") {
-      enable = true;
-    };
-    desktopManager.gnome = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome") {
-      enable = true;
-    };
+    desktopManager.plasma6 =
+      lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde")
+      {
+        enable = true;
+      };
+    desktopManager.gnome =
+      lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome")
+      {
+        enable = true;
+      };
   };
-  services.xserver.displayManager.startx.enable = true;
+  services.xserver.displayManager.startx.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
 
   environment.systemPackages = (
     [
       pkgs.git
       pkgs.wget
-      pkgs.blueman
-      pkgs.nix-prefetch-git
       pkgs.home-manager
-      pkgs.gparted
-      pkgs.cachix
-      pkgs.nixd
+    ]
+    ++ lib.optionals (config.qgroget.nixos.isDesktop) [
       pkgs.plymouth
       pkgs.wl-clipboard
+      pkgs.gparted
+      pkgs.blueman
+      pkgs.kdePackages.dolphin
+      pkgs.kdePackages.kio
+      pkgs.kdePackages.qtsvg
+    ]
+    ++ lib.optionals (config.qgroget.nixos.apps.dev.enable) [
+      pkgs.nixd
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
@@ -54,6 +73,10 @@
       pkgs.gnome-session
       pkgs.gnome-shell
       pkgs.gnome-control-center
+    ]
+    ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "niri") [
+      pkgs.pywalfox-native
+      pkgs.xwayland-satellite
     ]
   );
 }

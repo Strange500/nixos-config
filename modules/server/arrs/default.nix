@@ -6,7 +6,7 @@
 }: let
   cfg = {
     containerDir = "${config.qgroget.server.containerDir}";
-    mediaDir = "/mnt/media";
+    mediaDir = "/mnt/data/media";
     podName = "arr";
 
     ports = {
@@ -17,6 +17,7 @@
       bazarr = 6767;
       flaresolverr = 8191;
       prowlarr = 9696;
+      qui = 7476;
     };
 
     containers = {
@@ -27,6 +28,7 @@
       bazarr = "bazarr";
       flaresolverr = "flaresolverr";
       prowlarr = "prowlarr";
+      qui = "qui";
     };
   };
 
@@ -53,7 +55,10 @@
     bazarr = "lscr.io/linuxserver/bazarr:latest";
     flaresolverr = "ghcr.io/flaresolverr/flaresolverr:latest";
     prowlarr = "lscr.io/linuxserver/prowlarr:latest";
+    qui = "ghcr.io/autobrr/qui:latest";
   };
+
+  quiClientId = "KddfAIwLB0R5G.r3UlGpXmoSPmpy9XxXc9AsbBBPbqrgpRv4RHOHQhUkS.gkZyfUswykmCz0";
 
   inherit (config.virtualisation.quadlet) pods;
 in {
@@ -107,6 +112,11 @@ in {
       url = "http://127.0.0.1:${toString cfg.ports.prowlarr}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
+    };
+    qui = {
+      name = "qui";
+      url = "http://127.0.0.1:${toString cfg.ports.qui}";
+      type = "public";
     };
   };
 
@@ -169,7 +179,6 @@ in {
       "${cfg.containerDir}/sonarr-anime"
       "${cfg.containerDir}/radarr-anime"
       "${cfg.containerDir}/bazarr"
-      "${cfg.containerDir}/prowlarr"
     ];
     systemdUnits = [
       "${cfg.podName}-pod.service"
@@ -183,6 +192,7 @@ in {
     Z ${cfg.containerDir}/sonarr-anime 0700 arr media -
     Z ${cfg.containerDir}/radarr-anime 0700 arr media -
     Z ${cfg.containerDir}/bazarr 0700 arr media -
+    Z ${cfg.containerDir}/prowlarr 0700 arr media -
   '';
 
   sops.secrets = {
@@ -194,34 +204,9 @@ in {
       owner = "traefik";
       group = "traefik";
     };
+    "server/qui/env" = {
+    };
   };
-
-  environment.persistence."/persist".directories = [
-    "${config.services.jackett.dataDir}"
-  ];
-
-  services.jackett = {
-    enable = true;
-    user = "arr";
-    group = "media";
-    port = 9117;
-  };
-
-  services.flaresolverr = {
-    enable = true;
-    port = cfg.ports.flaresolverr;
-  };
-
-  qgroget.services.jackett = {
-    name = "jackett";
-    url = "http://127.0.0.1:9117";
-    type = "private";
-    middlewares = ["SSO"];
-  };
-
-  networking.firewall.allowedTCPPorts = [
-    9117
-  ];
 
   # inject secret basic token into config file at startup
   systemd.services.traefik = {
@@ -267,6 +252,7 @@ in {
           "${toString cfg.ports.radarr}:7877"
           "${toString cfg.ports.bazarr}:6767"
           "${toString cfg.ports.prowlarr}:9696"
+          "${toString cfg.ports.qui}:7476"
         ];
       };
       serviceConfig = commonServiceConfig;
@@ -289,6 +275,29 @@ in {
             ];
           }
           // commonContainerConfig;
+        serviceConfig = commonServiceConfig;
+      };
+
+      qui = {
+        autoStart = true;
+        containerConfig = {
+          name = cfg.containers.qui;
+          pod = pods.${cfg.podName}.ref;
+          image = images.qui;
+          environmentFiles = [
+            config.sops.secrets."server/qui/env".path
+          ];
+          environments = {
+            QUI__OIDC_ENABLED = "true";
+            QUI__OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
+            QUI__OIDC_CLIENT_ID = "${quiClientId}";
+            QUI__OIDC_REDIRECT_URL = "https://qui.${config.qgroget.server.domain}/api/auth/oidc/callback";
+            QUI__OIDC_DISABLE_BUILT_IN_LOGIN = "true";
+          };
+          volumes = [
+            "${cfg.containerDir}/qui/config:/config:Z"
+          ];
+        };
         serviceConfig = commonServiceConfig;
       };
 
@@ -340,6 +349,22 @@ in {
         serviceConfig = commonServiceConfig;
       };
 
+      prowlarr = {
+        autoStart = true;
+        containerConfig =
+          {
+            name = cfg.containers.prowlarr;
+            pod = pods.${cfg.podName}.ref;
+            image = images.prowlarr;
+            volumes = [
+              "${cfg.containerDir}/prowlarr/config:/config:Z"
+              "${cfg.mediaDir}:/media:Z"
+            ];
+          }
+          // commonContainerConfig;
+        serviceConfig = commonServiceConfig;
+      };
+
       bazarr = {
         autoStart = true;
         containerConfig =
@@ -354,6 +379,57 @@ in {
           }
           // commonContainerConfig;
         serviceConfig = commonServiceConfig;
+      };
+    };
+  };
+
+  services.authelia.instances.qgroget.settings = {
+    identity_providers.oidc = {
+      clients = [
+        {
+          client_id = "${quiClientId}";
+          client_name = "qui";
+          client_secret = "$pbkdf2-sha512$310000$iCxbbItaXiixdPdlJ5jrdA$jF7xpH3n.h1Bdt.yQce1KG7HHjkLSOFruN55yICz6j5dz1rts4brEymmxRJI9BAw46556uc5Yugo6QIKKj2PyA";
+          public = false;
+          consent_mode = "auto";
+          pre_configured_consent_duration = "1 week";
+          authorization_policy = "qui";
+          require_pkce = false;
+          pkce_challenge_method = "";
+          redirect_uris = [
+            "https://qui.${config.qgroget.server.domain}/api/auth/oidc/callback"
+          ];
+          scopes = [
+            "openid"
+            "profile"
+            "email"
+          ];
+          response_types = [
+            "code"
+          ];
+          grant_types = [
+            "authorization_code"
+          ];
+          access_token_signed_response_alg = "none";
+          userinfo_signed_response_alg = "none";
+          token_endpoint_auth_method = "client_secret_post";
+        }
+      ];
+      cors.allowed_origins = [
+        "https://qui.${config.qgroget.server.domain}"
+      ];
+      authorization_policies = {
+        qui = {
+          default_policy = "deny";
+          rules = [
+            {
+              policy = "two_factor";
+              subject = [
+                "group:admin"
+              ];
+            }
+          ];
+        };
       };
     };
   };

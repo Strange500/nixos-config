@@ -9,8 +9,8 @@
       user.username = "strange";
       nixos = {
         desktop = {
-          desktopEnvironment = "hyprland";
-          loginManager = "ly";
+          desktopEnvironment = "niri";
+          loginManager = "dms";
           theme = "atelier-cave";
         };
       };
@@ -23,16 +23,18 @@
           == "hyprland"
           || config.qgroget.nixos.desktop.desktopEnvironment == "kde"
           || config.qgroget.nixos.desktop.desktopEnvironment == "gnome"
+          || config.qgroget.nixos.desktop.desktopEnvironment == "niri"
           || config.qgroget.nixos.desktop.desktopEnvironment == "none";
-        message = "Only Hyprland, KDE, and GNOME are supported as desktop environments.";
+        message = "Only Hyprland, KDE, GNOME or niri are supported as desktop environments.";
       }
       {
         assertion =
           config.qgroget.nixos.desktop.loginManager
           == "gdm"
           || config.qgroget.nixos.desktop.loginManager == "ly"
+          || config.qgroget.nixos.desktop.loginManager == "dms"
           || config.qgroget.nixos.desktop.loginManager == "none";
-        message = "Only gdm and ly are supported as login managers.";
+        message = "Only gdm, ly and dms are supported as login managers.";
       }
     ];
   };
@@ -49,10 +51,17 @@
         default = "strange";
         description = "The username for the qgroget user.";
       };
+      backup.network = {
+        ip = lib.mkOption {
+          type = lib.types.str;
+          default = "192.168.0.119";
+          description = "The IP address of the backup server.";
+        };
+      };
       server = {
         network.ip = lib.mkOption {
           type = lib.types.str;
-          default = "192.168.0.34";
+          default = "192.168.0.28";
           description = "The IP address of the qgroget server.";
         };
         domain = lib.mkOption {
@@ -141,7 +150,7 @@
         desktop = {
           desktopEnvironment = lib.mkOption {
             type = lib.types.str;
-            default = "hyprland";
+            default = "niri";
             description = "The desktop environment to use.";
           };
           loginManager = lib.mkOption {

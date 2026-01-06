@@ -1,0 +1,17 @@
+layout {
+    gaps 20
+
+    border {
+        width 1
+    }
+
+    focus-ring {
+        width 2
+    }
+}
+window-rule {
+    geometry-corner-radius 4
+    clip-to-geometry true
+    tiled-state true
+    draw-border-with-background false
+}

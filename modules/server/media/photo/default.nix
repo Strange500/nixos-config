@@ -4,7 +4,7 @@
   ...
 }: let
   cfg = {
-    uploadLocation = "/mnt/immich";
+    uploadLocation = "/mnt/data/immich";
     port = 2283;
   };
 
@@ -257,14 +257,13 @@ in {
       buffering = {
         maxRequestBodyBytes = traefikConfig.bufferLimits;
         maxResponseBodyBytes = traefikConfig.bufferLimits;
-        memResponseBodyBytes = traefikConfig.bufferLimits;
-        memRequestBodyBytes = traefikConfig.bufferLimits;
       };
     };
   };
 
   systemd.tmpfiles.rules = [
     "Z ${cfg.uploadLocation} 0700 immich immich -"
+    "Z ${config.qgroget.server.containerDir}/immich-pg/data 0700 immich-pg immich -"
   ];
 
   qgroget.services.immich = {
@@ -284,7 +283,15 @@ in {
     mediaLocation = cfg.uploadLocation;
     machine-learning.enable = true;
     accelerationDevices = ["/dev/dri/renderD128"];
-
+    database = {
+      createDB = false;
+      enable = false;
+      host = "localhost";
+      port = 5433;
+      user = "immich";
+      name = "immich";
+    };
+    secretsFile = "${config.sops.secrets."server/immich/env".path}";
     # IMPORTANT: Don't emit a config.json into /nix/store; we'll write it at runtime.
     settings = null;
 
@@ -294,9 +301,53 @@ in {
     };
   };
 
-  sops.secrets."server/immich/oidc-client-secret" = {
-    owner = "root";
-    mode = "0400";
+  users.users.immich-pg = {
+    isSystemUser = true;
+    description = "User for running Immich Postgres";
+    uid = 985;
+    home = "/nonexistent";
+    createHome = false;
+    group = "immich";
+  };
+  users.groups.immich = {
+    gid = 985;
+  };
+
+  virtualisation.quadlet = {
+    containers = {
+      immich-pg = {
+        autoStart = true;
+        containerConfig = {
+          name = "immich-pg";
+          user = "${toString config.users.users.immich-pg.uid}:${toString config.users.groups.immich.gid}";
+          image = "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23";
+          publishPorts = [
+            "5433:5432"
+          ];
+          volumes = [
+            "${config.qgroget.server.containerDir}/immich-pg/data:/var/lib/postgresql/data:rw"
+          ];
+          environmentFiles = [
+            "${config.sops.secrets."server/immich/env".path}"
+          ];
+        };
+        serviceConfig = {
+          Restart = "always";
+        };
+        unitConfig = {
+          Before = ["immich-server.service"];
+        };
+      };
+    };
+  };
+
+  sops.secrets = {
+    "server/immich/oidc-client-secret" = {
+      owner = "root";
+      mode = "0400";
+    };
+    "server/immich/env" = {
+    };
   };
 
   #    Inject it into the immich-server service as a systemd credential and
@@ -330,12 +381,6 @@ in {
   };
 
   services.authelia.instances.qgroget.settings = {
-    access_control.rules = lib.mkAfter [
-      {
-        domain = "immich.${config.qgroget.server.domain}";
-        policy = "two_factor";
-      }
-    ];
     identity_providers.oidc = {
       clients = [
         {
@@ -345,7 +390,7 @@ in {
           public = false;
           consent_mode = "auto";
           pre_configured_consent_duration = "1 week";
-          authorization_policy = "two_factor";
+          authorization_policy = "immich";
           require_pkce = false;
           pkce_challenge_method = "";
           redirect_uris = [
@@ -371,9 +416,22 @@ in {
           token_endpoint_auth_method = "client_secret_post";
         }
       ];
-      cors.allowed_origins = lib.mkMerge [
+      cors.allowed_origins = [
         "https://immich.${config.qgroget.server.domain}"
       ];
+      authorization_policies = {
+        immich = {
+          default_policy = "deny";
+          rules = [
+            {
+              policy = "two_factor";
+              subject = [
+                "group:immich"
+              ];
+            }
+          ];
+        };
+      };
     };
   };
 }

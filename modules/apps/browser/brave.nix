@@ -1,5 +1,10 @@
-{pkgs, ...}: {
-  programs.chromium = {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
+  programs.chromium = lib.mkIf config.qgroget.nixos.apps.basic {
     enable = true;
     package = pkgs.brave;
     extensions = [
