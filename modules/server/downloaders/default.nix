@@ -91,30 +91,30 @@
       "Session\\DisableAutoTMMByDefault" = false;
       "Session\\DisableAutoTMMTriggers\\CategorySavePathChanged" = false;
       "Session\\DisableAutoTMMTriggers\\DefaultSavePathChanged" = false;
-      "Session\\GlobalMaxRatio" = 5;
+      "Session\\GlobalMaxRatio" = 50;
       # Disk / cache tuning (big memory lever)
       # Disk cache in MiB: set small to save RAM
       "Session\\DiskCache" = 256;
       # how long cached blocks live (s) — you already had 60; keep low to free RAM
       "Session\\DiskCacheTTL" = 60;
       # Turn off read caching to reduce memory (will increase disk reads)
-      "Session\\UseReadCache" = false;
+      "Session\\UseReadCache" = true;
 
       # File/socket/thread pools — reduce memory and fds
       "Session\\FilePoolSize" = 200;
-      "Session\\AsyncIOThreadsCount" = 1;
-      "Session\\HashingThreadsCount" = 1;
+      "Session\\AsyncIOThreadsCount" = 10;
+      "Session\\HashingThreadsCount" = 10;
       "Session\\MaxConnections" = 400; # global peers
       "Session\\MaxConnectionsPerTorrent" = 60; # per torrent peers
       "Session\\MaxActiveCheckingTorrents" = 3;
       "Session\\MaxActiveDownloads" = 200;
       "Session\\MaxActiveTorrents" = 100;
-      "Session\\MaxActiveUploads" = 20;
-      "Session\\MaxUploads" = 80;
+      "Session\\MaxActiveUploads" = 1000;
+      "Session\\MaxUploads" = 1000;
       "Session\\MaxUploadsPerTorrent" = 3;
       "Session\\Port" = "@OUTGOING_PORT@";
       "Session\\Preallocation" = true;
-      "Session\\QueueingSystemEnabled" = true;
+      "Session\\QueueingSystemEnabled" = false;
       "Session\\SSL\\Port" = 7633;
       "Session\\SendBufferWatermark" = 1000;
       "Session\\SendBufferWatermarkFactor" = 100;
@@ -132,9 +132,13 @@
       AutoDeleteAddedTorrentFile = "IfAdded";
     };
 
-    LegalNotice = {Accepted = true;};
+    LegalNotice = {
+      Accepted = true;
+    };
 
-    Meta = {MigrationVersion = 8;};
+    Meta = {
+      MigrationVersion = 8;
+    };
 
     Network = {
       PortForwardingEnabled = false;
@@ -180,7 +184,10 @@
 
   qbitPrestartScript = pkgs.writeShellApplication {
     name = "qbit-prestart";
-    runtimeInputs = with pkgs; [coreutils gnused];
+    runtimeInputs = with pkgs; [
+      coreutils
+      gnused
+    ];
     text = ''
       set -euo pipefail
 

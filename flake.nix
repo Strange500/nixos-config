@@ -72,6 +72,17 @@
       url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nvf = {
+      url = "github:NotAShelf/nvf";
+      # You can override the input nixpkgs to follow your system's
+      # instance of nixpkgs. This is safe to do as nvf does not depend
+      # on a binary cache.
+      inputs.nixpkgs.follows = "nixpkgs";
+      # Optionally, you can also override individual plugins
+      # for example:
+      #inputs.obsidian-nvim.follows = "obsidian-nvim"; # <- this will use the obsidian-nvim from your inputs
+    };
   };
 
   outputs = {
@@ -87,6 +98,7 @@
     quadlet-nix,
     portfolio,
     jovian-nixos,
+    nvf,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -100,6 +112,17 @@
       chaotic.nixosModules.default
       inputs.nur.modules.nixos.default
       inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
+      {
+        # Add nvf neovim to all systems
+        environment.systemPackages = [
+          (inputs.nvf.lib.neovimConfiguration {
+            pkgs = nixpkgs.legacyPackages.${system};
+            modules = [
+              ./modules/apps/nvim.nix
+            ];
+          }).neovim
+        ];
+      }
     ];
 
     # Desktop-specific modules
@@ -157,6 +180,14 @@
         inherit pkgs;
       };
     };
+
+    packages."x86_64-linux".default =
+      (nvf.lib.neovimConfiguration {
+        pkgs = nixpkgs.legacyPackages."x86_64-linux";
+        modules = [
+          ./modules/apps/nvim.nix
+        ];
+      }).neovim;
     nixosConfigurations = {
       # Desktop workstation
       Clovis = mkSystem "Clovis" desktopModules;
@@ -181,6 +212,17 @@
         inherit system;
         modules = [
           ./hosts/installer/configuration.nix
+          {
+            # use the neovim package from the flake inputs
+            environment.systemPackages = [
+              (inputs.nvf.lib.neovimConfiguration {
+                pkgs = nixpkgs.legacyPackages.${system};
+                modules = [
+                  ./modules/apps/nvim.nix
+                ];
+              }).neovim
+            ];
+          }
         ];
       };
     };

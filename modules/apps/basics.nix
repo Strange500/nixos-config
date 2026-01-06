@@ -12,10 +12,5 @@
       git
       telegram-desktop
     ];
-    sessionVariables.EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
-    sessionVariables.VISUAL = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
-    sessionVariables.BROWSER = "firefox";
-    sessionVariables.TERMINAL = "kitty";
-    sessionVariables.FILE_MANAGER = "thunar";
   };
 }

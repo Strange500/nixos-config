@@ -10,7 +10,7 @@
       nixos = {
         desktop = {
           desktopEnvironment = "niri";
-          loginManager = "ly";
+          loginManager = "dms";
           theme = "atelier-cave";
         };
       };
@@ -32,8 +32,9 @@
           config.qgroget.nixos.desktop.loginManager
           == "gdm"
           || config.qgroget.nixos.desktop.loginManager == "ly"
+          || config.qgroget.nixos.desktop.loginManager == "dms"
           || config.qgroget.nixos.desktop.loginManager == "none";
-        message = "Only gdm and ly are supported as login managers.";
+        message = "Only gdm, ly and dms are supported as login managers.";
       }
     ];
   };

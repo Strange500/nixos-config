@@ -56,7 +56,7 @@ in {
     ]);
 
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
-    EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
+    EDITOR = "vim";
     VISUAL = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
     BROWSER = "firefox";
     TERMINAL = "kitty";
@@ -64,7 +64,7 @@ in {
   };
   programs = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     starship.enable = true;
-
+    tmux.enable = true;
     vscode = {
       enable = true;
       package = pkgs.vscode;

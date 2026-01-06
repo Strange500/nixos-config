@@ -16,7 +16,11 @@
     };
     zsh.enable = true;
     dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
-    dankMaterialShell.enable = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") true;
+    dankMaterialShell.enable =
+      lib.mkIf (
+        config.qgroget.nixos.desktop.desktopEnvironment == "niri"
+      )
+      true;
   };
 
   programs.niri = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") {
@@ -25,12 +29,16 @@
   };
 
   services = {
-    desktopManager.plasma6 = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde") {
-      enable = true;
-    };
-    desktopManager.gnome = lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome") {
-      enable = true;
-    };
+    desktopManager.plasma6 =
+      lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "kde")
+      {
+        enable = true;
+      };
+    desktopManager.gnome =
+      lib.mkIf (lib.strings.toLower config.qgroget.nixos.desktop.desktopEnvironment == "gnome")
+      {
+        enable = true;
+      };
   };
   services.xserver.displayManager.startx.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
 
@@ -45,6 +53,9 @@
       pkgs.wl-clipboard
       pkgs.gparted
       pkgs.blueman
+      pkgs.kdePackages.dolphin
+      pkgs.kdePackages.kio
+      pkgs.kdePackages.qtsvg
     ]
     ++ lib.optionals (config.qgroget.nixos.apps.dev.enable) [
       pkgs.nixd

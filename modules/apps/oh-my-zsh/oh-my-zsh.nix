@@ -4,44 +4,96 @@
   programs.fastfetch = {
     enable = true;
     settings = {
+      logo = {
+        type = "none";
+        padding = {
+          top = 2;
+          left = 25; # Make space for the image!
+        };
+      };
+      display = {
+        separator = " ➜  ";
+      };
       modules = [
-        "title"
-        "separator"
-        "os"
-        "host"
+        "break"
+        "break"
+        "break"
+        {
+          type = "os";
+          key = "OS   ";
+        }
         {
           type = "kernel";
-          format = "{release}";
+          key = " ├  ";
         }
-        "uptime"
-        "packages"
-        "shell"
         {
-          type = "display";
-          compactType = "original";
-          key = "Resolution";
+          type = "packages";
+          format = "{} (nix)";
+          key = " ├ 󰏖 ";
         }
-        "de"
-        "wm"
-        "wmtheme"
-        "theme"
-        "icons"
-        "terminal"
+        {
+          type = "shell";
+          key = " └  ";
+        }
+        "break"
+        {
+          type = "wm";
+          key = "WM   ";
+        }
+        {
+          type = "wmtheme";
+          key = " ├ 󰉼 ";
+        }
+        {
+          type = "icons";
+          key = " ├ 󰀻 ";
+        }
+        {
+          type = "cursor";
+          key = " ├  ";
+        }
+        {
+          type = "terminal";
+          key = " ├  ";
+        }
         {
           type = "terminalfont";
-          format = "{/name}{-}{/}{name}{?size} {size}{?}";
+          key = " └  ";
         }
-        "cpu"
+        "break"
+        {
+          type = "host";
+          format = "{5} {1} Type {2}";
+          key = "PC   ";
+        }
+        {
+          type = "cpu";
+          format = "{1} ({3}) @ {7} GHz";
+          key = " ├  ";
+        }
         {
           type = "gpu";
-          key = "GPU";
+          format = "{1} {2} @ {12} GHz";
+          key = " ├ 󰢮 ";
         }
         {
           type = "memory";
-          format = "{} / {}";
+          key = " ├  ";
+        }
+        {
+          type = "swap";
+          key = " ├ 󰓡 ";
+        }
+        {
+          type = "disk";
+          key = " ├ 󰋊 ";
+        }
+        {
+          type = "monitor";
+          key = " └  ";
         }
         "break"
-        "colors"
+        "break"
       ];
     };
   };
@@ -64,10 +116,14 @@
 
   programs.bat = {
     enable = true;
-    config = {pager = "less -FR";};
+    config = {
+      pager = "less -FR";
+    };
   };
 
-  programs.btop = {enable = true;};
+  programs.btop = {
+    enable = true;
+  };
 
   programs.git = {
     enable = true;
@@ -90,7 +146,9 @@
     };
   };
 
-  programs.lazygit = {enable = true;};
+  programs.lazygit = {
+    enable = true;
+  };
 
   programs.eza = {
     enable = true;
@@ -106,9 +164,13 @@
     ];
   };
 
-  programs.yazi = {enable = true;};
+  programs.yazi = {
+    enable = true;
+  };
 
-  programs.zoxide = {enable = true;};
+  programs.zoxide = {
+    enable = true;
+  };
 
   programs.zsh = {
     enable = true;
@@ -117,11 +179,11 @@
     syntaxHighlighting.enable = true;
 
     sessionVariables = {
-      EDITOR = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
+      EDDITOR = "vim";
       TERM = "xterm-256color";
     };
     initContent = ''
-      fastfetch
+      kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -
       function y() {
       local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
        yazi "$@" --cwd-file="$tmp"
@@ -138,7 +200,7 @@
       #vim = "lvim";
       ls = "eza";
       update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
-
+      rogetfetch = "kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -";
       # Network tools reminders
       traceroute = "echo 'Use trip instead'";
       mtr = "echo 'Use trip instead'";
@@ -146,7 +208,12 @@
 
     oh-my-zsh = {
       enable = true;
-      plugins = ["z" "fzf" "git" "extract"];
+      plugins = [
+        "z"
+        "fzf"
+        "git"
+        "extract"
+      ];
     };
   };
 
@@ -214,7 +281,9 @@
         format = "([$all_status$ahead_behind]($style) )";
       };
 
-      fill = {symbol = " ";};
+      fill = {
+        symbol = " ";
+      };
 
       nodejs = {
         symbol = "";
