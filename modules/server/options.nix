@@ -139,5 +139,51 @@
       default = {};
       description = "Declarative restic backups keyed by service name.";
     };
+
+    # Service Contract Pattern - Flat structure with required and optional fields
+    # Used by collector.nix to aggregate service configurations
+    serviceModules = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.submodule {
+        options = {
+          # Required fields - must be explicitly provided
+          enable = lib.mkOption {
+            type = lib.types.bool;
+            description = "Whether to enable this service";
+          };
+          domain = lib.mkOption {
+            type = lib.types.str;
+            description = "Domain name for the service (used for subdomain or routing)";
+          };
+          dataDir = lib.mkOption {
+            type = lib.types.str;
+            description = "Data directory path for persistent service data";
+          };
+
+          # Optional fields
+          extraConfig = lib.mkOption {
+            type = lib.types.attrs;
+            default = {};
+            description = "Additional service-specific configuration attributes";
+          };
+          middleware = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [];
+            description = "List of middleware names to apply (e.g., authentik, chain-authelia)";
+          };
+          databases = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [];
+            description = "List of database names required for this service (must be unique across all services)";
+          };
+          backupPaths = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [];
+            description = "List of paths to include in backups for this service";
+          };
+        };
+      });
+      default = {};
+      description = "Service module contracts - flat structure for all managed services";
+    };
   };
 }
