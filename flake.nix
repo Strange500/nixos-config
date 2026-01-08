@@ -179,6 +179,12 @@
       jellyseerrTest = import ./tests/jellyseerr {
         inherit pkgs;
       };
+      requiredFieldsTest = import ./tests/required-fields {
+        inherit pkgs;
+      };
+      requiredFieldsMissingDomainTest = import ./tests/required-fields-missing-domain {
+        inherit pkgs;
+      };
     };
 
     packages."x86_64-linux".default =
