@@ -25,27 +25,31 @@
     assertions = lib.flatten (lib.mapAttrsToList (
       serviceName: serviceConfig: let
         isEnabled = serviceConfig.enable or false;
-        hasRequiredFields =
-          (serviceConfig.domain or null != null)
-          && (serviceConfig.dataDir or null != null);
+        hasDomain = serviceConfig.domain or null != null;
+        hasDataDir = serviceConfig.dataDir or null != null;
+        missingFields =
+          []
+          ++ (lib.optional (!hasDomain) "domain")
+          ++ (lib.optional (!hasDataDir) "dataDir");
+        missingFieldsStr = lib.concatStringsSep ", " missingFields;
       in
-        if isEnabled && !hasRequiredFields
+        if isEnabled && missingFields != []
         then [
           {
             assertion = false;
             message = ''
-              Service '${serviceName}' is enabled but missing required fields.
+              Service '${serviceName}' is enabled but missing required field(s): ${missingFieldsStr}
 
               Configuration Error:
               When qgroget.serviceModules.${serviceName}.enable = true, you must provide:
-              - domain (string): Domain name for the service
-              - dataDir (string): Data directory path for persistent data
+              ${lib.optionalString (!hasDomain) "  - domain (string): Domain name for the service (e.g., \"${serviceName}.example.com\")"}
+              ${lib.optionalString (!hasDataDir) "  - dataDir (string): Data directory path for persistent data (e.g., \"/var/lib/${serviceName}\")"}
 
               Example fix:
               qgroget.serviceModules.${serviceName} = {
                 enable = true;
-                domain = "myservice.example.com";
-                dataDir = "/var/lib/${serviceName}";
+              ${lib.optionalString (!hasDomain) "  domain = \"${serviceName}.example.com\";"}
+              ${lib.optionalString (!hasDataDir) "  dataDir = \"/var/lib/${serviceName}\";"}
               };
             '';
           }
