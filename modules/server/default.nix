@@ -3,8 +3,22 @@
   lib,
   ...
 }: {
+  # Server Module Entry Point
+  #
+  # This module serves as the main entry point for all server-related services.
+  # It imports the core components of the service contract system:
+  #
+  # - options.nix: Service contract definitions and type enforcement
+  # - collector.nix: Service aggregation and auto-activation logic (Epic 2)
+  # - settings.nix: Service enablement and global settings
+  # - Individual service modules: Specific service implementations
+  #
+  # The module also contains validation assertions to ensure required fields
+  # are provided for enabled services.
+
   imports = [
     ./options.nix
+    ./collector.nix
     ./settings.nix
     ./media
     ./arrs
