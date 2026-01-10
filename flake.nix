@@ -185,6 +185,9 @@
       requiredFieldsMissingDomainTest = import ./tests/required-fields-missing-domain {
         inherit pkgs;
       };
+      collectorPersistenceTest = import ./tests/collector/eval-test.nix {
+        inherit pkgs impermanence;
+      };
     };
 
     packages."x86_64-linux".default =

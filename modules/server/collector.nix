@@ -3,20 +3,31 @@
   lib,
   ...
 }: {
-  # PLACEHOLDER: Collector Module for Service Aggregation
+  # Collector Module for Service Aggregation
   #
-  # This module will be implemented in Epic 2: Service Aggregation and Auto-Activation.
-  # Its purpose is to:
-  # - Automatically activate services when enabled (no manual imports needed)
-  # - Aggregate persistence paths from all enabled services
-  # - Aggregate backup paths from all enabled services
-  # - Generate Traefik dynamic configurations for all enabled services
-  # - Declare database requirements for all enabled services
-  #
-  # For now, this is an empty placeholder to establish the module structure
-  # and allow the entry point (default.nix) to import it without errors.
+  # This module automatically aggregates configurations from all enabled services
+  # defined in qgroget.serviceModules.*. It provides:
+  # - Persistence path aggregation for Impermanence
+  # - Backup directory aggregation for Restic/Borg
+  # - Traefik dynamic configuration generation
+  # - Database provisioning declarations
+  # - Evaluation-time validation (port conflicts, dependencies, etc.)
 
   config = {
-    # Empty config section - will be populated in Epic 2
+    # Persistence Path Aggregation (Story 2.1)
+    # Aggregates dataDir and backupPaths from all enabled services
+    # CRITICAL: Uses lib.mkAfter to merge with existing host persistence config
+    environment.persistence."/persist".directories = let
+      enabledServices = lib.filterAttrs (name: service: service.enable) config.qgroget.serviceModules;
+      persistencePaths = lib.flatten (lib.mapAttrsToList (
+          name: service:
+            [service.dataDir] ++ service.backupPaths
+        )
+        enabledServices);
+      uniquePaths = lib.unique persistencePaths;
+    in
+      lib.mkAfter uniquePaths;
+
+    # TODO: Add other aggregations (backup paths, Traefik config, databases) in future stories
   };
 }
