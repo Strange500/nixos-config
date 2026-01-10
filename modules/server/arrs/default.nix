@@ -207,7 +207,6 @@ in {
     "server/qui/env" = {
     };
   };
-
   # inject secret basic token into config file at startup
   systemd.services.traefik = {
     path = [pkgs.coreutils pkgs.gnused];
@@ -253,6 +252,7 @@ in {
           "${toString cfg.ports.bazarr}:6767"
           "${toString cfg.ports.prowlarr}:9696"
           "${toString cfg.ports.qui}:7476"
+          "${toString cfg.ports.flaresolverr}:8191"
         ];
       };
       serviceConfig = commonServiceConfig;
@@ -362,6 +362,28 @@ in {
             ];
           }
           // commonContainerConfig;
+        serviceConfig = commonServiceConfig;
+      };
+
+      flaresolverr = {
+        autoStart = true;
+
+        containerConfig = {
+          name = cfg.containers.flaresolverr;
+          pod = pods.${cfg.podName}.ref;
+          image = images.flaresolverr;
+
+          environments = {
+            no_sandbox = "true";
+            TZ = "Europe/Paris";
+          };
+
+          dns = [
+            "94.140.14.140"
+            "94.140.14.141"
+          ];
+        };
+
         serviceConfig = commonServiceConfig;
       };
 

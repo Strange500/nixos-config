@@ -146,10 +146,6 @@
     };
   };
 
-  programs.lazygit = {
-    enable = true;
-  };
-
   programs.eza = {
     enable = true;
     extraOptions = [
@@ -195,7 +191,7 @@
     shellAliases = {
       y = "yazi";
       cat = "bat";
-      lg = "lazygit";
+      lg = "vim";
       #nano = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
       #vim = "lvim";
       ls = "eza";
