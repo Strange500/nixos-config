@@ -165,15 +165,40 @@
             default = {};
             description = "Additional service-specific configuration attributes";
           };
-          middleware = lib.mkOption {
+          middlewares = lib.mkOption {
             type = lib.types.listOf lib.types.str;
             default = [];
             description = "List of middleware names to apply (e.g., authentik, chain-authelia)";
           };
           databases = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
+            type = lib.types.listOf (lib.types.submodule {
+              options = {
+                type = lib.mkOption {
+                  type = lib.types.enum ["postgresql" "redis" "mongodb"];
+                  description = "Database type";
+                };
+                name = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Database name (must be unique across all services)";
+                };
+                user = lib.mkOption {
+                  type = lib.types.str;
+                  description = "Database user name";
+                };
+                port = lib.mkOption {
+                  type = lib.types.nullOr lib.types.int;
+                  default = null;
+                  description = "Database port (optional, defaults to standard port for type)";
+                };
+                extraConfig = lib.mkOption {
+                  type = lib.types.attrs;
+                  default = {};
+                  description = "Additional database-specific configuration";
+                };
+              };
+            });
             default = [];
-            description = "List of database names required for this service (must be unique across all services)";
+            description = "List of databases required for this service";
           };
           backupPaths = lib.mkOption {
             type = lib.types.listOf lib.types.str;
@@ -210,6 +235,31 @@
       type = lib.types.attrs;
       default = {};
       description = "Traefik routing configuration aggregated from enabled services";
+    };
+
+    databases = lib.mkOption {
+      type = lib.types.attrsOf (lib.types.attrsOf (lib.types.listOf (lib.types.submodule {
+        options = {
+          host = lib.mkOption {
+            type = lib.types.str;
+            description = "Database server hostname";
+          };
+          port = lib.mkOption {
+            type = lib.types.int;
+            description = "Database server port";
+          };
+          database = lib.mkOption {
+            type = lib.types.str;
+            description = "Database name";
+          };
+          user = lib.mkOption {
+            type = lib.types.str;
+            description = "Database username";
+          };
+        };
+      })));
+      default = {};
+      description = "Database connection configurations aggregated by type and service";
     };
   };
 }

@@ -65,7 +65,7 @@
         service = "service-${name}";
         middlewares = lib.unique (
           (typeToMiddleware.${service.type} or ["authentik"])
-          ++ service.middleware
+          ++ service.middlewares
         );
         entryPoints = ["websecure"];
         tls = {
@@ -85,6 +85,125 @@
       routers = lib.mapAttrs generateRouter exposedServices;
       services = lib.mapAttrs generateService exposedServices;
     };
+
+    # Database Provisioning (Story 2.4)
+    # Automatically provisions PostgreSQL databases based on service declarations
+    # Creates databases, users, and exposes connection details back to services
+    services.postgresql = let
+      enabledServices = lib.filterAttrs (name: service: service.enable) config.qgroget.serviceModules;
+      allDatabases = lib.flatten (lib.mapAttrsToList (
+          name: service:
+            map (db:
+              {
+                inherit name;
+                serviceName = name;
+              }
+              // db)
+            service.databases
+        )
+        enabledServices);
+
+      # Filter PostgreSQL databases
+      postgresqlDatabases = lib.filter (db: db.type == "postgresql") allDatabases;
+
+      # Validation: Check for required fields
+      validateDatabase = db: let
+        missingFields = lib.filter (field: !(lib.hasAttr field db) || db.${field} == null || db.${field} == "") ["type" "name" "user"];
+      in
+        if missingFields != []
+        then
+          throw ''
+            Service '${db.serviceName}' declares database with missing required fields: ${lib.concatStringsSep ", " missingFields}
+
+            All PostgreSQL databases require: type, name, user
+
+            Example:
+              databases = [{
+                type = "postgresql";
+                name = "immich";
+                user = "immich";
+              }];
+          ''
+        else db;
+
+      # Validate database names (PostgreSQL naming rules)
+      validateDatabaseName = db: let
+        nameRegex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
+        isValidName = builtins.match nameRegex db.name != null;
+        isValidLength = builtins.stringLength db.name <= 63;
+      in
+        if !isValidName
+        then
+          throw ''
+            Service '${db.serviceName}' declares invalid database name '${db.name}'
+
+            Database names must:
+            - Start with a letter or underscore
+            - Contain only letters, numbers, and underscores
+            - Be 63 characters or less
+
+            Example:
+              databases = [{
+                type = "postgresql";
+                name = "immich_db";
+                user = "immich";
+              }];
+          ''
+        else if !isValidLength
+        then
+          throw ''
+            Service '${db.serviceName}' declares database name '${db.name}' that is too long (${toString (builtins.stringLength db.name)} characters)
+
+            Database names must be 63 characters or less.
+
+            Example:
+              databases = [{
+                type = "postgresql";
+                name = "immich";
+                user = "immich";
+              }];
+          ''
+        else db;
+
+      # Apply validations
+      validatedDatabases = map (db: validateDatabaseName (validateDatabase db)) postgresqlDatabases;
+
+      # Check for duplicate database names
+      databaseNames = map (db: db.name) validatedDatabases;
+      uniqueDatabaseNames = lib.unique databaseNames;
+    in
+      lib.mkIf (postgresqlDatabases != []) {
+        enable = true;
+        ensureDatabases = uniqueDatabaseNames;
+        ensureUsers =
+          map (db: {
+            name = db.user;
+          })
+          validatedDatabases;
+      };
+
+    # Database Connection Configuration (Story 2.4)
+    # Exposes structured database connection details back to service modules
+    # Services can access via config.qgroget.databases.postgresql.<serviceName>
+    qgroget.databases.postgresql = let
+      enabledServices = lib.filterAttrs (name: service: service.enable) config.qgroget.serviceModules;
+      postgresqlDatabases = lib.flatten (lib.mapAttrsToList (
+          name: service:
+            map (db: {serviceName = name;} // db) (lib.filter (db: db.type == "postgresql") service.databases)
+        )
+        enabledServices);
+    in
+      lib.mapAttrs' (serviceName: service: {
+        name = serviceName;
+        value = map (db: {
+          host = "localhost";
+          port = 5432;
+          database = db.name;
+          user = db.user;
+          # Password comes from SOPS secrets: server/<serviceName>/db_password
+        }) (lib.filter (db: db.type == "postgresql") service.databases);
+      })
+      enabledServices;
 
     # TODO: Add other aggregations (databases, validation) in future stories
   };

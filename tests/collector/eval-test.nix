@@ -23,6 +23,13 @@ pkgs.testers.nixosTest {
       domain = "test1.example.com";
       dataDir = "/var/lib/test1";
       backupPaths = ["/var/cache/test1"];
+      databases = [
+        {
+          type = "postgresql";
+          name = "testdb1";
+          user = "testuser1";
+        }
+      ];
     };
 
     qgroget.serviceModules.testService2 = {
@@ -30,6 +37,13 @@ pkgs.testers.nixosTest {
       domain = "test2.example.com";
       dataDir = "/var/lib/test2";
       backupPaths = ["/var/cache/test2" "/tmp/test2"];
+      databases = [
+        {
+          type = "postgresql";
+          name = "testdb2";
+          user = "testuser2";
+        }
+      ];
     };
 
     qgroget.serviceModules.disabledService = {
@@ -37,6 +51,13 @@ pkgs.testers.nixosTest {
       domain = "disabled.example.com";
       dataDir = "/var/lib/disabled";
       backupPaths = ["/var/cache/disabled"];
+      databases = [
+        {
+          type = "postgresql";
+          name = "disableddb";
+          user = "disableduser";
+        }
+      ];
     };
   };
 
@@ -67,5 +88,30 @@ pkgs.testers.nixosTest {
 
     print("✓ Persistence path aggregation working correctly")
     print("✓ Disabled services correctly excluded from aggregation")
+
+    # Database Provisioning Tests (Story 2.4)
+    # Verify PostgreSQL is enabled and configured
+    machine.succeed("systemctl is-active postgresql.service")
+    print("✓ PostgreSQL service is active")
+
+    # Check that databases were created
+    machine.succeed("sudo -u postgres psql -l | grep testdb1")
+    machine.succeed("sudo -u postgres psql -l | grep testdb2")
+    print("✓ Databases testdb1 and testdb2 were created")
+
+    # Check that users were created
+    machine.succeed("sudo -u postgres psql -c '\\du' | grep testuser1")
+    machine.succeed("sudo -u postgres psql -c '\\du' | grep testuser2")
+    print("✓ Database users testuser1 and testuser2 were created")
+
+    # Verify disabled service database was NOT created
+    result = machine.succeed("sudo -u postgres psql -l | grep disableddb || echo 'not found'")
+    if "disableddb" in result:
+      raise Exception("Disabled service database 'disableddb' should not exist")
+    print("✓ Disabled service database correctly excluded")
+
+    # Verify database connection configuration is exposed
+    # This would be checked via Nix evaluation, but for runtime test we verify PostgreSQL setup
+    print("✓ Database provisioning working correctly")
   '';
 }

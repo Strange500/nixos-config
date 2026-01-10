@@ -17,7 +17,7 @@
           subdomain = "jellyfin";
           type = "public";
           port = 8096;
-          middleware = [];
+          middlewares = [];
         };
         qgroget.serviceModules.authentik = {
           enable = true;
@@ -28,7 +28,7 @@
           subdomain = "auth";
           type = "private";
           port = 9000;
-          middleware = [];
+          middlewares = [];
         };
         qgroget.serviceModules.internal-service = {
           enable = true;
@@ -39,7 +39,7 @@
           subdomain = "internal";
           type = "internal";
           port = 3000;
-          middleware = [];
+          middlewares = [];
         };
         qgroget.serviceModules.service-with-custom-middleware = {
           enable = true;
@@ -61,7 +61,7 @@
           subdomain = "notexposed";
           type = "private";
           port = 9999;
-          middleware = [];
+          middlewares = [];
         };
         qgroget.serviceModules.disabledService = {
           enable = false;
@@ -72,7 +72,7 @@
           subdomain = "disabled";
           type = "public";
           port = 7777;
-          middleware = [];
+          middlewares = [];
         };
       }
     ];

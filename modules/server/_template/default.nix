@@ -156,29 +156,73 @@ in {
         };
 
         databases = lib.mkOption {
-          type = lib.types.listOf lib.types.str;
+          type = lib.types.listOf (lib.types.submodule {
+            options = {
+              type = lib.mkOption {
+                type = lib.types.enum ["postgresql"];
+                description = "Database type (currently only postgresql supported)";
+                example = "postgresql";
+              };
+              name = lib.mkOption {
+                type = lib.types.str;
+                description = "Database name (must be unique across all services)";
+                example = "example_db";
+              };
+              user = lib.mkOption {
+                type = lib.types.str;
+                description = "Database user name (will be auto-created)";
+                example = "example_user";
+              };
+              port = lib.mkOption {
+                type = lib.types.int;
+                default = 5432;
+                description = "Database port (default 5432 for PostgreSQL)";
+                example = 5432;
+              };
+              extraConfig = lib.mkOption {
+                type = lib.types.attrs;
+                default = {};
+                description = "Additional database-specific configuration";
+                example = {
+                  extensions = ["uuid-ossp"];
+                };
+              };
+            };
+          });
           default = [];
           description = ''
-            List of database names required by this service.
+            List of databases required by this service.
+
+            Each database entry specifies the database type, name, user, and
+            optional configuration. The collector will auto-provision these
+            databases and provide connection credentials.
 
             IMPORTANT: Database names must be UNIQUE across all services.
-            Use explicit names like "example_primary", "example_cache".
-            Do NOT use generic names like "db" or "data".
 
             Examples:
-              - databases = ["example_db"]; # Single database
-              - databases = ["example_primary" "example_cache"]; # Multiple
+              databases = [{
+                type = "postgresql";
+                name = "example_db";
+                user = "example_user";
+              }];
 
             The collector will:
-            1. Verify name uniqueness (future: story 2-4)
-            2. Auto-provision PostgreSQL databases (future: story 2-4)
+            1. Verify name uniqueness at evaluation time
+            2. Auto-provision PostgreSQL databases and users
             3. Provide connection credentials via systemd LoadCredential
 
             How to use database credentials in implementation:
               - Credentials injected as: credentials.example_db_url
               - Connection URL format: postgresql://user:pass@localhost/dbname
+              - Connection details available via: config.qgroget.databases.postgresql
           '';
-          example = ["example_db"];
+          example = [
+            {
+              type = "postgresql";
+              name = "example_db";
+              user = "example_user";
+            }
+          ];
         };
 
         backupPaths = lib.mkOption {
