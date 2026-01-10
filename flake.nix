@@ -192,6 +192,10 @@
         inherit (pkgs) lib;
         inherit pkgs;
       };
+      collectorTraefikTest = import ./tests/collector/traefik-eval-test.nix {
+        inherit (pkgs) lib;
+        inherit pkgs;
+      };
     };
 
     packages."x86_64-linux".default =

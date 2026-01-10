@@ -180,10 +180,36 @@
             default = [];
             description = "List of paths to include in backups for this service";
           };
+          exposed = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Whether the service should be exposed via Traefik routing";
+          };
+          subdomain = lib.mkOption {
+            type = lib.types.str;
+            default = "";
+            description = "Subdomain for the service (e.g., 'jellyfin' for jellyfin.example.com)";
+          };
+          type = lib.mkOption {
+            type = lib.types.enum ["public" "private" "admin" "internal"];
+            default = "private";
+            description = "Service type determines default middleware chain (public/private/admin/internal)";
+          };
+          port = lib.mkOption {
+            type = lib.types.int;
+            default = 0;
+            description = "Port number the service listens on (for Traefik routing)";
+          };
         };
       });
       default = {};
       description = "Service module contracts - flat structure for all managed services";
+    };
+
+    traefik = lib.mkOption {
+      type = lib.types.attrs;
+      default = {};
+      description = "Traefik routing configuration aggregated from enabled services";
     };
   };
 }
