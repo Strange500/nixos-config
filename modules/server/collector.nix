@@ -28,6 +28,22 @@
     in
       lib.mkAfter uniquePaths;
 
-    # TODO: Add other aggregations (backup paths, Traefik config, databases) in future stories
+    # Backup Directory Aggregation (Story 2.2)
+    # Aggregates backup configurations from all enabled services with backupPaths
+    qgroget.backups = let
+      enabledServices = lib.filterAttrs (name: service: service.enable) config.qgroget.serviceModules;
+      servicesWithBackups = lib.filterAttrs (name: service: service.backupPaths != []) enabledServices;
+    in
+      lib.mapAttrs (name: service: {
+        paths = lib.unique ([service.dataDir] ++ service.backupPaths);
+        systemdUnits = ["${name}.service"];
+        priority = 100;
+        exclude = [];
+        preBackup = null;
+        postBackup = null;
+      })
+      servicesWithBackups;
+
+    # TODO: Add other aggregations (Traefik config, databases) in future stories
   };
 }
