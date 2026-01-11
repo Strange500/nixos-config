@@ -5,7 +5,7 @@
 }: {
   config = {
     qgroget = {
-      secretAgeKeyPath = "/var/lib/sops/age/keys.txt";
+      secretAgeKeyPath = "/persist/var/lib/sops/age/keys.txt";
       user.username = "strange";
       nixos = {
         desktop = {
@@ -43,7 +43,7 @@
     qgroget = {
       secretAgeKeyPath = lib.mkOption {
         type = lib.types.str;
-        default = "/var/lib/sops/age/keys.txt";
+        default = "/persist/var/lib/sops/age/keys.txt";
         description = "Path to the age key file for sops.";
       };
       user.username = lib.mkOption {

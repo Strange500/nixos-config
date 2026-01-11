@@ -280,7 +280,7 @@
     "/".neededForBoot = true;
     "/nix".neededForBoot = true;
     "/persist".neededForBoot = true;
-    "/var/lib/sops".neededForBoot = true;
+    # "/var/lib/sops".neededForBoot = true;
     # Override /boot to use UUID (matches current fstab) instead of partlabel
     "/boot".device = lib.mkForce "/dev/disk/by-uuid/E2E0-85F9";
   };

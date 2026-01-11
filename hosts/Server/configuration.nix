@@ -21,6 +21,11 @@
     autoSubUidGidRange = true;
   };
 
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+  };
+
   environment.systemPackages = [
     pkgs.fuse-overlayfs
   ];
