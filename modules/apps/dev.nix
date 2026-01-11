@@ -23,8 +23,8 @@
       version = "1.0.0";
     };
     vsix = pkgs.fetchurl {
-      url = "https://github.com/AvengeMedia/DankMaterialShell/raw/refs/heads/master/quickshell/matugen/dynamic-base16-dankshell.vsix";
-      sha256 = "0cpgwk5rwi9xphh1504fq94n2cr74zvqrwqldh3cdiivrl7bqavd";
+      url = "https://github.com/AvengeMedia/DankMaterialShell/raw/master/quickshell/matugen/dms-theme.vsix";
+      sha256 = "01i92ryr2s9v6bpbpf9q7x2sajm7apik4s6g6wzhigxa13bp339h";
     };
   };
 in {
