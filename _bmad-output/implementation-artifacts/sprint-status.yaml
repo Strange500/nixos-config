@@ -1,0 +1,110 @@
+# generated: 2026-01-08
+# project: nixos
+# project_key: nixos-service-contract-refactoring
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-01-08
+project: nixos
+project_key: nixos-service-contract-refactoring
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Core Service Contract Infrastructure
+  epic-1: in-progress
+  1-1-define-service-contract-schema: done
+  1-2-create-annotated-service-template: done
+  1-3-implement-required-field-enforcement: done
+  1-4-implement-clear-error-messages-with-examples: done
+  1-5-create-module-entry-point-with-imports: done
+  epic-1-retrospective: optional
+
+  # Epic 2: Configuration Aggregation & Integration
+  epic-2: in-progress
+  2-1-implement-persistence-path-aggregation: done
+  2-2-implement-backup-directory-aggregation: ready-for-dev
+  2-3-implement-traefik-routing-generation: done
+  2-4-implement-postgresql-database-auto-provisioning: ready-for-dev
+  2-5-implement-dependency-validation-at-evaluation-time: backlog
+  2-6-implement-central-service-enablement: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Validation & Error Detection System
+  epic-3: backlog
+  3-1-implement-port-conflict-detection: backlog
+  3-2-implement-database-name-uniqueness-validation: backlog
+  3-3-implement-middleware-name-validation: backlog
+  3-4-implement-contract-conformance-validation: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Testing Infrastructure
+  epic-4: backlog
+  4-1-create-collector-evaluation-test-framework: backlog
+  4-2-create-per-service-vm-test-structure: backlog
+  4-3-implement-service-startup-verification-test: backlog
+  4-4-implement-persistence-verification-test: backlog
+  4-5-implement-traefik-routing-verification-test: backlog
+  4-6-create-integration-test-for-cross-service-scenarios: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Service Migration Support
+  epic-5: backlog
+  5-1-implement-pattern-coexistence-via-conditional-imports: backlog
+  5-2-create-proof-of-concept-service-migration: backlog
+  5-3-implement-pre-cutover-validation: backlog
+  5-4-implement-zero-downtime-migration-process: backlog
+  5-5-document-migration-commit-convention: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Documentation & Developer Experience
+  epic-6: backlog
+  6-1-create-architecture-decision-record: backlog
+  6-2-create-migration-guide-with-before-after-examples: backlog
+  6-3-create-service-template-usage-guide: backlog
+  6-4-document-settings-file-service-visibility: backlog
+  6-5-ensure-single-file-service-comprehension: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Full Service Migration
+  epic-7: backlog
+  7-1-migrate-media-services-jellyfin: backlog
+  7-2-migrate-media-services-jellyseerr: backlog
+  7-3-migrate-media-services-immich: backlog
+  7-4-migrate-arr-stack-sonarr-radarr-bazarr-prowlarr: backlog
+  7-5-migrate-download-clients-qbittorrent-nicotine: backlog
+  7-6-migrate-authentication-authelia-lldap: backlog
+  7-7-migrate-vaultwarden: backlog
+  7-8-migrate-traefik: backlog
+  7-9-migrate-miscellaneous-services-portfolio-obsidian-syncthing-file-server: backlog
+  7-10-remove-legacy-pattern-code: backlog
+  epic-7-retrospective: optional

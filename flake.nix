@@ -179,6 +179,23 @@
       jellyseerrTest = import ./tests/jellyseerr {
         inherit pkgs;
       };
+      requiredFieldsTest = import ./tests/required-fields {
+        inherit pkgs;
+      };
+      requiredFieldsMissingDomainTest = import ./tests/required-fields-missing-domain {
+        inherit pkgs;
+      };
+      collectorPersistenceTest = import ./tests/collector/eval-test.nix {
+        inherit pkgs impermanence;
+      };
+      collectorBackupTest = import ./tests/collector/backup-eval-test.nix {
+        inherit (pkgs) lib;
+        inherit pkgs;
+      };
+      collectorTraefikTest = import ./tests/collector/traefik-eval-test.nix {
+        inherit (pkgs) lib;
+        inherit pkgs;
+      };
     };
 
     packages."x86_64-linux".default =

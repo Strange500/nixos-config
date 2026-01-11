@@ -1,0 +1,102 @@
+{
+  "workflow_version": "1.2.0",
+  "timestamps": {
+    "started": "2026-01-06T00:00:00Z",
+    "last_updated": "2026-01-06T00:00:00Z",
+    "completed": "2026-01-06T00:00:00Z"
+  },
+  "mode": "initial_scan",
+  "scan_level": "deep",
+  "project_root": "/home/strange/nixos",
+  "output_folder": "/home/strange/nixos/docs",
+  "completed_steps": [
+    {
+      "step": "step_1",
+      "status": "completed",
+      "timestamp": "2026-01-06T00:00:00Z",
+      "summary": "Classified as monolith NixOS flake configuration with 7 hosts"
+    },
+    {
+      "step": "step_2",
+      "status": "completed",
+      "timestamp": "2026-01-06T00:00:00Z",
+      "summary": "Found 2 existing docs (README.md, copilot-instructions.md)"
+    },
+    {
+      "step": "step_3",
+      "status": "completed",
+      "timestamp": "2026-01-06T00:00:00Z",
+      "summary": "Tech stack: NixOS Flakes, Nix language"
+    },
+    {
+      "step": "step_4",
+      "status": "completed",
+      "timestamp": "2026-01-06T00:00:00Z",
+      "summary": "Deep scan of modules/server/, modules/desktop/, hosts/"
+    }
+  ],
+  "current_step": "completed",
+  "project_classification": {
+    "repository_type": "monolith",
+    "project_type_id": "infra",
+    "primary_language": "Nix",
+    "architecture_pattern": "Modular NixOS Configuration",
+    "domain": "qgroget.com"
+  },
+  "project_types": [
+    {
+      "part_id": "main",
+      "project_type_id": "infra",
+      "display_name": "NixOS Configuration Flake"
+    }
+  ],
+  "findings": {
+    "hosts": {
+      "desktop": ["Clovis", "Septimius", "Clotaire"],
+      "server": ["Server"],
+      "gaming": ["Cube"],
+      "embedded": ["pi"],
+      "installer": ["installer"]
+    },
+    "server_services": [
+      "jellyfin",
+      "jellyseerr",
+      "immich",
+      "sonarr",
+      "sonarr-anime",
+      "radarr",
+      "radarr-anime",
+      "bazarr",
+      "prowlarr",
+      "qui",
+      "qbittorrent",
+      "nicotine",
+      "authelia",
+      "lldap",
+      "vaultwarden",
+      "traefik",
+      "syncthing",
+      "portfolio",
+      "obsidian"
+    ],
+    "key_technologies": [
+      "NixOS", "Nix Flakes", "Home Manager",
+      "Hyprland", "Niri", "Stylix",
+      "SOPS", "Impermanence", "ZFS", "BTRFS",
+      "Podman", "Quadlet", "Traefik", "Authelia"
+    ],
+    "secrets_management": "SOPS with age encryption",
+    "container_runtime": "Podman with Quadlet"
+  },
+  "outputs_generated": [
+    "project-scan-report.json",
+    "index.md",
+    "project-overview.md",
+    "architecture.md",
+    "source-tree-analysis.md",
+    "component-inventory.md",
+    "server-services.md",
+    "development-guide.md"
+  ],
+  "resume_instructions": "Workflow completed successfully"
+}
