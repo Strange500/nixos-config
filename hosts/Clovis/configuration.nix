@@ -21,7 +21,6 @@
 
   fileSystems."/persist".neededForBoot = true;
   fileSystems."/var/log".neededForBoot = true;
-  fileSystems."/var/lib/sops".neededForBoot = true;
 
   environment.persistence = {
     "/persist" = {

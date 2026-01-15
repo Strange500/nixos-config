@@ -28,32 +28,34 @@
     };
   };
 in {
-  home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (with pkgs;
-    [
-      devbox
-      devenv
-      libnotify
-      pre-commit
-      alejandra
-      nixd
-      deadnix
-      # Java
-      maven
-      gradle
-      # Python
-      python3
-      python3Packages.virtualenv
-      python3Packages.pip
-      # JS/TS
-      nodejs
-      yarn
-      pnpm
-    ]
-    ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
-      (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
-      (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
-      (jetbrains.plugins.addPlugins jetbrains.rust-rover pluginListRust)
-    ]);
+  home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (
+    with pkgs;
+      [
+        devbox
+        devenv
+        libnotify
+        pre-commit
+        alejandra
+        nixd
+        deadnix
+        # Java
+        maven
+        gradle
+        # Python
+        python3
+        python3Packages.virtualenv
+        python3Packages.pip
+        # JS/TS
+        nodejs
+        yarn
+        pnpm
+      ]
+      ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
+        (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
+        (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
+        (jetbrains.plugins.addPlugins jetbrains.rust-rover pluginListRust)
+      ]
+  );
 
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     EDITOR = "vim";

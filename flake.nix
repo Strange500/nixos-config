@@ -39,7 +39,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.hyprlang.follows = "hyprland/hyprlang";
     };
-
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -98,6 +101,7 @@
     quadlet-nix,
     portfolio,
     jovian-nixos,
+    rust-overlay,
     nvf,
     ...
   } @ inputs: let
@@ -128,6 +132,12 @@
     # Desktop-specific modules
     desktopModules = [
       impermanence.nixosModules.impermanence
+      (
+        {pkgs, ...}: {
+          nixpkgs.overlays = [rust-overlay.overlays.default];
+          environment.systemPackages = [pkgs.rust-bin.stable.latest.default];
+        }
+      )
     ];
 
     # Server-specific modules
@@ -166,7 +176,8 @@
           [
             ./hosts/${hostname}/configuration.nix
           ]
-          ++ commonModules ++ extraModules;
+          ++ commonModules
+          ++ extraModules;
       };
   in {
     checks.${system} = let

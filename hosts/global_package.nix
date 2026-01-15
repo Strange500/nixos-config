@@ -59,6 +59,7 @@
     ]
     ++ lib.optionals (config.qgroget.nixos.apps.dev.enable) [
       pkgs.nixd
+      pkgs.delta
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
