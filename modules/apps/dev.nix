@@ -49,6 +49,7 @@ in {
         nodejs
         yarn
         pnpm
+        gcc
       ]
       ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
         (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)

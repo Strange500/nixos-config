@@ -122,7 +122,7 @@
           (inputs.nvf.lib.neovimConfiguration {
             pkgs = nixpkgs.legacyPackages.${system};
             modules = [
-              ./modules/apps/nvim.nix
+              ./modules/apps/nvf
             ];
           }).neovim
         ];

@@ -36,7 +36,7 @@
       ]
       ++ lib.optionals config.qgroget.nixos.vr [
         pkgs.opencomposite
-        pkgs.wlx-overlay-s
+        pkgs.wayvr
       ];
     hardware.graphics = {
       enable = true;

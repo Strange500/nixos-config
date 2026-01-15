@@ -16,7 +16,7 @@
     };
     zsh.enable = true;
     dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
-    dankMaterialShell.enable =
+    dank-material-shell.enable =
       lib.mkIf (
         config.qgroget.nixos.desktop.desktopEnvironment == "niri"
       )
