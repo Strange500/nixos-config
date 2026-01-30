@@ -179,11 +179,6 @@
           default = true;
           description = "Enable gaming apps and configurations.";
         };
-        vr = lib.mkOption {
-          type = lib.types.bool;
-          default = false;
-          description = "Enable VR configurations.";
-        };
         remote-access = {
           enable = lib.mkOption {
             type = lib.types.bool;

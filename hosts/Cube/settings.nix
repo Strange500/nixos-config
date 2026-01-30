@@ -2,7 +2,10 @@
   config = {
     qgroget.nixos = {
       desktop = {
-        monitors = ["HDMI-A-1, 1920x1080, 0x0, 1" "DP-2, 2560x1440@144, 1920x0, 1"];
+        monitors = [
+          "HDMI-A-1, 1920x1080, 0x0, 1"
+          "DP-2, 2560x1440@144, 1920x0, 1"
+        ];
       };
       auto-update = false;
       remote-access = {
@@ -23,7 +26,6 @@
         crypto = false;
       };
       gaming = true;
-      vr = true;
       desktop.loginManager = lib.mkForce "none";
       desktop.desktopEnvironment = lib.mkForce "gnome";
       settings.bluetooth.enable = false;
