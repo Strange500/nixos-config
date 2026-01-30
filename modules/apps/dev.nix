@@ -8,12 +8,6 @@
   pluginListInte = [
     inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.2"."com.github.copilot"
   ];
-  pluginListWeb = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".webstorm."2025.2"."com.github.copilot"
-  ];
-  pluginListRust = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".rust-rover."2025.2"."com.github.copilot"
-  ];
 
   # Custom VSCode extension: Dynamic Base16 DankShell theme
   dynamic-base16-dankshell = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -39,6 +33,7 @@ in {
         nixd
         deadnix
         # Java
+        jdk
         maven
         gradle
         # Python
@@ -52,12 +47,9 @@ in {
         gcc
       ]
       ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
-        (jetbrains.plugins.addPlugins jetbrains.webstorm pluginListWeb)
-        (jetbrains.plugins.addPlugins jetbrains.idea-ultimate pluginListInte)
-        (jetbrains.plugins.addPlugins jetbrains.rust-rover pluginListRust)
+        (jetbrains.plugins.addPlugins jetbrains.idea pluginListInte)
       ]
   );
-
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     EDITOR = "vim";
     VISUAL = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
@@ -95,7 +87,7 @@ in {
             # nix
             jnoortheen.nix-ide
             # java
-            redhat.java
+            oracle.oracle-java
             vscjava.vscode-gradle
             vscjava.vscode-maven
             vscjava.vscode-java-pack

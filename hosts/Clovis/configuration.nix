@@ -66,7 +66,10 @@
         services.rollback = {
           description = "Rollback BTRFS root subvolume to a pristine state";
           wantedBy = ["initrd.target"];
-          after = ["systemd-cryptsetup@cryptsystem.service" "systemd-cryptsetup@cryptdata.service"];
+          after = [
+            "systemd-cryptsetup@cryptsystem.service"
+            "systemd-cryptsetup@cryptdata.service"
+          ];
           before = ["sysroot.mount"];
           unitConfig.DefaultDependencies = "no";
           serviceConfig.Type = "oneshot";

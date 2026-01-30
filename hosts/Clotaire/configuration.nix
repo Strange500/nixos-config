@@ -12,7 +12,6 @@
     ../../modules/system/tpm/tpm.nix
     ./hardware-configuration.nix
   ];
-
   boot.loader.grub = {
     efiSupport = true;
     efiInstallAsRemovable = true;

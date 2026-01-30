@@ -77,8 +77,41 @@
       enabled = false;
       program = "";
     };
-
     BitTorrent = {
+      # --- CRITICAL IO FIXES ---
+
+      # 1. Enable Queueing. Without this, MaxActiveDownloads is ignored.
+      "Session\\QueueingSystemEnabled" = true;
+
+      # 2. Drastically lower concurrency.
+      # Writing 3 files sequentially is faster than 200 simultaneously.
+      # (Value is per-instance, so 3 instances = 9 active downloads total)
+      "Session\\MaxActiveDownloads" = 3;
+      "Session\\MaxActiveTorrents" = 15;
+      "Session\\MaxActiveCheckingTorrents" = 1; # Only check 1 file at a time per instance
+
+      # 3. Cache Strategy: Trade RAM for Disk Health
+      # Increase Cache: 256MB is too small for modern speeds. Use 512MB or 1024MB if you have RAM.
+      "Session\\DiskCache" = 1024;
+      # Increase TTL: Keep data in RAM longer (10 mins) to allow larger write chunks.
+      "Session\\DiskCacheTTL" = 600;
+      # DISABLE OS Cache: Prevent Windows/Linux from double-caching and flushing randomly.
+      # This forces the app to use the explicit DiskCache defined above.
+      "Session\\UseOSCache" = false;
+      "Session\\CoalesceReadWrite" = true; # Merge small reads/writes into big ones
+
+      # 4. Threading
+      # Hashing is CPU and IO intensive. 10 threads will kill a mechanical drive.
+      "Session\\HashingThreadsCount" = 1;
+      "Session\\AsyncIOThreadsCount" = 4; # Default is usually 4, 10 is overkill
+
+      # --- NETWORK & CONNECTIONS ---
+      "Session\\MaxConnections" = 200; # Lower global peers to reduce random read requests
+      "Session\\MaxConnectionsPerTorrent" = 40;
+      "Session\\MaxUploads" = 100; # Too many upload slots = death by random reads
+      "Session\\MaxUploadsPerTorrent" = 4;
+
+      # --- STANDARD SETTINGS (Kept from your config) ---
       "Session\\AddTorrentStopped" = false;
       "Session\\AddTorrentToTopOfQueue" = true;
       "Session\\AddTrackersEnabled" = false;
@@ -92,42 +125,22 @@
       "Session\\DisableAutoTMMTriggers\\CategorySavePathChanged" = false;
       "Session\\DisableAutoTMMTriggers\\DefaultSavePathChanged" = false;
       "Session\\GlobalMaxRatio" = 50;
-      # Disk / cache tuning (big memory lever)
-      # Disk cache in MiB: set small to save RAM
-      "Session\\DiskCache" = 256;
-      # how long cached blocks live (s) — you already had 60; keep low to free RAM
-      "Session\\DiskCacheTTL" = 60;
-      # Turn off read caching to reduce memory (will increase disk reads)
       "Session\\UseReadCache" = true;
-
-      # File/socket/thread pools — reduce memory and fds
-      "Session\\FilePoolSize" = 200;
-      "Session\\AsyncIOThreadsCount" = 10;
-      "Session\\HashingThreadsCount" = 10;
-      "Session\\MaxConnections" = 400; # global peers
-      "Session\\MaxConnectionsPerTorrent" = 60; # per torrent peers
-      "Session\\MaxActiveCheckingTorrents" = 3;
-      "Session\\MaxActiveDownloads" = 200;
-      "Session\\MaxActiveTorrents" = 100;
-      "Session\\MaxActiveUploads" = 1000;
-      "Session\\MaxUploads" = 1000;
-      "Session\\MaxUploadsPerTorrent" = 3;
+      "Session\\FilePoolSize" = 2000; # INCREASED: Keep file handles open to avoid opening/closing files constantly
       "Session\\Port" = "@OUTGOING_PORT@";
-      "Session\\Preallocation" = true;
-      "Session\\QueueingSystemEnabled" = false;
+      "Session\\Preallocation" = true; # Keep true to prevent fragmentation
       "Session\\SSL\\Port" = 7633;
       "Session\\SendBufferWatermark" = 1000;
       "Session\\SendBufferWatermarkFactor" = 100;
       "Session\\ShareLimitAction" = "Stop";
       "Session\\SubcategoriesEnabled" = true;
       "Session\\Tags" = "cross-seed";
-      "Session\\TempPath" = "/temp/torrents";
+      "Session\\TempPath" = "/temp/torrents"; # Ensure this path is on an SSD!
       "Session\\TempPathEnabled" = true;
       "Session\\TorrentExportDirectory" = "";
       "Session\\UseAlternativeGlobalSpeedLimit" = false;
       "Session\\uTPRateLimited" = true;
     };
-
     Core = {
       AutoDeleteAddedTorrentFile = "IfAdded";
     };

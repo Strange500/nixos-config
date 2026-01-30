@@ -41,6 +41,12 @@
       };
   };
   services.xserver.displayManager.startx.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+  virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+    };
+  };
 
   environment.systemPackages = (
     [
@@ -60,6 +66,9 @@
     ++ lib.optionals (config.qgroget.nixos.apps.dev.enable) [
       pkgs.nixd
       pkgs.delta
+      pkgs.podman-compose
+      pkgs.jetbrains-toolbox
+      pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent

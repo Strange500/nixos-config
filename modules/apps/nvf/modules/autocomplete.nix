@@ -34,7 +34,11 @@
     # 3. Configure Copilot itself
     assistant.copilot = {
       enable = true;
-      panel.enable = false;
+      setupOpts = {
+        suggestion.enabled = true;
+        panel.enabled = true;
+        panel.layout.position = "bottom";
+      };
       # suggestion.enable = false; # Optional: Disable ghost text if it conflicts
     };
   };
