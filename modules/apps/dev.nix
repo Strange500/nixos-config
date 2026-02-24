@@ -136,6 +136,7 @@ in {
           };
           "java.gradle.buildServer.enabled" = "off";
           "workbench.colorTheme" = "Dynamic Base16 DankShell";
+          "http.systemCertificatesNode" = true;
         };
       };
     };

@@ -27,9 +27,13 @@
     package = pkgs.openjdk21;
   };
 
-  users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [config.qgroget.user.username];
+  users.extraGroups.vboxusers.members = lib.mkIf config.qgroget.nixos.apps.dev.enable [
+    config.qgroget.user.username
+  ];
 
-  networking.networkmanager = {enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;};
+  networking.networkmanager = {
+    enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
+  };
   services = {
     xserver.xkb = {
       layout = "fr";
@@ -49,18 +53,6 @@
   virtualisation = lib.mkIf (config.qgroget.nixos.apps.dev.enable) {
     containers.enable = true;
     libvirtd.enable = true;
-    virtualbox = lib.mkIf (config.qgroget.nixos.apps.dev.vbox.enable) {
-      host = {
-        enable = true;
-        enableKvm = true;
-        enableExtensionPack = true;
-        addNetworkInterface = false;
-      };
-      guest = {
-        enable = true;
-        dragAndDrop = true;
-      };
-    };
   };
 
   xdg.portal = lib.mkIf (config.qgroget.nixos.isDesktop) {
@@ -121,12 +113,17 @@
     ledger.enable = config.qgroget.nixos.apps.crypto;
   };
 
+  services.trezord.enable = config.qgroget.nixos.apps.crypto;
+
   environment.sessionVariables = {
     #WLR_NO_HARDWARE_CURSORS = "1"; # uncomment if cursor is invisble
     NIXOS_OZONE_WL = "1";
   };
 
-  fonts.packages = with pkgs; [pkgs.nerd-fonts.jetbrains-mono font-awesome];
+  fonts.packages = with pkgs; [
+    pkgs.nerd-fonts.jetbrains-mono
+    font-awesome
+  ];
 
   home-manager.backupFileExtension = "backup";
 
@@ -142,8 +139,14 @@
 
   nix = {
     settings = {
-      trusted-users = ["root" "${config.qgroget.user.username}"];
-      experimental-features = ["nix-command" "flakes"];
+      trusted-users = [
+        "root"
+        "${config.qgroget.user.username}"
+      ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       substituters = [
         "https://nix-community.cachix.org"
         "https://cache.nixos.org/"

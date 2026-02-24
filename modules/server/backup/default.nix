@@ -51,13 +51,8 @@
   remote_directories = [
     "/persist/backup"
     "/mnt/data/immich/upload"
-    "/mnt/data/media/media/anime/A Certain Scientific Railgun (2009) [tvdbid-114921]"
-    "/mnt/data/media/media/anime/Kaguya-sama - Love Is War (2019) [tvdbid-354198]"
-    "/mnt/data/media/media/anime/Kaguya-sama - Love Is War - The First Kiss That Never Ends (2023) [tvdbid-443648]"
     "/mnt/data/media/media/anime/Mushoku Tensei - Jobless Reincarnation (2021) [tvdbid-371310]"
-    "/mnt/data/media/media/anime/Shadows House (2021) [tvdbid-396876]"
     "/mnt/data/media/media/anime/Summer Time Rendering (2022) [tvdbid-407306]"
-    "/mnt/data/media/media/tv/Wednesday (2022) [tvdbid-397060]"
   ];
   backupServerIp = config.qgroget.backup.network.ip;
   backupUser = "strange";

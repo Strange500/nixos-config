@@ -6,6 +6,7 @@
   # Import the split modules
   imports = [
     ./languages/rust.nix
+    ./languages/angular.nix
     ./modules/autocomplete.nix
     ./modules/keymaps.nix
     ./modules/terminal.nix

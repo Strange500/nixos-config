@@ -134,8 +134,16 @@
       impermanence.nixosModules.impermanence
       (
         {pkgs, ...}: {
-          nixpkgs.overlays = [rust-overlay.overlays.default];
-          environment.systemPackages = [pkgs.rust-bin.stable.latest.default];
+          nixpkgs.overlays = [
+            rust-overlay.overlays.default
+            (final: prev: {
+              my-rust = prev.rust-bin.stable.latest.default.override {
+                extensions = ["rust-src"];
+                targets = ["wasm32-unknown-unknown"];
+              };
+            })
+          ];
+          environment.systemPackages = [pkgs.my-rust];
         }
       )
     ];
