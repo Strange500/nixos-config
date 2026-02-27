@@ -13,6 +13,7 @@
     ./SSO
     ./backup
     ./misc
+    ./automation
     # ./homeAssistant
   ];
 }
