@@ -48,7 +48,7 @@
       autoStart = true;
 
       containerConfig = {
-        image = "docker.io/vaultwarden/server:latest";
+        image = "docker.io/vaultwarden/server:alpine";
         user = "${toString config.users.users.vaultwarden.uid}:${toString config.users.groups.password-manager.gid}";
 
         # Environment variables

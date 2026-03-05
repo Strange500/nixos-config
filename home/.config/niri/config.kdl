@@ -2,7 +2,27 @@
 // "/-" comments out the following node.
 // Check the wiki for a full description of the configuration:
 // https://yalter.github.io/niri/Configuration:-Introduction
+    // https://yalter.github.iojj
 
+
+
+output "HDMI-A-1" {
+    // Enable/disable outputs by their names.
+    // You can find output names using `nirictl outputs`.
+ 
+    position x=2560 y=0
+    // Example:
+    // disable "HDMI-A-1"
+    //
+    // You can also set resolution, scale, position and rotation.
+    //
+    // Example:
+    // set "eDP-1" resolution="1920x1080" scale=1.5 position="0,0" rotation="normal"
+}
+
+output "DP-2" {
+    position x=0 y=0
+}
 // Input device configuration.
 // Find the full list of options on the wiki:
 // https://yalter.github.io/niri/Configuration:-Input

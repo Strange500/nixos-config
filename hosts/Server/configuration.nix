@@ -2,6 +2,7 @@
   inputs,
   config,
   pkgs,
+  lib,
   ...
 }: {
   imports = [
@@ -99,5 +100,11 @@
 
     # Ensure this matches the mirrors if you are doing mirrored booting,
     # but for now, "nodev" is sufficient for a single UEFI bootloader.
+  };
+
+  systemd.services."systemd-tmpfiles-resetup" = {
+    serviceConfig = {
+      RemainAfterExit = lib.mkForce false;
+    };
   };
 }
