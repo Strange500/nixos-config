@@ -13,14 +13,12 @@
     ports = {
       qbittorrent1 = 8112;
       qbittorrent2 = 8113;
-      qbittorrent3 = 8114;
       nicotine = 6080;
     };
 
     vpnOutGoingPort = {
       qbittorrent1 = 30402;
       qbittorrent2 = 40656;
-      qbittorrent3 = 59078;
     };
 
     containers = {
@@ -28,7 +26,6 @@
       gluetun = "gluetun";
       qbittorrent = "qbittorrent";
       qbittorrentBis = "qbittorrent_bis";
-      qbittorrentNyaa = "qbittorrent_nyaa";
     };
   };
 
@@ -240,10 +237,8 @@ in {
   environment.etc."tmpfiles.d/downloaders.conf".text = ''
     Z ${config.qgroget.server.containerDir}/qbittorrent 0700 arr downloaders -
     Z ${config.qgroget.server.containerDir}/qbittorrent_bis 0700 arr downloaders -
-    Z ${config.qgroget.server.containerDir}/qbittorrent_nyaa 0700 arr downloaders -
     Z /persist/temp/torrent1 0700 arr downloaders -
     Z /persist/temp/torrent2 0700 arr downloaders -
-    Z /persist/temp/torrent3 0700 arr downloaders -
 
   '';
 
@@ -258,7 +253,6 @@ in {
     paths = [
       "${config.qgroget.server.containerDir}/qbittorrent"
       "${config.qgroget.server.containerDir}/qbittorrent_bis"
-      "${config.qgroget.server.containerDir}/qbittorrent_nyaa"
       #"${config.qgroget.server.containerDir}/nicotine"
       "${config.qgroget.server.containerDir}/gluetun"
     ];
@@ -297,7 +291,6 @@ in {
           #"${toString cfg.ports.nicotine}:6080"
           "${toString cfg.ports.qbittorrent1}:8112"
           "${toString cfg.ports.qbittorrent2}:8113"
-          "${toString cfg.ports.qbittorrent3}:8114"
         ];
       };
       serviceConfig = commonServiceConfig;
@@ -387,40 +380,6 @@ in {
           // {
             ExecStartPre = [
               "${qbitPrestartScript}/bin/qbit-prestart ${cfg.containerDir}/qbittorrent_bis/config/qBittorrent ${toString cfg.ports.qbittorrent2} ${toString cfg.vpnOutGoingPort.qbittorrent2}"
-            ];
-          };
-        unitConfig = {
-          Requires = [containers.gluetun.ref];
-          After = [containers.gluetun.ref];
-        };
-      };
-
-      qbittorrent-nyaa = {
-        autoStart = true;
-        containerConfig =
-          {
-            name = cfg.containers.qbittorrentNyaa;
-            image = images.qbittorrent;
-            pod = pods.${cfg.podName}.ref;
-            environments =
-              commonEnv
-              // {
-                WEBUI_PORT = "8114";
-              }
-              // qbitEnv;
-            volumes = [
-              "${cfg.containerDir}/qbittorrent_nyaa/config:/config:Z"
-              "/mnt/data/media:/data:Z"
-              "/mnt/data/media:/media:Z"
-              "/persist/temp/torrent3:/temp/torrents:Z"
-            ];
-          }
-          // commonContainerConfig;
-        serviceConfig =
-          commonServiceConfig
-          // {
-            ExecStartPre = [
-              "${qbitPrestartScript}/bin/qbit-prestart ${cfg.containerDir}/qbittorrent_nyaa/config/qBittorrent ${toString cfg.ports.qbittorrent3} ${toString cfg.vpnOutGoingPort.qbittorrent3}"
             ];
           };
         unitConfig = {
