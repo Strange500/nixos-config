@@ -270,14 +270,12 @@ in {
       restartUnits = [
         containers.qbittorrent.ref
         containers.qbittorrent-bis.ref
-        containers.qbittorrent-nyaa.ref
       ];
     };
     "qbit/password" = {
       restartUnits = [
         containers.qbittorrent.ref
         containers.qbittorrent-bis.ref
-        containers.qbittorrent-nyaa.ref
       ];
     };
   };
