@@ -202,6 +202,7 @@ in {
           "authorization"
           "token"
           "revocation"
+          "userinfo"
           "introspection"
         ];
         allowed_origins_from_client_redirect_uris = false;

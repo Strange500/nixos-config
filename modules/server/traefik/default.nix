@@ -4,10 +4,14 @@
   pkgs,
   ...
 }: let
-  generateRouter = service: {
-    rule = "Host(`${service.name}.${config.qgroget.server.domain}`)";
+  generateRouter = name: service: {
+    rule = "Host(`${
+      if service.name != "shit" && service.name != null
+      then service.name + "."
+      else ""
+    }${config.qgroget.server.domain}`)";
     entryPoints = ["websecure"];
-    service = service.name;
+    service = name;
     tls =
       {
         certResolver =
@@ -21,7 +25,7 @@
     middlewares = lib.optionalAttrs (service.middlewares != []) service.middlewares;
   };
 
-  generateService = service: {
+  generateService = name: service: {
     loadBalancer = {
       servers = [
         {url = "${service.url}";}
@@ -187,8 +191,8 @@ in {
 
     qgroget.services.proxy.traefikDynamicConfig = {
       http = {
-        routers = lib.mapAttrs (_name: service: generateRouter service) config.qgroget.services;
-        services = lib.mapAttrs (_name: service: generateService service) config.qgroget.services;
+        routers = lib.mapAttrs (name: service: generateRouter name service) config.qgroget.services;
+        services = lib.mapAttrs (name: service: generateService name service) config.qgroget.services;
         middlewares = {
           googlenoindex = {
             headers = {
