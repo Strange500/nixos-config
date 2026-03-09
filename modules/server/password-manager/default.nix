@@ -5,7 +5,7 @@
 }: {
   qgroget.services = {
     vaultwarden = {
-      name = "vaultwarden";
+      subdomain = "vaultwarden";
       url = "http://127.0.0.1:4743";
       type = "public";
       journalctl = true;

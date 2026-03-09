@@ -101,7 +101,7 @@ in {
     hardware.enableRedistributableFirmware = true;
 
     qgroget.services.jellyfin = {
-      name = "jellyfin";
+      subdomain = "jellyfin";
       url = "http://127.0.0.1:8096";
       type = "public";
       journalctl = true;

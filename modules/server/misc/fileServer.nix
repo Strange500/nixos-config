@@ -1,6 +1,6 @@
 {config, ...}: {
   qgroget.services.file = {
-    name = "file";
+    subdomain = "file";
     url = "http://127.0.0.1:8095";
     type = "public";
   };

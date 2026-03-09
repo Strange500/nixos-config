@@ -113,7 +113,7 @@ in {
             name = "authelia_session";
             domain = "qgroget.com";
             authelia_url = "https://auth.${config.qgroget.server.domain}";
-            default_redirection_url = "https://unraid.${config.qgroget.server.domain}/";
+            default_redirection_url = "https://${config.qgroget.server.domain}/";
             same_site = "lax";
             inactivity = "5m";
             expiration = "1h";
@@ -211,7 +211,7 @@ in {
   };
 
   qgroget.services.auth = {
-    name = "auth";
+    subdomain = "auth";
     url = "http://127.0.0.1:9091";
     type = "public";
   };
@@ -230,7 +230,7 @@ in {
   };
 
   qgroget.services.lldap = {
-    name = "lldap";
+    subdomain = "lldap";
     url = "http://127.0.0.1:7080";
     type = "public";
     persistedData = [

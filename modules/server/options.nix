@@ -3,9 +3,9 @@
     services = lib.mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
         options = {
-          name = lib.mkOption {
+          subdomain = lib.mkOption {
             type = lib.types.str;
-            description = "Service name for subdomain";
+            description = "Service subdomain. Use empty string for main domain";
           };
           url = lib.mkOption {
             type = lib.types.str;

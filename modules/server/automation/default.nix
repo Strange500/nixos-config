@@ -41,7 +41,7 @@ in {
   };
 
   qgroget.services.n8n = {
-    name = "n8n";
+    subdomain = "n8n";
     url = "http://127.0.0.1:5678";
     type = "public";
     persistedData = [

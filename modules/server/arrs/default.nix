@@ -78,43 +78,43 @@ in {
 
   qgroget.services = {
     sonarr-anime = {
-      name = "sonarr-anime";
+      subdomain = "sonarr-anime";
       url = "http://127.0.0.1:${toString cfg.ports.sonarr-anime}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     radarr-anime = {
-      name = "radarr-anime";
+      subdomain = "radarr-anime";
       url = "http://127.0.0.1:${toString cfg.ports.radarr-anime}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     sonarr = {
-      name = "sonarr";
+      subdomain = "sonarr";
       url = "http://127.0.0.1:${toString cfg.ports.sonarr}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     radarr = {
-      name = "radarr";
+      subdomain = "radarr";
       url = "http://127.0.0.1:${toString cfg.ports.radarr}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     bazarr = {
-      name = "bazarr";
+      subdomain = "bazarr";
       url = "http://127.0.0.1:${toString cfg.ports.bazarr}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     prowlarr = {
-      name = "prowlarr";
+      subdomain = "prowlarr";
       url = "http://127.0.0.1:${toString cfg.ports.prowlarr}";
       type = "private";
       middlewares = ["SSO" "inject-basic-arr"];
     };
     qui = {
-      name = "qui";
+      subdomain = "qui";
       url = "http://127.0.0.1:${toString cfg.ports.qui}";
       type = "public";
     };

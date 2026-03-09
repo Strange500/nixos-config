@@ -267,7 +267,7 @@ in {
   ];
 
   qgroget.services.immich = {
-    name = "immich";
+    subdomain = "immich";
     url = "http://[::1]:${toString cfg.port}";
     type = "public";
     middlewares = ["immich-limit"];

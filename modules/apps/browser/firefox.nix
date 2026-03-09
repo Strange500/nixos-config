@@ -27,11 +27,11 @@
       settings = {
         # specify profile-specific preferences here; check about:config for options
         "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
-        "browser.startup.homepage" = "https://nixos.org";
+        "browser.startup.homepage" = "https://${config.qgroget.server.domain}";
         "browser.newtabpage.pinned" = [
           {
-            title = "NixOS";
-            url = "https://nixos.org";
+            title = "QGRoget";
+            url = "https://${config.qgroget.server.domain}";
           }
         ];
       };

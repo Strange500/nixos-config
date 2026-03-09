@@ -26,7 +26,7 @@ in {
 
     qgroget.services = {
       jellyseerr = {
-        name = "jellyseerr";
+        subdomain = "jellyseerr";
         url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
         type = "public";
         journalctl = true;

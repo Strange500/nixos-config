@@ -7,7 +7,7 @@
   port = 8082;
 in {
   qgroget.services.git = {
-    name = "git";
+    subdomain = "git";
     url = "http://127.0.0.1:${toString port}";
     type = "private";
   };

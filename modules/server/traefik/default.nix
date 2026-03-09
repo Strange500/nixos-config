@@ -6,8 +6,8 @@
 }: let
   generateRouter = name: service: {
     rule = "Host(`${
-      if service.name != "shit" && service.name != null
-      then service.name + "."
+      if service.subdomain != ""
+      then service.subdomain + "."
       else ""
     }${config.qgroget.server.domain}`)";
     entryPoints = ["websecure"];
@@ -60,7 +60,7 @@ in {
 
     qgroget.services = {
       proxy = {
-        name = "proxy";
+        subdomain = "proxy";
         url = "http://127.0.0.1:8080";
         type = "private";
         persistedData = [

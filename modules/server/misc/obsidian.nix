@@ -1,6 +1,6 @@
 {config, ...}: {
   qgroget.services.obsidian = {
-    name = "obsidian";
+    subdomain = "obsidian";
     url = "http://127.0.0.1:5984";
     type = "public";
     middlewares = [

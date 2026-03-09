@@ -47,7 +47,7 @@
 
   qgroget.services = {
     home-assistant = {
-      name = "home-assistant";
+      subdomain = "home-assistant";
       url = "http://localhost:8123";
       type = "public";
       unitName = "home-assistant.service";

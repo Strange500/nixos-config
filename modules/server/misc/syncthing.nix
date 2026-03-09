@@ -37,7 +37,7 @@ in {
     };
 
     qgroget.services.syncthing = {
-      name = "syncthing";
+      subdomain = "syncthing";
       url = "http://${config.services.syncthing.guiAddress}";
       type = "private";
       persistedData = ["/var/lib/syncthing"];
