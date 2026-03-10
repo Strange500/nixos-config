@@ -3,7 +3,6 @@
   lib,
   ...
 }: {
-  # 1. Enable the SMART daemon for Scrutiny
   services.smartd = {
     enable = true;
     autodetect = true;
@@ -17,7 +16,6 @@
       notify = {
         urls = [
           "generic://n8n.qgroget.com/webhook/c8558b6d-c7c2-405d-bfa7-2d59836a5956?template=json"
-          #"generic+https://n8n.qgroget.com/webhook-test/c8558b6d-c7c2-405d-bfa7-2d59836a5956"
         ];
       };
     };
