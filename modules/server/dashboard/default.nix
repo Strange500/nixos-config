@@ -96,6 +96,8 @@
                   roles = [accessGroup];
                 };
               };
+
+              statusCheck = true;
             }
           )
           config.qgroget.services;
