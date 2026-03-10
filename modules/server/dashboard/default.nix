@@ -61,16 +61,6 @@
         widgets = [
           {type = "clock";}
           {
-            type = "weather";
-            options = {
-              apiKey = "efdbade728b37086877a5e83442004db";
-              city = "Paris";
-            };
-          }
-          {
-            type = "public-ip";
-          }
-          {
             type = "iframe";
             options = {
               url = "https://lldap.${config.qgroget.server.domain}";
