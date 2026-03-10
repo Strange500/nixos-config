@@ -61,10 +61,14 @@
         widgets = [
           {type = "clock";}
           {
-            type = "iframe";
+            type = "embed";
             options = {
-              url = "https://lldap.${config.qgroget.server.domain}";
-              frameHeight = "500px";
+              html = ''
+                <p align="center"><iframe
+                src="https://lldap.${config.qgroget.server.domain}"
+                frameborder='0' scrolling="no" style="width: 540px; height: 615px;
+                overflow: hidden;"></iframe></p>
+              '';
             };
           }
         ];
