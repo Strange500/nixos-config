@@ -16,7 +16,8 @@
 
       notify = {
         urls = [
-          "https://n8n.qgroget.com/webhook-test/c8558b6d-c7c2-405d-bfa7-2d59836a5956"
+          "generic+https://webhook.site/49e976cb-a14a-4dc5-95d6-4f88052b2fa0"
+          #"generic+https://n8n.qgroget.com/webhook-test/c8558b6d-c7c2-405d-bfa7-2d59836a5956"
         ];
       };
     };
