@@ -59,7 +59,6 @@
           hideForGuests = false;
         };
         widgets = [
-          {type = "clock";}
           {
             type = "embed";
             options = {
