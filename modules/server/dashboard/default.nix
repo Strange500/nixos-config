@@ -63,12 +63,7 @@
           {
             type = "embed";
             options = {
-              html = ''
-                <p align="center"><iframe
-                src="https://lldap.${config.qgroget.server.domain}"
-                frameborder='0' scrolling="no" style="width: 540px; height: 615px;
-                overflow: hidden;"></iframe></p>
-              '';
+              html = "<p align=\"center\"><iframe src=\"https://lldap.${config.qgroget.server.domain}\" frameborder='0' style=\"width: 540px; height: 615px; overflow: hidden;\"></iframe></p>";
             };
           }
         ];
