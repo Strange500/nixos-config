@@ -36,7 +36,6 @@
       statusCheck = false;
       theme = "minimal-dark";
       fontAwesomeKey = "c94dc2b452";
-      customCss = ".clock p.time { font-size: 3rem !important; }";
       layout = "vertical";
       iconSize = "small";
       auth = {
@@ -59,12 +58,10 @@
           hideForGuests = false;
         };
         widgets = [
-          {type = "clock";}
           {
-            type = "weather";
+            type = "embed";
             options = {
-              apiKey = "efdbade728b37086877a5e83442004db";
-              city = "Paris";
+              html = "<p align=\"center\"><iframe src=\"https://lldap.${config.qgroget.server.domain}\" frameborder='0' style=\"width: 540px; height: 615px; overflow: hidden;\"></iframe></p>";
             };
           }
         ];
