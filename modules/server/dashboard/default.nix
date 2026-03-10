@@ -67,6 +67,15 @@
               city = "Paris";
             };
           }
+          {
+            type = "public-ip";
+          }
+          {
+            type = "iframe";
+            options = {
+              url = "https://lldap.${config.qgroget.server.domain}";
+            };
+          }
         ];
       }
       {
