@@ -74,6 +74,7 @@
             type = "iframe";
             options = {
               url = "https://lldap.${config.qgroget.server.domain}";
+              frameHeight = "300px";
             };
           }
         ];
