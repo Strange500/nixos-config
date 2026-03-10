@@ -4,5 +4,6 @@
     ./fileServer.nix
     ./portfolio.nix
     # ./forgero.nix
+    ./scrutiny.nix
   ];
 }

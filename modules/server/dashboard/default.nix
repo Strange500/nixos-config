@@ -21,6 +21,10 @@
     jellyseerr = "sh-jellyseerr";
     n8n = "sh-n8n";
     proxy = "sh-traefik";
+    auth = "sh-authelia";
+    scrutiny = "sh-scrutiny";
+    bazarr = "sh-bazarr";
+    top = "sh-glances";
   };
 
   yamlFormat = pkgs.formats.yaml {};
