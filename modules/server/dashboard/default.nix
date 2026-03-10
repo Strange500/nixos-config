@@ -36,7 +36,6 @@
       statusCheck = false;
       theme = "minimal-dark";
       fontAwesomeKey = "c94dc2b452";
-      customCss = ".clock p.time { font-size: 3rem !important; } .widget-base.iframe-widget { min-height: 500px !important; } .widget-base.iframe-widget iframe { height: 100% !important; min-height: 480px !important; }";
       layout = "vertical";
       iconSize = "small";
       auth = {
