@@ -55,22 +55,6 @@
 
     sections = [
       {
-        name = "Today";
-        icon = "far fa-smile-beam";
-        displayData = {
-          collapsed = false;
-          hideForGuests = false;
-        };
-        widgets = [
-          {
-            type = "embed";
-            options = {
-              html = "<p align=\"center\"><iframe src=\"https://lldap.${config.qgroget.server.domain}\" frameborder='0' style=\"width: 540px; height: 615px; overflow: hidden;\"></iframe></p>";
-            };
-          }
-        ];
-      }
-      {
         name = "Services";
         icon = "far fa-briefcase";
         items =
@@ -102,6 +86,47 @@
             }
           )
           config.qgroget.services;
+      }
+
+      {
+        name = "LLDAP";
+        icon = "sh-lldap";
+        displayData = {
+          collapsed = false;
+          hideForGuests = false;
+        };
+        widgets = [
+          {
+            type = "embed";
+            options = {
+              html = "<p align=\"center\"><iframe src=\"https://lldap.${config.qgroget.server.domain}\" frameborder='0' style=\"width: 540px; height: 615px; overflow: hidden;\"></iframe></p>";
+            };
+          }
+        ];
+      }
+
+      {
+        name = "QGRoget Wiki";
+        icon = "far fa-rocket";
+        displayData = {
+          collapsed = true;
+          hideForGuests = true;
+        };
+        widgets = [
+          {
+            type = "markdown";
+            options = {
+              content = ''
+                # Wiki de QGRoget
+                -- liste des services les plus courants, et courte description
+                - **LLDAP** : Gestion de son utilisateur (changement de mot de passe, 2FA, etc.)
+                - **Dashy** : Tableau de bord de tous les services, avec accès rapide et vérification de leur statut
+                - **Jellyfin** : Serveur de médias (films, séries, musique, etc.)
+                - **Jellyseerr** : Interface de recherche pour Jellyfin, avec des fonctionnalités supplémentaires
+              '';
+            };
+          }
+        ];
       }
     ];
   };
