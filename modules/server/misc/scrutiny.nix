@@ -11,7 +11,7 @@
   };
 
   scrutinyPkgs = import scrutinyPkgsSrc {
-    system = builtins.currentSystem;
+    system = "x86_64-linux";
   };
 in {
   # Disable the default scrutiny module and use the one from the forked nixpkgs
