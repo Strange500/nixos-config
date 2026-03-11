@@ -63,6 +63,8 @@
               accessGroup =
                 if name == "immich"
                 then "immich"
+                else if name == "jellyseerr"
+                then "jellyseerr"
                 else if service.type == "private"
                 then "admin"
                 else "users";
