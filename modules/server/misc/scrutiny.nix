@@ -4,14 +4,17 @@
   pkgs,
   ...
 }: let
-  scrutiny-fork = pkgs.scrutiny.overrideAttrs (oldAttrs: {
-    src = pkgs.fetchFromGitHub {
-      owner = "Starosdev";
-      repo = "scrutiny";
-      rev = "43ed5e8a31c81fd26a0962350cd16a5ac9b6182a";
-      hash = "sha256-tK4D4QeB4K3tFjdW4ftKiWrGZ119oaUdzCvfZ4shTPw=";
+  # Import nixpkgs from the PR #481809 branch
+  # This PR updates scrutiny, we'll use only scrutiny from this branch
+  scrutinyPkgs =
+    import (pkgs.fetchFromGitHub {
+      owner = "Samasaur1";
+      repo = "nixpkgs";
+      rev = "3d83e50bd8f1336dfc55c627fdf52f96512ef8f6"; # branch name from the PR
+      hash = "sha256-jsc6oeVz6m4vJzshA6EbjDLSHoffAC2+lOmQXTOaqxs="; # will need to be filled after first build
+    }) {
+      system = pkgs.system;
     };
-  });
 in {
   services.smartd = {
     enable = true;
@@ -20,7 +23,7 @@ in {
 
   services.scrutiny = {
     enable = true;
-    package = scrutiny-fork;
+    package = scrutinyPkgs.scrutiny;
     settings = {
       web.listen.port = 36468;
 
