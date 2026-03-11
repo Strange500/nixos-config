@@ -45,6 +45,10 @@ in {
         yarn
         pnpm
         gcc
+
+        # Flutter
+        flutter
+        android-studio-full
       ]
       ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
         (jetbrains.plugins.addPlugins jetbrains.idea pluginListInte)

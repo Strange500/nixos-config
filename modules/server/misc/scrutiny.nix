@@ -23,6 +23,7 @@
     collector = {
       enable = true;
       settings.api.endpoint = "http://127.0.0.1:36468";
+      schedule = "hourly";
     };
   };
 

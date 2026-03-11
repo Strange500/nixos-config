@@ -135,6 +135,7 @@
   nixpkgs.config = {
     allowUnfree = true;
     allowUnfreePredicate = _: true;
+    android_sdk.accept_license = true;
   };
 
   nix = {
