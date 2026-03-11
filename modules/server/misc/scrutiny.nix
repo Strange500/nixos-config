@@ -5,17 +5,24 @@
   ...
 }: let
   # Import nixpkgs from the PR #481809 branch
-  # This PR updates scrutiny, we'll use only scrutiny from this branch
+  # This PR updates scrutiny with new service options
   scrutinyPkgs =
     import (pkgs.fetchFromGitHub {
       owner = "Samasaur1";
       repo = "nixpkgs";
-      rev = "3d83e50bd8f1336dfc55c627fdf52f96512ef8f6"; # branch name from the PR
-      hash = "sha256-jsc6oeVz6m4vJzshA6EbjDLSHoffAC2+lOmQXTOaqxs="; # will need to be filled after first build
+      rev = "3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
+      hash = "sha256-jsc6oeVz6m4vJzshA6EbjDLSHoffAC2+lOmQXTOaqxs=";
     }) {
       system = pkgs.system;
     };
 in {
+  # Disable the default scrutiny module and use the one from the forked nixpkgs
+  disabledModules = ["services/monitoring/scrutiny.nix"];
+
+  imports = [
+    "${scrutinyPkgs.path}/nixos/modules/services/monitoring/scrutiny.nix"
+  ];
+
   services.smartd = {
     enable = true;
     autodetect = true;
