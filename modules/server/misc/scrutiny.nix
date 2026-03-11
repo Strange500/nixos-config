@@ -1,29 +1,19 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: let
   # Import nixpkgs from the PR #481809 branch
   # This PR updates scrutiny with new service options
-  scrutinyPkgsSrc = pkgs.fetchFromGitHub {
-    owner = "Samasaur1";
-    repo = "nixpkgs";
+  scrutinyPkgsSrc = builtins.fetchGit {
+    url = "https://github.com/Samasaur1/nixpkgs";
     rev = "3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
-    hash = "sha256-jsc6oeVz6m4vJzshA6EbjDLSHoffAC2+lOmQXTOaqxs=";
   };
 
   scrutinyPkgs = import scrutinyPkgsSrc {
-    system = pkgs.system;
+    system = builtins.currentSystem;
   };
 in {
-  # Use overlay to replace scrutiny package with the forked version
-  nixpkgs.overlays = [
-    (final: prev: {
-      scrutiny = scrutinyPkgs.scrutiny;
-    })
-  ];
-
   # Disable the default scrutiny module and use the one from the forked nixpkgs
   disabledModules = ["services/monitoring/scrutiny.nix"];
 
@@ -38,6 +28,7 @@ in {
 
   services.scrutiny = {
     enable = true;
+    package = scrutinyPkgs.scrutiny;
     settings = {
       web.listen.port = 36468;
 
