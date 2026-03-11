@@ -1,8 +1,18 @@
 {
   config,
   lib,
+  pkgs,
   ...
-}: {
+}: let
+  scrutiny-fork = pkgs.scrutiny.overrideAttrs (oldAttrs: {
+    src = pkgs.fetchFromGitHub {
+      owner = "Starosdev";
+      repo = "scrutiny";
+      rev = "43ed5e8a31c81fd26a0962350cd16a5ac9b6182a";
+      hash = "sha256-tK4D4QeB4K3tFjdW4ftKiWrGZ119oaUdzCvfZ4shTPw=";
+    };
+  });
+in {
   services.smartd = {
     enable = true;
     autodetect = true;
@@ -10,6 +20,7 @@
 
   services.scrutiny = {
     enable = true;
+    package = scrutiny-fork;
     settings = {
       web.listen.port = 36468;
 
