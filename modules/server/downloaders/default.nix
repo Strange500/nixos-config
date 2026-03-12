@@ -84,7 +84,7 @@
       # Writing 3 files sequentially is faster than 200 simultaneously.
       # (Value is per-instance, so 3 instances = 9 active downloads total)
       "Session\\MaxActiveDownloads" = 3;
-      "Session\\MaxActiveTorrents" = 15;
+      "Session\\MaxActiveTorrents" = 150;
       "Session\\MaxActiveCheckingTorrents" = 1; # Only check 1 file at a time per instance
 
       # 3. Cache Strategy: Trade RAM for Disk Health
@@ -105,8 +105,8 @@
       # --- NETWORK & CONNECTIONS ---
       "Session\\MaxConnections" = 200; # Lower global peers to reduce random read requests
       "Session\\MaxConnectionsPerTorrent" = 40;
-      "Session\\MaxUploads" = 100; # Too many upload slots = death by random reads
-      "Session\\MaxUploadsPerTorrent" = 4;
+      "Session\\MaxUploads" = 200; # Too many upload slots = death by random reads
+      "Session\\MaxUploadsPerTorrent" = 10;
 
       # --- STANDARD SETTINGS (Kept from your config) ---
       "Session\\AddTorrentStopped" = false;
