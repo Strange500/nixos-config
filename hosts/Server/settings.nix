@@ -25,7 +25,7 @@
             game.enable = false;
           };
           dev = {
-            enable = true;
+            enable = false;
             jetbrains.enable = false;
           };
           media = false;
