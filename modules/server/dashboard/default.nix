@@ -143,6 +143,12 @@ in {
     };
   };
 
+  qgroget.services.eth = {
+    subdomain = "eth";
+    url = "http://127.0.0.1:8545";
+    type = "public";
+  };
+
   qgroget.services.dashy.traefikDynamicConfig = {
     http.middlewares.dashy = {
       headers = {
