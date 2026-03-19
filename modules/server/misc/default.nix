@@ -5,5 +5,6 @@
     ./portfolio.nix
     # ./forgero.nix
     ./scrutiny.nix
+    ./mc.nix
   ];
 }
