@@ -22,7 +22,7 @@
         media = false;
         crypto = false;
       };
-      gaming = false;
+      gaming = true;
     };
   };
 }
