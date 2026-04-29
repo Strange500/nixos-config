@@ -4,9 +4,10 @@
   ...
 }: {
   imports = [
-    ../global.nix
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
+    ../../modules/profiles/base.nix
+    ../../modules/profiles/desktop.nix
+    ../../modules/profiles/gaming.nix
+    ./settings.nix
     ../../modules/system/tpm/tpm.nix
     ./disk-config.nix
     ./hardware-configuration.nix
