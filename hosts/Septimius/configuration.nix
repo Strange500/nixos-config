@@ -5,10 +5,10 @@
   ...
 }: {
   imports = [
-    ../global.nix
+    ../../modules/profiles/base.nix
+    ../../modules/profiles/desktop.nix
+    ./settings.nix
     ./disk-config.nix
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
     ../../modules/system/tpm/tpm.nix
     ./hardware-configuration.nix
   ];

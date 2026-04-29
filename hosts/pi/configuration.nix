@@ -5,10 +5,8 @@
   ...
 }: {
   imports = [
-    ../global.nix
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
-    inputs.jovian-nixos.nixosModules.default
+    ../../modules/profiles/base.nix
+    ./settings.nix
   ];
 
   boot = {
