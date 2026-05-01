@@ -46,6 +46,10 @@ in {
         pnpm
         gcc
 
+        # LaTeX
+        texliveFull
+        texlab
+
         # Flutter
         flutter
         android-studio-full
@@ -105,6 +109,8 @@ in {
             # js
             dbaeumer.vscode-eslint
             esbenp.prettier-vscode
+            # latex
+            james-yu.latex-workshop
           ]
           ++ [
             dynamic-base16-dankshell
@@ -139,6 +145,26 @@ in {
             };
           };
           "java.gradle.buildServer.enabled" = "off";
+          "latex-workshop.latex.autoBuild.run" = "onSave";
+          "latex-workshop.latex.recipes" = [
+            {
+              "name" = "latexmk (pdf)";
+              "tools" = ["latexmk"];
+            }
+          ];
+          "latex-workshop.latex.tools" = [
+            {
+              "name" = "latexmk";
+              "command" = "latexmk";
+              "args" = [
+                "-synctex=1"
+                "-interaction=nonstopmode"
+                "-file-line-error"
+                "-pdf"
+                "%DOC%"
+              ];
+            }
+          ];
           "workbench.colorTheme" = "Dynamic Base16 DankShell";
           "http.systemCertificatesNode" = true;
         };

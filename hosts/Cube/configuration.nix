@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   config,
   pkgs,
   ...
@@ -17,6 +18,41 @@
   services.xserver.enable = true;
 
   networking.interfaces.enp3s0.wakeOnLan.enable = true;
+
+  sops.secrets = {
+    "ssh/private" = {
+      owner = "game-installer";
+      # group = "game-installer";
+      # mode = "0600";
+    };
+  };
+
+  services.game-installer = {
+    enable = true;
+    user = "game-installer";
+    openFirewall = true;
+    environment = {
+      SSH_HOST = "192.168.0.28";
+      SSH_PORT = "22";
+      SSH_USERNAME = "strange";
+      SSH_PRIVATE_KEY_PATH = config.sops.secrets."ssh/private".path;
+      PUBLIC_HOST = "192.168.0.138";
+      PUBLIC_PROTOCOL = "http";
+      WINDOWS_RUNTIME = "proton";
+    };
+  };
+
+  # allow everyone to write under /data
+  systemd.tmpfiles.rules = [
+    "d /data 0777 root root -"
+    "d /data/games 0777 root root -"
+  ];
+
+  systemd.services.game-installer.serviceConfig.ReadWritePaths = [
+    "/data"
+  ];
+
+  systemd.services.game-installer.serviceConfig.UMask = lib.mkForce "0000";
 
   jovian = {
     steam = {
