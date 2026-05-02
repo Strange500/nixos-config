@@ -3,6 +3,8 @@
   pkgs,
   ...
 }: {
+  programs.zsh.enable = true;
+
   users.users.root.hashedPassword = "$6$13gz85QezPcMpTXb$jalGiNan9u2PYc3jP4zgUYoZqNcu.811AqfVNadcNQhH4kn9uWC0FxO7UPArX5Apm49lhDbQ5elFeBRS76.s.1";
 
   users.users.${config.qgroget.user.username} = {

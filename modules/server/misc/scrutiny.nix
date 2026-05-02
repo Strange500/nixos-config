@@ -14,7 +14,7 @@ in {
   nixpkgs.overlays = [
     (final: prev: let
       scrutinyPkgs = import scrutinyPkgsSrc {
-        system = "x86_64-linux";
+        system = prev.stdenv.hostPlatform.system;
       };
     in {
       scrutiny = scrutinyPkgs.scrutiny;

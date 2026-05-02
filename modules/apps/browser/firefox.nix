@@ -10,6 +10,7 @@
   };
   programs.firefox = lib.mkIf config.qgroget.nixos.apps.basic {
     enable = true;
+    configPath = ".mozilla/firefox";
     languagePacks = ["fr_FR"];
     policies = {
       DisableTelemetry = true;

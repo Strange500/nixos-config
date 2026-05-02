@@ -43,7 +43,7 @@
   vim.extraPackages = [pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter];
   vim.languages.rust = {
     enable = true;
-    crates.enable = true;
+    extensions.crates-nvim.enable = true;
     dap.enable = true;
     dap.adapter = "codelldb";
   };

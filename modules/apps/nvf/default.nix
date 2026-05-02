@@ -28,8 +28,10 @@
       scrolloff = 8;
     };
     # --- General Language Settings ---
+    lsp = {
+      enable = true;
+    };
     languages = {
-      enableLSP = true;
       enableTreesitter = true;
       # Simple languages can stay here, complex ones go to ./languages/
       nix.enable = true;

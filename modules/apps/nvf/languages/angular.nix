@@ -1,8 +1,10 @@
 {pkgs, ...}: {
-  vim.languages = {
-    ts.enable = true;
-    html.enable = true;
-    css.enable = true;
-    tailwind.enable = true;
+  vim = {
+    languages = {
+      typescript.enable = true;
+      html.enable = true;
+      css.enable = true;
+    };
+    lsp.presets.tailwindcss-language-server.enable = true;
   };
 }
