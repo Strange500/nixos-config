@@ -31,6 +31,7 @@
     enable = true;
     user = "game-installer";
     openFirewall = true;
+    localInstallBase = "/data/games";
     environment = {
       SSH_HOST = "192.168.0.28";
       SSH_PORT = "22";
@@ -90,7 +91,9 @@
   };
 
   boot.loader.grub = {
+    enable = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
+    devices = lib.mkForce ["nodev"];
   };
 }
