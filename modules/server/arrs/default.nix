@@ -18,6 +18,7 @@
       flaresolverr = 8191;
       prowlarr = 9696;
       qui = 7476;
+      questarr = 7879;
     };
 
     containers = {
@@ -29,6 +30,7 @@
       flaresolverr = "flaresolverr";
       prowlarr = "prowlarr";
       qui = "qui";
+      questarr = "questarr";
     };
   };
 
@@ -56,6 +58,7 @@
     flaresolverr = "ghcr.io/flaresolverr/flaresolverr:latest";
     prowlarr = "lscr.io/linuxserver/prowlarr:latest";
     qui = "ghcr.io/autobrr/qui:latest";
+    questarr = "ghcr.io/doezer/questarr:latest";
   };
 
   quiClientId = "KddfAIwLB0R5G.r3UlGpXmoSPmpy9XxXc9AsbBBPbqrgpRv4RHOHQhUkS.gkZyfUswykmCz0";
@@ -118,6 +121,12 @@ in {
       url = "http://127.0.0.1:${toString cfg.ports.qui}";
       type = "public";
     };
+    questarr = {
+      subdomain = "questarr";
+      url = "http://127.0.0.1:${toString cfg.ports.questarr}";
+      type = "private";
+      middlewares = ["SSO"];
+    };
   };
 
   services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
@@ -170,6 +179,13 @@ in {
         "group:admin"
       ];
     }
+    {
+      domain = "questarr.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
   ];
 
   qgroget.backups.arr = {
@@ -179,6 +195,7 @@ in {
       "${cfg.containerDir}/sonarr-anime"
       "${cfg.containerDir}/radarr-anime"
       "${cfg.containerDir}/bazarr"
+      "${cfg.containerDir}/questarr"
     ];
     systemdUnits = [
       "${cfg.podName}-pod.service"
@@ -193,6 +210,7 @@ in {
     Z ${cfg.containerDir}/radarr-anime 0700 arr media -
     Z ${cfg.containerDir}/bazarr 0700 arr media -
     Z ${cfg.containerDir}/prowlarr 0700 arr media -
+    Z ${cfg.containerDir}/questarr 0700 arr media -
   '';
 
   sops.secrets = {
@@ -205,6 +223,8 @@ in {
       group = "traefik";
     };
     "server/qui/env" = {
+    };
+    "server/questarr/env" = {
     };
   };
 
@@ -253,6 +273,7 @@ in {
           "${toString cfg.ports.bazarr}:6767"
           "${toString cfg.ports.prowlarr}:9696"
           "${toString cfg.ports.qui}:7476"
+          "${toString cfg.ports.questarr}:5000"
         ];
       };
       serviceConfig = commonServiceConfig;
@@ -378,6 +399,28 @@ in {
             ];
           }
           // commonContainerConfig;
+        serviceConfig = commonServiceConfig;
+      };
+
+      questarr = {
+        autoStart = true;
+        containerConfig = {
+          name = cfg.containers.questarr;
+          pod = pods.${cfg.podName}.ref;
+          image = images.questarr;
+          environments = {
+            PUID = toString config.users.users.arr.uid;
+            PGID = toString config.users.groups.media.gid;
+            APP_URL = "https://questarr.${config.qgroget.server.domain}";
+          };
+          environmentFiles = [
+            config.sops.secrets."server/questarr/env".path
+          ];
+          volumes = [
+            "${cfg.containerDir}/questarr/config:/app/data:Z"
+            "${cfg.mediaDir}:/media:Z"
+          ];
+        };
         serviceConfig = commonServiceConfig;
       };
     };

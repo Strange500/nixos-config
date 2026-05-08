@@ -12,7 +12,7 @@
     ./modules/apps/desktopsApps.nix
     ./modules/shared
     inputs.sops-nix.homeManagerModule
-    inputs.dms.homeModules.dankMaterialShell.default
+    inputs.dms.homeModules.dank-material-shell
   ];
 
   home = {

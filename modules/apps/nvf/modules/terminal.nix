@@ -8,7 +8,9 @@
     };
 
     # Visual settings
-    direction = "float"; # Options: "horizontal", "vertical", "float"
+    setupOpts = {
+      direction = "float"; # Options: "horizontal", "vertical", "float"
+    };
 
     # Optional: Integration with LazyGit
     lazygit = {

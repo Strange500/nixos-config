@@ -1,4 +1,8 @@
-{lib, ...}: {
+{
+  lib,
+  config,
+  ...
+}: {
   # =============================================================================
   # DISKO CONFIGURATION - Reverse-engineered from running system state
   # =============================================================================
@@ -291,9 +295,17 @@
   # This wipes / on each boot, keeping only what's persisted in /persist.
   # The snapshot bpool_sata/local/root@blank was created on Nov 14, 2025.
   # ---------------------------------------------------------------------------
-  boot.initrd.postResumeCommands = lib.mkAfter ''
-    zfs rollback -r bpool_sata/local/root@blank
-  '';
+  boot.initrd.systemd.services.rollback-root = {
+    description = "Rollback ZFS root to blank snapshot";
+    wantedBy = ["initrd.target"];
+    after = ["zfs-import.target"];
+    before = ["sysroot.mount"];
+    unitConfig.DefaultDependencies = "no";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${config.boot.zfs.package}/bin/zfs rollback -r bpool_sata/local/root@blank";
+    };
+  };
 
   environment.persistence = {
     "/persist" = {

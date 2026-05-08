@@ -6,10 +6,9 @@
   ...
 }: {
   imports = [
-    ../global.nix
-    inputs.home-manager.nixosModules.default
-    inputs.sops-nix.nixosModules.sops
-    ../../modules/server
+    ../../modules/profiles/base.nix
+    ../../modules/profiles/server.nix
+    ./settings.nix
     ./disk-config.nix
     ./hardware-configuration.nix
   ];
