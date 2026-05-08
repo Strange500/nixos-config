@@ -86,6 +86,10 @@
       # for example:
       #inputs.obsidian-nvim.follows = "obsidian-nvim"; # <- this will use the obsidian-nvim from your inputs
     };
+
+    game-installer = {
+      url = "github:strange500/game-installer";
+    };
   };
 
   outputs = {
@@ -103,12 +107,14 @@
     jovian-nixos,
     rust-overlay,
     nvf,
+    game-installer,
     ...
   } @ inputs: let
     system = "x86_64-linux";
 
     # Common modules used by most hosts
     commonModules = [
+      game-installer.nixosModules.default
       home-manager.nixosModules.default
       stylix.nixosModules.stylix
       disko.nixosModules.disko

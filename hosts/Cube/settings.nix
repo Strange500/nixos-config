@@ -19,7 +19,7 @@
           game.enable = true;
         };
         dev = {
-          enable = true;
+          enable = false;
           jetbrains.enable = false;
         };
         media = true;
