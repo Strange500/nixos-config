@@ -48,7 +48,7 @@ in {
     users.groups.jellyseerr = {
     };
 
-    services.jellyseerr = {
+    services.seerr = {
       openFirewall = false;
       enable = true;
       port = cfg.port;
