@@ -10,7 +10,6 @@
     hardware.bluetooth.settings = {
       # more compatibility
       General = {
-        Enable = "Source,Sink,Media,Socket";
         Experimental = true;
       };
     };
