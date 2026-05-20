@@ -2,8 +2,50 @@
   pkgs,
   config,
   lib,
+  inputs,
   ...
-}: {
+}: let
+  serverConfig = inputs.self.nixosConfigurations.Server.config;
+  serverDomain = serverConfig.qgroget.server.domain;
+  services = serverConfig.qgroget.services;
+
+  # Helper to generate URL
+  mkUrl = service: "https://${
+    if service.subdomain != ""
+    then service.subdomain + "."
+    else ""
+  }${serverDomain}";
+
+  # Group services
+  publicServices = lib.filterAttrs (n: s: s.type == "public" && n != "dashy") services;
+  privateServices = lib.filterAttrs (n: s: s.type == "private") services;
+
+  # Specific overrides/additions
+  overrides = {
+  };
+
+  # Build the dynamic bookmarks
+  mkBookmark = name: service:
+    if overrides ? ${name}
+    then overrides.${name}
+    else {
+      name = lib.toUpper (lib.substring 0 1 name) + lib.substring 1 (-1) name;
+      url = mkUrl service;
+    };
+
+  homeBookmarks =
+    (lib.mapAttrsToList mkBookmark publicServices)
+    ++ [
+      {
+        name = "Home | QGRoget";
+        url = "https://${serverDomain}/";
+      }
+      {
+        name = "Admin";
+        bookmarks = lib.mapAttrsToList mkBookmark privateServices;
+      }
+    ];
+in {
   sops.secrets."firefox/certFilePKCS12.p12" = lib.mkIf config.qgroget.nixos.apps.basic {
     format = "binary";
     sopsFile = ../../../secrets/client.p12;
@@ -13,16 +55,23 @@
     configPath = ".mozilla/firefox";
     languagePacks = ["fr_FR"];
     policies = {
-      DisableTelemetry = true;
-      DisableFirefoxStudies = true;
+      DisableTelemetry = lib.mkForce true;
+      DisableFirefoxStudies = lib.mkForce true;
       EnableTrackingProtection = {
-        Value = true;
-        Locked = true;
-        Cryptomining = true;
-        Fingerprinting = true;
+        Value = lib.mkForce true;
+        Locked = lib.mkForce true;
+        Cryptomining = lib.mkForce true;
+        Fingerprinting = lib.mkForce true;
       };
-      BlockAboutConfig = false;
-      DefaultDownloadDirectory = "\${home}/Downloads";
+      BlockAboutConfig = lib.mkForce false;
+      DefaultDownloadDirectory = lib.mkForce "\${home}/Downloads";
+      # Password manager logic
+      PasswordManagerEnabled = lib.mkForce false;
+      OfferToSaveLogins = lib.mkForce false;
+      # UI Cleanup
+      DisablePocket = lib.mkForce true;
+      NoDefaultBookmarks = lib.mkForce true;
+      DisplayBookmarksToolbar = lib.mkForce "always";
     };
     profiles.${config.qgroget.user.username} = {
       settings = {
@@ -35,6 +84,40 @@
             url = "https://${config.qgroget.server.domain}";
           }
         ];
+
+        # Performance & HW Acceleration
+        "gfx.webrender.all" = true;
+        "media.ffmpeg.vaapi.enabled" = true;
+        "media.rdd-ffmpeg.enabled" = true;
+        "widget.dmabuf.force-enabled" = true;
+
+        # Privacy
+        "privacy.trackingprotection.enabled" = true;
+        "privacy.trackingprotection.socialtracking.enabled" = true;
+        "browser.send_pings" = false;
+        "dom.event.clipboardevents.enabled" = false; # Prevent websites from interfering with copy/paste
+
+        # UI Tweaks
+        "browser.compactmode.show" = true;
+        "browser.uidensity" = 1; # Compact
+        "browser.tabs.closeWindowWithLastTab" = false;
+        "browser.aboutConfig.showWarning" = false;
+        "browser.shell.checkDefaultBrowser" = false;
+        "general.smoothScroll" = true;
+        "pdfjs.sidebarViewOnLoad" = 0;
+        "browser.download.panel.shown" = true; # Show download panel when a download starts
+
+        # Bitwarden friendly
+        "signon.rememberSignons" = false;
+        "signon.autofillForms" = false;
+        "extensions.pocket.enabled" = false;
+
+        # New Tab cleanup
+        "browser.newtabpage.activity-stream.showSponsored" = false;
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false;
+        "browser.newtabpage.activity-stream.default.sites" = "";
+
+        "extensions.autoDisableScopes" = 0;
       };
       extensions = {
         force = true;
@@ -62,130 +145,7 @@
             bookmarks = [
               {
                 name = "Home";
-                bookmarks = [
-                  {
-                    name = "Photos - Immich";
-                    url = "https://immich.qgroget.com/photos";
-                  }
-                  {
-                    name = "Connexion - Jellyseerr";
-                    url = "https://jellyseerr.qgroget.com/login";
-                  }
-                  {
-                    name = "Jellyfin";
-                    url = "https://jellyfin.qgroget.com/web/#/login.html?serverid=68fb5b2c9433451fa16eb7e29139e7f2&url=%2Fhome.html";
-                  }
-                  {
-                    name = "Vaults | Vaultwarden Web";
-                    url = "https://vaultwarden.qgroget.com/#/vault";
-                  }
-                  {
-                    name = "Home | QGRoget";
-                    url = "https://list.qgroget.com/";
-                  }
-                  {
-                    name = "Open WebUI";
-                    url = "https://ai.qgroget.com/";
-                  }
-                  {
-                    name = "Navidrome";
-                    url = "https://navidrome.qgroget.com/app/#/album/recentlyAdded?sort=recently_added&order=DESC&filter={}";
-                  }
-                  {
-                    name = "Admin";
-                    bookmarks = [
-                      {
-                        name = "Series - Bazarr";
-                        url = "https://bazarr.qgroget.com/series";
-                      }
-                      {
-                        name = "Nicotine";
-                        url = "https://nicotine.qgroget.com/";
-                      }
-                      {
-                        name = "Pi-hole - piholeunbound";
-                        url = "https://pihole.qgroget.com/admin/";
-                      }
-                      {
-                        name = "Radarr";
-                        url = "https://radarr-anime.qgroget.com/";
-                      }
-                      {
-                        name = "Indexers - Prowlarr";
-                        url = "https://prowlarr.qgroget.com/";
-                      }
-                      {
-                        name = "Radarr";
-                        url = "https://radarr.qgroget.com/";
-                      }
-                      {
-                        name = "Sonarr";
-                        url = "https://sonarr-serie.qgroget.com/";
-                      }
-                      {
-                        name = "Sonarr";
-                        url = "https://sonarr.qgroget.com/";
-                      }
-                    ];
-                  }
-                ];
-              }
-              {
-                name = "Crypto";
-                bookmarks = [
-                  {
-                    name = "Stack";
-                    bookmarks = [
-                      {
-                        name = "Stake with Lido | Lido";
-                        url = "https://stake.lido.fi/";
-                      }
-                    ];
-                  }
-                  {
-                    name = "Swap";
-                    bookmarks = [
-                      {
-                        name = "dApp 1inch - DeFi / DEX aggregator on Ethereum, Binance Smart Chain, Optimism, Polygon, Arbitrum";
-                        url = "https://app.1inch.io/#/1/simple/swap/1:ETH";
-                      }
-                      {
-                        name = "ParaSwap - Solving Liquidity for DeFi";
-                        url = "https://app.paraswap.xyz/#/swap/0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE/1/SELL?version=6.2&network=ethereum";
-                      }
-                      {
-                        name = "SimpleSwap | Cryptocurrency Exchange | Easy way to swap BTC to ETH, XRP, LTC, EOS, XLM";
-                        url = "https://simpleswap.io/";
-                      }
-                      {
-                        name = "Aave - Open Source Liquidity Protocol";
-                        url = "https://app.aave.com/";
-                      }
-                      {
-                        name = "Velora - Intents-based Trading Protocol";
-                        url = "https://www.velora.xyz/";
-                      }
-                    ];
-                  }
-                  {
-                    name = "DCA";
-                    bookmarks = [
-                      {
-                        name = "Balmy — Your Decentralized Home Banking";
-                        url = "https://app.balmy.xyz/";
-                      }
-                    ];
-                  }
-                  {
-                    name = "Impot";
-                    bookmarks = [
-                      {
-                        name = "Waltio";
-                        url = "https://tax.waltio.com/dashboard";
-                      }
-                    ];
-                  }
-                ];
+                bookmarks = homeBookmarks;
               }
               {
                 name = "Game";
@@ -222,16 +182,38 @@
                     url = "https://cs.rin.ru/forum/";
                   }
                   {
-                    name = "Téléchargement Gratuit | Jean-Luc Mélenchon France Élection présidentielle française, 2017 Europe 1 Humour, france, menton, oreille png | PNGEgg";
-                    url = "https://www.pngegg.com/fr/png-kripb/download";
+                    name = "La cale | Cale de Piratage";
+                    url = "https://la-cale.space/";
                   }
                   {
-                    name = "YggTorrent - 1er Tracker BitTorrent Francophone";
-                    url = "https://www.yggtorrent.top/auth/login";
+                    name = "C411";
+                    url = "https://c411.org/";
+                  }
+                ];
+              }
+
+              {
+                name = "AI";
+                bookmarks = [
+                  {
+                    name = "ChatGPT";
+                    url = "https://chat.openai.com/";
                   }
                   {
-                    name = "[JySzE] Naruto Shippuden - 104 [v2.5] :: Nyaa";
-                    url = "https://nyaa.si/view/1693349";
+                    name = "Gemini";
+                    url = "https://gemini.google.com/";
+                  }
+                  {
+                    name = "Claude";
+                    url = "https://claude.ai/";
+                  }
+                  {
+                    name = "Grok";
+                    url = "https://x.ai/";
+                  }
+                  {
+                    name = "Stitch";
+                    url = "https://stitch.google.com/";
                   }
                 ];
               }
@@ -249,20 +231,8 @@
                 ];
               }
               {
-                name = "Syncthing";
-                url = "http://127.0.0.1:8384";
-              }
-              {
                 name = "Home | SeaDex";
                 url = "https://releases.moe/";
-              }
-              {
-                name = "LeetCode 75 - Study Plan - LeetCode";
-                url = "https://leetcode.com/studyplan/leetcode-75/";
-              }
-              {
-                name = "Claude";
-                url = "https://claude.ai/login?returnTo=%2F%3F";
               }
               {
                 name = "ENT IMT NORD EUROPE";
@@ -272,7 +242,6 @@
           }
         ];
       };
-      settings = {"extensions.autoDisableScopes" = 0;};
     };
   };
 }

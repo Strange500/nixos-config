@@ -184,6 +184,9 @@
       TERM = "xterm-256color";
     };
     initContent = ''
+      if [[ -z "$TMUX" && -o interactive ]] && command -v tmux >/dev/null 2>&1; then
+        tmux attach -t main || tmux new -s main
+      fi
       kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -
       function y() {
       local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd

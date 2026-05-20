@@ -17,6 +17,8 @@ in {
   };
 
   config = mkIf cfg.enable {
+    services.jellyseerr.configDir = "/var/lib/jellyseerr";
+
     systemd.tmpfiles.rules = [
       "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
       "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
@@ -48,7 +50,7 @@ in {
     users.groups.jellyseerr = {
     };
 
-    services.jellyseerr = {
+    services.seerr = {
       openFirewall = false;
       enable = true;
       port = cfg.port;
