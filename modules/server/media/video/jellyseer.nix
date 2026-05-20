@@ -4,50 +4,50 @@
   ...
 }:
 with lib; let
-  cfg = config.qgroget.server.jellyseerr;
+  cfg = config.qgroget.server.seerr;
 in {
-  options.qgroget.server.jellyseerr = {
-    enable = mkEnableOption "Custom Jellyseerr setup with persistent config and Traefik integration";
+  options.qgroget.server.seerr = {
+    enable = mkEnableOption "Custom Seerr setup with persistent config and Traefik integration";
 
     port = mkOption {
       type = types.port;
       default = 5055;
-      description = "Internal port for Jellyseerr web UI.";
+      description = "Internal port for Seerr web UI.";
     };
   };
 
   config = mkIf cfg.enable {
-    services.jellyseerr.configDir = "/var/lib/jellyseerr";
+    services.seerr.configDir = "/persist/var/lib/seerr";
 
     systemd.tmpfiles.rules = [
-      "d ${config.services.jellyseerr.configDir} 0755 jellyseerr jellyseerr -"
-      "d ${config.services.jellyseerr.configDir}/db 0755 jellyseerr jellyseerr -"
-      "d ${config.services.jellyseerr.configDir}/logs 0755 jellyseerr jellyseerr -"
-      "Z ${config.services.jellyseerr.configDir} - jellyseerr jellyseerr -"
+      "d ${config.services.seerr.configDir} 0755 seerr seerr -"
+      "d ${config.services.seerr.configDir}/db 0755 seerr seerr -"
+      "d ${config.services.seerr.configDir}/logs 0755 seerr seerr -"
+      "Z ${config.services.seerr.configDir} - seerr seerr -"
     ];
 
     qgroget.services = {
-      jellyseerr = {
-        subdomain = "jellyseerr";
-        url = "http://127.0.0.1:${toString config.services.jellyseerr.port}";
+      seerr = {
+        subdomain = "seerr";
+        url = "http://127.0.0.1:${toString config.services.seerr.port}";
         type = "public";
         journalctl = true;
-        unitName = "jellyseerr.service";
+        unitName = "seerr.service";
         persistedData = [
-          "${config.services.jellyseerr.configDir}"
+          "${config.services.seerr.configDir}"
         ];
         backupDirectories = [
-          "${config.services.jellyseerr.configDir}"
+          "${config.services.seerr.configDir}"
         ];
       };
     };
 
-    users.users.jellyseerr = {
+    users.users.seerr = {
       isSystemUser = true;
-      description = "Jellyseerr user";
-      group = "jellyseerr";
+      description = "Seerr user";
+      group = "seerr";
     };
-    users.groups.jellyseerr = {
+    users.groups.seerr = {
     };
 
     services.seerr = {
@@ -56,7 +56,7 @@ in {
       port = cfg.port;
     };
 
-    systemd.services.jellyseerr.serviceConfig.DynamicUser = lib.mkForce false;
-    systemd.services.jellyseerr.serviceConfig.User = "jellyseerr";
+    systemd.services.seerr.serviceConfig.DynamicUser = lib.mkForce false;
+    systemd.services.seerr.serviceConfig.User = "seerr";
   };
 }
