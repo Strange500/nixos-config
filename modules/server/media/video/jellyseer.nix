@@ -61,6 +61,7 @@ in {
       User = "seerr";
       Group = "seerr";
       StateDirectory = lib.mkForce [];
+      ReadWritePaths = ["/var/lib/seerr"];
     };
   };
 }
