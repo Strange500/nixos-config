@@ -7,6 +7,7 @@
   imports = [
     ../../modules/profiles/base.nix
     ../../modules/profiles/desktop.nix
+    ../../modules/system/networking/eduroam.nix
     ./settings.nix
     ./disk-config.nix
     ../../modules/system/tpm/tpm.nix
