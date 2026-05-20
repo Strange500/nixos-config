@@ -28,7 +28,7 @@
     ];
 
     qgroget.server = {
-      jellyseerr = {
+      seerr = {
         enable = true;
       };
       jellyfin = {

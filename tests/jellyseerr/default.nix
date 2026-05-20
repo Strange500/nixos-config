@@ -11,7 +11,7 @@ pkgs.testers.nixosTest {
       ];
 
       config = {
-        qgroget.server.jellyseerr = {
+        qgroget.server.seerr = {
           enable = true;
           port = 5055;
         };
