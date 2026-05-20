@@ -12,6 +12,7 @@
     stylix.targets = {
       plymouth.enable = false;
       console.enable = false;
+      tmux.enable = false;
     };
   };
 }

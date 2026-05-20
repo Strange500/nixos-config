@@ -69,7 +69,47 @@ in {
   };
   programs = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     starship.enable = true;
-    tmux.enable = true;
+    tmux = {
+      enable = true;
+      clock24 = true;
+      mouse = true;
+      keyMode = "vi";
+      prefix = "C-a";
+      baseIndex = 1;
+      escapeTime = 0;
+
+      plugins = with pkgs.tmuxPlugins; [
+        sensible
+        vim-tmux-navigator
+        catppuccin
+        yank
+        resurrect
+        {
+          plugin = continuum;
+          extraConfig = ''
+            set -g @continuum-restore 'on'
+            set -g @continuum-save-interval '5'
+          '';
+        }
+      ];
+
+      extraConfig = ''
+        # Better split shortcuts
+        bind-key | split-window -h -c "#{pane_current_path}"
+        bind-key - split-window -v -c "#{pane_current_path}"
+
+        # Catppuccin configuration
+        set -g @catppuccin_flavor 'mocha' # latte, frappe, macchiato or mocha
+        set -g @catppuccin_window_status_style "rounded"
+
+        # Renumber windows when one is closed
+        set -g renumber-windows on
+
+        # Improve colors
+        set -g default-terminal "tmux-256color"
+        set -ag terminal-overrides ",xterm-256color:RGB"
+      '';
+    };
     vscode = {
       enable = true;
       package = pkgs.vscode;

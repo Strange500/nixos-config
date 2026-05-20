@@ -180,14 +180,18 @@
     syntaxHighlighting.enable = true;
 
     sessionVariables = {
-      EDDITOR = "vim";
+      EDITOR = "vim";
       TERM = "xterm-256color";
     };
     initContent = ''
       if [[ -z "$TMUX" && -o interactive ]] && command -v tmux >/dev/null 2>&1; then
         tmux attach -t main || tmux new -s main
       fi
-      kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -
+      if [ -f ~/Téléchargements/gif.gif ]; then
+        kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -
+      else
+        fastfetch
+      fi
       function y() {
       local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
        yazi "$@" --cwd-file="$tmp"
@@ -219,6 +223,11 @@
         "extract"
       ];
     };
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
   };
 
   programs.starship = {
