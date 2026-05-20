@@ -17,7 +17,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.seerr.configDir = "/persist/var/lib/seerr";
+    services.seerr.configDir = "/var/lib/seerr";
 
     systemd.tmpfiles.rules = [
       "d ${config.services.seerr.configDir} 0755 seerr seerr -"
@@ -34,10 +34,10 @@ in {
         journalctl = true;
         unitName = "seerr.service";
         persistedData = [
-          "${config.services.seerr.configDir}"
+          "/var/lib/seerr"
         ];
         backupDirectories = [
-          "${config.services.seerr.configDir}"
+          "/var/lib/seerr"
         ];
       };
     };
@@ -56,7 +56,11 @@ in {
       port = cfg.port;
     };
 
-    systemd.services.seerr.serviceConfig.DynamicUser = lib.mkForce false;
-    systemd.services.seerr.serviceConfig.User = "seerr";
+    systemd.services.seerr.serviceConfig = {
+      DynamicUser = lib.mkForce false;
+      User = "seerr";
+      Group = "seerr";
+      StateDirectory = lib.mkForce [];
+    };
   };
 }
