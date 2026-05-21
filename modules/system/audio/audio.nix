@@ -7,6 +7,15 @@
   config = lib.mkIf (config.qgroget.nixos.isDesktop) {
     nixpkgs.config.pulseaudio = true;
 
+    security.rtkit.enable = true;
+    services.pipewire = {
+      enable = true;
+      alsa.enable = true;
+      alsa.support32Bit = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
+
     systemd.user.services.mpris-proxy = {
       # allow heaset button to control
       description = "Mpris proxy";
@@ -16,11 +25,6 @@
     };
 
     # audio
-    services.pulseaudio = {
-      enable = false;
-      package = pkgs.pulseaudioFull;
-      support32Bit = true;
-      extraConfig = "load-module module-combine-sink; unload-module module-suspend-on-idle;";
-    };
+    services.pulseaudio.enable = false;
   };
 }
