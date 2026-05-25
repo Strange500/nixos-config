@@ -170,7 +170,7 @@
           };
           background = lib.mkOption {
             type = lib.types.path;
-            default = ../desktop/stylix/wallpaper/apple-dark.jpg;
+            default = ../desktop/stylix/wallpaper/gemini-wallpaper.png;
             description = "Path to the wallpaper";
           };
         };
