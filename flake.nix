@@ -55,20 +55,24 @@
 
     impermanence = {
       url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     declarative-jellyfin = {
       url = "github:Sveske-Juice/declarative-jellyfin";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     jovian-nixos.url = "github:Jovian-Experiments/Jovian-NixOS";
     jovian-nixos.inputs.nixpkgs.follows = "nixpkgs";
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    chaotic.inputs.nixpkgs.follows = "nixpkgs";
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
 
     portfolio = {
       url = "github:strange500/nextPortfolio";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dms = {
@@ -89,6 +93,11 @@
 
     game-installer = {
       url = "github:strange500/game-installer";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    celler = {
+      url = "github:blitz/celler";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -108,6 +117,7 @@
     rust-overlay,
     nvf,
     game-installer,
+    celler,
     ...
   } @ inputs: let
     system = "x86_64-linux";
@@ -160,6 +170,7 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       portfolio.nixosModules.default
+      celler.nixosModules.cellerd
       # {
       #   nixpkgs.overlays = [
       #     (final: prev: {

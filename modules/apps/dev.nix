@@ -145,9 +145,9 @@ in {
             vscjava.vscode-java-test
             vscjava.vscode-java-dependency
             # python
-            ms-python.python
-            ms-python.vscode-pylance
-            ms-toolsai.jupyter
+            # ms-python.python
+            # ms-python.vscode-pylance
+            # ms-toolsai.jupyter
             # js
             dbaeumer.vscode-eslint
             esbenp.prettier-vscode

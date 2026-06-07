@@ -18,7 +18,7 @@
   boot.kernelModules = [
     "kvm-amd"
   ];
-  boot.kernelPackages = pkgs.nur.repos.Ev357.linux-patched;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   users.mutableUsers = false;
 
