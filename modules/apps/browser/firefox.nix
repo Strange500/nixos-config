@@ -120,114 +120,129 @@ in {
 
         "extensions.autoDisableScopes" = 0;
       };
-      extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-        ublock-origin
-        bitwarden
-        metamask
-        pywalfox
-      ];
-      bookmarks = [
-        {
-          toolbar = true;
-          bookmarks = [
-            {
-              name = "Home";
-              bookmarks = homeBookmarks;
-            }
-            {
-              name = "Game";
-              bookmarks = [
-                {
-                  name = "Repacker";
-                  bookmarks = [
-                    {
-                      name = "FitGirl Repacks - The ONLY official site for FitGirl Repacks. Every single FG repack installer has a link inside, which leads here. Do not fall for fake and scam sites, which are using my name.";
-                      url = "https://fitgirl-repacks.site/";
-                    }
-                    {
-                      name = "DODI Repacks";
-                      url = "https://dodi-repacks.site/";
-                    }
-                  ];
-                }
-                {
-                  name = "DDL";
-                  bookmarks = [
-                    {
-                      name = "STEAMRIP » Free Pre-installed Steam Games";
-                      url = "https://steamrip.com/";
-                    }
-                  ];
-                }
-                {name = "game watchlist";}
-                {
-                  name = "Pirated Games Mega Thread";
-                  url = "https://rentry.org/pgames";
-                }
-                {
-                  name = "CS RIN - Steam Underground • Index page";
-                  url = "https://cs.rin.ru/forum/";
-                }
-                {
-                  name = "La cale | Cale de Piratage";
-                  url = "https://la-cale.space/";
-                }
-                {
-                  name = "C411";
-                  url = "https://c411.org/";
-                }
-              ];
-            }
-
-            {
-              name = "AI";
-              bookmarks = [
-                {
-                  name = "ChatGPT";
-                  url = "https://chat.openai.com/";
-                }
-                {
-                  name = "Gemini";
-                  url = "https://gemini.google.com/";
-                }
-                {
-                  name = "Claude";
-                  url = "https://claude.ai/";
-                }
-                {
-                  name = "Grok";
-                  url = "https://x.ai/";
-                }
-                {
-                  name = "Stitch";
-                  url = "https://stitch.google.com/";
-                }
-              ];
-            }
-            {
-              name = "NixOS";
-              bookmarks = [
-                {
-                  name = "Home Manager - Option Search";
-                  url = "https://home-manager-options.extranix.com/";
-                }
-                {
-                  name = "NixOS Search - Packages";
-                  url = "https://search.nixos.org/packages";
-                }
-              ];
-            }
-            {
-              name = "Home | SeaDex";
-              url = "https://releases.moe/";
-            }
-            {
-              name = "ENT IMT NORD EUROPE";
-              url = "https://myservices.imt-nord-europe.fr/portail/";
-            }
+      extensions = {
+        force = true;
+        packages = with pkgs.nur.repos.rycee.firefox-addons; [
+          ublock-origin
+          bitwarden
+          metamask
+          pywalfox
+        ];
+        settings."uBlock0@raymondhill.net".settings = {
+          selectedFilterLists = [
+            "ublock-filters"
+            "ublock-badware"
+            "ublock-privacy"
+            "ublock-unbreak"
+            "ublock-quick-fixes"
           ];
-        }
-      ];
+        };
+      };
+      bookmarks = {
+        force = true;
+        settings = [
+          {
+            toolbar = true;
+            bookmarks = [
+              {
+                name = "Home";
+                bookmarks = homeBookmarks;
+              }
+              {
+                name = "Game";
+                bookmarks = [
+                  {
+                    name = "Repacker";
+                    bookmarks = [
+                      {
+                        name = "FitGirl Repacks - The ONLY official site for FitGirl Repacks. Every single FG repack installer has a link inside, which leads here. Do not fall for fake and scam sites, which are using my name.";
+                        url = "https://fitgirl-repacks.site/";
+                      }
+                      {
+                        name = "DODI Repacks";
+                        url = "https://dodi-repacks.site/";
+                      }
+                    ];
+                  }
+                  {
+                    name = "DDL";
+                    bookmarks = [
+                      {
+                        name = "STEAMRIP » Free Pre-installed Steam Games";
+                        url = "https://steamrip.com/";
+                      }
+                    ];
+                  }
+                  {name = "game watchlist";}
+                  {
+                    name = "Pirated Games Mega Thread";
+                    url = "https://rentry.org/pgames";
+                  }
+                  {
+                    name = "CS RIN - Steam Underground • Index page";
+                    url = "https://cs.rin.ru/forum/";
+                  }
+                  {
+                    name = "La cale | Cale de Piratage";
+                    url = "https://la-cale.space/";
+                  }
+                  {
+                    name = "C411";
+                    url = "https://c411.org/";
+                  }
+                ];
+              }
+
+              {
+                name = "AI";
+                bookmarks = [
+                  {
+                    name = "ChatGPT";
+                    url = "https://chat.openai.com/";
+                  }
+                  {
+                    name = "Gemini";
+                    url = "https://gemini.google.com/";
+                  }
+                  {
+                    name = "Claude";
+                    url = "https://claude.ai/";
+                  }
+                  {
+                    name = "Grok";
+                    url = "https://x.ai/";
+                  }
+                  {
+                    name = "Stitch";
+                    url = "https://stitch.google.com/";
+                  }
+                ];
+              }
+              {
+                name = "NixOS";
+                bookmarks = [
+                  {
+                    name = "Home Manager - Option Search";
+                    url = "https://home-manager-options.extranix.com/";
+                  }
+                  {
+                    name = "NixOS Search - Packages";
+                    url = "https://search.nixos.org/packages";
+                  }
+                ];
+              }
+              {
+                name = "Home | SeaDex";
+                url = "https://releases.moe/";
+              }
+              {
+                name = "ENT IMT NORD EUROPE";
+                url = "https://myservices.imt-nord-europe.fr/portail/";
+              }
+            ];
+          }
+        ];
+      };
     };
   };
 }
