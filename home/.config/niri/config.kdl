@@ -10,7 +10,7 @@ output "HDMI-A-1" {
     // Enable/disable outputs by their names.
     // You can find output names using `nirictl outputs`.
  
-    position x=2560 y=0
+    position x=0 y=0
     // Example:
     // disable "HDMI-A-1"
     //
@@ -21,7 +21,7 @@ output "HDMI-A-1" {
 }
 
 output "DP-2" {
-    position x=0 y=0
+    position x=1920g y=0
 }
 // Input device configuration.
 // Find the full list of options on the wiki:

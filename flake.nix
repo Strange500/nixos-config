@@ -99,6 +99,7 @@
       url = "github:blitz/celler";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    scrutiny-nixpkgs.url = "github:Samasaur1/nixpkgs/3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
   };
 
   outputs = {
@@ -118,6 +119,7 @@
     nvf,
     game-installer,
     celler,
+    scrutiny-nixpkgs,
     ...
   } @ inputs: let
     system = "x86_64-linux";

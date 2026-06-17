@@ -1,14 +1,12 @@
 {
   config,
   lib,
+  inputs,
   ...
 }: let
   # Import nixpkgs from the PR #481809 branch
   # This PR updates scrutiny with new service options and adds scrutiny-collector-zfs
-  scrutinyPkgsSrc = builtins.fetchGit {
-    url = "https://github.com/Samasaur1/nixpkgs";
-    rev = "3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
-  };
+  scrutinyPkgsSrc = inputs.scrutiny-nixpkgs;
 in {
   # Use overlay to provide all scrutiny packages from the forked nixpkgs
   nixpkgs.overlays = [
