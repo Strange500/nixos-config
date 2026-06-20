@@ -54,7 +54,7 @@ in {
         flutter
         android-studio-full
 
-        gemini-cli
+        antigravity-cli
       ]
       ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
         (jetbrains.plugins.addPlugins jetbrains.idea pluginListInte)
