@@ -22,16 +22,18 @@
         binfmt = true;
       };
     };
-    environment.systemPackages = [
-      pkgs.steam-rom-manager
-      pkgs.prismlauncher
-      pkgs.wine
-      pkgs.winetricks
+    environment.systemPackages = with pkgs; [
+      steam-rom-manager
+      prismlauncher
+      wine
+      winetricks
       (import ./script.nix {inherit pkgs config;})
       (import ./steamImport.nix {inherit pkgs;})
-      pkgs.python3
+      python3
       #      pkgs.proton-ge-custom
-      pkgs.protontricks
+      protontricks
+      lsfg-vk
+      lsfg-vk-ui
     ];
     hardware.graphics = {
       enable = true;
