@@ -1222,11 +1222,11 @@
         "systems": "systems_7"
       },
       "locked": {
-        "lastModified": 1783239113,
-        "narHash": "sha256-AfrftGOZ3cPYnA518NcpD4qisfdXvTxsclJC4sR3YCQ=",
+        "lastModified": 1783239287,
+        "narHash": "sha256-JrYTNN4fB9oFxEYQwKR2xcGOwmr0opMdMJiePaiimpI=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "b18e48215756c6b94ea487b900c665cbf2052eb9",
+        "rev": "fa9a29b207587e1f958c62e1c78b67f738b7f0b3",
         "type": "github"
       },
       "original": {
