@@ -33,9 +33,9 @@ The goal is to keep systems reproducible, versioned, and easy to rebuild.
 ## 🖥️ Server Configuration (host: `Server`)
 
 Server config is composed from:
-- `/home/runner/work/nixos-config/nixos-config/hosts/Server/configuration.nix`
-- `/home/runner/work/nixos-config/nixos-config/modules/server/default.nix`
-- imported feature modules under `/home/runner/work/nixos-config/nixos-config/modules/server/*`
+- `hosts/Server/configuration.nix`
+- `modules/server/default.nix`
+- imported feature modules under `modules/server/*`
 
 ### Core platform
 - **Ingress / TLS**: Traefik (Let's Encrypt, dynamic routers generated from `qgroget.services`)
