@@ -1193,11 +1193,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1784030839,
-        "narHash": "sha256-EkK1XwKNptfkHcEMq334QzZVGcIjr/MGxm3vTmn9Vkg=",
+        "lastModified": 1784031005,
+        "narHash": "sha256-04rAiJ6tOfCbJPxd8PUC4vF7avRwG6872I6NehA43Bs=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "b85b505d0c7175c05c46063e5fdfce08b662cf64",
+        "rev": "bc93092163c26fea44185147b487e9ea2649be8b",
         "type": "github"
       },
       "original": {
