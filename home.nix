@@ -18,6 +18,9 @@
   home = {
     username = "${config.qgroget.user.username}";
     homeDirectory = "/home/${config.qgroget.user.username}";
+    sessionVariables = {
+      GH_TOKEN = "$(cat ${config.sops.secrets."github_token".path})";
+    };
     stateVersion = "25.11";
     packages = lib.mkIf (config.qgroget.nixos.isDesktop) [
       pkgs.discord
@@ -56,7 +59,13 @@
       "git/ssh/private" = {
         path = "${config.sops.defaultSymlinkPath}/git/ssh/private";
       };
+      "github_token" = {};
     };
+  };
+
+  programs.gh = {
+    enable = true;
+    gitProtocol = "ssh";
   };
 
   programs.home-manager.enable = true;
