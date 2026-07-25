@@ -79,6 +79,39 @@
           default = "/etc/containersConfig";
           description = "Directory for container configurations.";
         };
+        calibre-importer = {
+          enable = lib.mkEnableOption "Headless Calibre Importer";
+          sourceDir = lib.mkOption {
+            type = lib.types.str;
+            default = "/mnt/data/media/torrents/ebook";
+            description = "Directory where torrented ebooks are placed.";
+          };
+          libraryDir = lib.mkOption {
+            type = lib.types.str;
+            default = "/mnt/data/media/media/books";
+            description = "Directory for the organized Calibre library.";
+          };
+          stateDir = lib.mkOption {
+            type = lib.types.str;
+            default = "/var/lib/calibre-importer";
+            description = "Directory to store state (e.g. processed files list).";
+          };
+          interval = lib.mkOption {
+            type = lib.types.str;
+            default = "hourly";
+            description = "Systemd timer interval for running the importer.";
+          };
+          user = lib.mkOption {
+            type = lib.types.str;
+            default = "calibre-importer";
+            description = "User to run the import script as.";
+          };
+          group = lib.mkOption {
+            type = lib.types.str;
+            default = "media";
+            description = "Group to run the import script as.";
+          };
+        };
       };
       nixos = {
         auto-update = lib.mkOption {

@@ -3,5 +3,6 @@
     ./photo
     ./video
     ./video/jellyseer.nix
+    ./books
   ];
 }

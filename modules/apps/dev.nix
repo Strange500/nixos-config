@@ -209,6 +209,7 @@ in {
           ];
           "workbench.colorTheme" = "Dynamic Base16 DankShell";
           "http.systemCertificatesNode" = true;
+          "editor.semanticHighlighting.enabled" = true;
         };
       };
     };
