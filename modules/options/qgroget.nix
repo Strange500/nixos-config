@@ -80,7 +80,7 @@
           description = "Directory for container configurations.";
         };
         calibre-importer = {
-          enable = lib.mkEnableOption "Headless Calibre Importer";
+          enable = lib.mkEnableOption "Headless Calibre UI";
           sourceDir = lib.mkOption {
             type = lib.types.str;
             default = "/mnt/data/media/torrents/ebook";
@@ -91,16 +91,7 @@
             default = "/mnt/data/media/media/books";
             description = "Directory for the organized Calibre library.";
           };
-          stateDir = lib.mkOption {
-            type = lib.types.str;
-            default = "/var/lib/calibre-importer";
-            description = "Directory to store state (e.g. processed files list).";
-          };
-          interval = lib.mkOption {
-            type = lib.types.str;
-            default = "hourly";
-            description = "Systemd timer interval for running the importer.";
-          };
+
           user = lib.mkOption {
             type = lib.types.str;
             default = "calibre-importer";
@@ -111,6 +102,9 @@
             default = "media";
             description = "Group to run the import script as.";
           };
+        };
+        grimmory = {
+          enable = lib.mkEnableOption "Grimmory eBook and Manga Organizer/Reader";
         };
       };
       nixos = {

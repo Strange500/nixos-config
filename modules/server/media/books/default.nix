@@ -5,86 +5,127 @@
   ...
 }: let
   cfg = config.qgroget.server.calibre-importer;
-  importScript = pkgs.writeShellScriptBin "calibre-import" ''
-    export PATH="${pkgs.coreutils}/bin:${pkgs.gnugrep}/bin:${pkgs.findutils}/bin:${pkgs.calibre}/bin:$PATH"
-
-    SOURCE_DIR="${cfg.sourceDir}"
-    LIB_DIR="${cfg.libraryDir}"
-    STATE_FILE="${cfg.stateDir}/processed.txt"
-
-    mkdir -p "$LIB_DIR"
-    mkdir -p "${cfg.stateDir}"
-    touch "$STATE_FILE"
-
-    # Find all supported ebook files and process them
-    find "$SOURCE_DIR" -type f \( -iname "*.epub" -o -iname "*.pdf" -o -iname "*.mobi" -o -iname "*.azw3" -o -iname "*.cbz" -o -iname "*.cbr" \) | while read -r file; do
-        if ! grep -Fxq "$file" "$STATE_FILE"; then
-            echo "Importing: $file"
-
-            FILENAME=$(basename "$file")
-            FILENAME_NOEXT="''${FILENAME%.*}"
-            PARENT_DIR=$(basename "$(dirname "$file")")
-
-            # Setup the base command
-            CMD=(calibredb add --with-library="$LIB_DIR" "$file")
-
-            # CBZ and CBR files rarely contain embedded metadata.
-            # To prevent Calibre from dumping them into "Inconnu(e)",
-            # we force the Author to be the Parent Directory (e.g. "Mushoku Tensei")
-            # and the Title to be the filename.
-            if [[ "$file" == *.cbz ]] || [[ "$file" == *.cbr ]] || [[ "$file" == *.CBZ ]] || [[ "$file" == *.CBR ]]; then
-                CMD+=(--authors="$PARENT_DIR" --title="$FILENAME_NOEXT")
-            fi
-
-            if "''${CMD[@]}"; then
-                echo "$file" >> "$STATE_FILE"
-                echo "Successfully imported $file"
-            else
-                echo "Failed to import: $file"
-            fi
-        fi
-    done
-  '';
+  grimmoryCfg = config.qgroget.server.grimmory;
 in {
-  config = lib.mkIf cfg.enable {
-    users.users.${cfg.user} = {
-      isSystemUser = true;
-      group = cfg.group;
-      description = "Calibre auto-importer user";
-    };
-    users.groups.${cfg.group} = {};
-
-    # Ensure state directory is created with correct permissions
-    systemd.tmpfiles.rules = [
-      "d ${cfg.stateDir} 0755 ${cfg.user} ${cfg.group} -"
-      "d ${cfg.libraryDir} 0775 ${cfg.user} ${cfg.group} -"
-    ];
-
-    systemd.services.calibre-importer = {
-      description = "Headless Calibre Auto-Importer";
-      after = ["network.target"];
-      serviceConfig = {
-        Type = "oneshot";
-        User = cfg.user;
-        Group = cfg.group;
-        ExecStart = "${importScript}/bin/calibre-import";
-        # Basic hardening
-        ProtectSystem = "strict";
-        ProtectHome = "read-only";
-        PrivateTmp = true;
-        ReadWritePaths = [cfg.stateDir cfg.libraryDir];
-        ReadOnlyPaths = [cfg.sourceDir];
-        Environment = ["CALIBRE_CONFIG_DIRECTORY=${cfg.stateDir}/.config" "HOME=${cfg.stateDir}"];
+  config = lib.mkMerge [
+    (lib.mkIf cfg.enable {
+      users.users.${cfg.user} = {
+        isSystemUser = true;
+        uid = 972;
+        group = cfg.group;
+        description = "Calibre auto-importer user";
       };
-    };
+      users.groups.${cfg.group} = {};
 
-    systemd.timers.calibre-importer = {
-      description = "Timer for Headless Calibre Auto-Importer";
-      wantedBy = ["timers.target"];
-      timerConfig = {
-        OnCalendar = cfg.interval;
-        Persistent = true;
+      # Ensure state directory is created with correct permissions
+      systemd.tmpfiles.rules = [
+        "d ${cfg.libraryDir} 0775 ${cfg.user} ${cfg.group} -"
+      ];
+
+      virtualisation.quadlet.containers.calibre = {
+        autoStart = true;
+        containerConfig = {
+          name = "calibre-web-automated";
+          image = "docker.io/crocodilestick/calibre-web-automated:latest";
+          environments = {
+            PUID = "972";
+            PGID = "973";
+            TZ = "Europe/Paris";
+          };
+          volumes = [
+            "${config.qgroget.server.containerDir}/calibre/config:/config:Z"
+            "${cfg.libraryDir}:/calibre-library:Z"
+            "${cfg.sourceDir}/ingest:/cwa-book-ingest:Z"
+          ];
+          publishPorts = ["8083:8083"];
+        };
       };
-    };
-  };
+
+      qgroget.services.calibre = {
+        subdomain = "calibre";
+        url = "http://127.0.0.1:8083";
+        type = "private";
+        middlewares = ["SSO"];
+      };
+
+      services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+        {
+          domain = "calibre.${config.qgroget.server.domain}";
+          policy = "two_factor";
+          subject = ["group:admin"];
+        }
+      ];
+    })
+
+    (lib.mkIf grimmoryCfg.enable {
+      systemd.tmpfiles.rules = [
+        "d ${config.qgroget.server.containerDir}/grimmory/data 0775 ${cfg.user} ${cfg.group} -"
+        "d ${config.qgroget.server.containerDir}/grimmory/bookdrop 0775 ${cfg.user} ${cfg.group} -"
+        "d ${config.qgroget.server.containerDir}/grimmory/mariadb 0775 ${cfg.user} ${cfg.group} -"
+      ];
+
+      virtualisation.quadlet.pods.grimmory-pod = {
+        podConfig.publishPorts = ["6060:6060"];
+      };
+
+      virtualisation.quadlet.containers.mariadb = {
+        autoStart = true;
+        containerConfig = {
+          name = "mariadb";
+          image = "lscr.io/linuxserver/mariadb:11.4.8";
+          pod = "grimmory-pod.pod";
+          environments = {
+            PUID = "972";
+            PGID = "973";
+            TZ = "Europe/Paris";
+            MYSQL_ROOT_PASSWORD = "super_secure_password";
+            MYSQL_DATABASE = "grimmory";
+            MYSQL_USER = "grimmory";
+            MYSQL_PASSWORD = "your_secure_password";
+          };
+          volumes = [
+            "${config.qgroget.server.containerDir}/grimmory/mariadb:/config:Z"
+          ];
+        };
+      };
+
+      virtualisation.quadlet.containers.grimmory = {
+        autoStart = true;
+        containerConfig = {
+          name = "grimmory";
+          image = "docker.io/grimmory/grimmory:latest";
+          pod = "grimmory-pod.pod";
+          environments = {
+            USER_ID = "972";
+            GROUP_ID = "973";
+            TZ = "Europe/Paris";
+            DATABASE_URL = "jdbc:mariadb://127.0.0.1:3306/grimmory";
+            DATABASE_USERNAME = "grimmory";
+            DATABASE_PASSWORD = "your_secure_password";
+            SWAGGER_ENABLED = "false";
+            FORCE_DISABLE_OIDC = "false";
+          };
+          volumes = [
+            "${config.qgroget.server.containerDir}/grimmory/data:/app/data:Z"
+            "/mnt/data/media/media/books:/books:Z"
+            "${config.qgroget.server.containerDir}/grimmory/bookdrop:/bookdrop:Z"
+          ];
+        };
+      };
+
+      qgroget.services.grimmory = {
+        subdomain = "grimmory";
+        url = "http://127.0.0.1:6060";
+        type = "public";
+      };
+
+      services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+        {
+          domain = "grimmory.${config.qgroget.server.domain}";
+          policy = "two_factor";
+          subject = ["group:admin"];
+        }
+      ];
+    })
+  ];
 }

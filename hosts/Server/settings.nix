@@ -5,6 +5,7 @@
         domain = "qgroget.com";
         test.enable = false;
         calibre-importer.enable = true;
+        grimmory.enable = true;
       };
       nixos = {
         auto-update = false;
