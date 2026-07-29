@@ -25,10 +25,7 @@
         };
         apps = {
           basic = false;
-          sync = {
-            desktop.enable = false;
-            game.enable = false;
-          };
+
           dev = {
             enable = false;
             jetbrains.enable = false;

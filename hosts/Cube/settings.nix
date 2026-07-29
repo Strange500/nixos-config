@@ -14,10 +14,6 @@
         sunshine.enable = true;
       };
       apps = {
-        sync = {
-          desktop.enable = false;
-          game.enable = true;
-        };
         dev = {
           enable = false;
           jetbrains.enable = false;

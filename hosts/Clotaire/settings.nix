@@ -13,10 +13,6 @@
       };
       apps = {
         school = true;
-        sync = {
-          desktop.enable = false;
-          game.enable = false;
-        };
         dev = {
           enable = true;
           jetbrains.enable = true;

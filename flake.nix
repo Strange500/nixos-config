@@ -223,7 +223,6 @@
       (nvf.lib.neovimConfiguration {
         pkgs = nixpkgs.legacyPackages."x86_64-linux";
         modules = [
-          ./modules/apps/nvim.nix
         ];
       }).neovim;
     nixosConfigurations = {
@@ -256,7 +255,6 @@
               (inputs.nvf.lib.neovimConfiguration {
                 pkgs = nixpkgs.legacyPackages.${system};
                 modules = [
-                  ./modules/apps/nvim.nix
                 ];
               }).neovim
             ];
