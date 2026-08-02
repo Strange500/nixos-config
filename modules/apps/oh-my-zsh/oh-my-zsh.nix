@@ -193,7 +193,22 @@
        builtin cd -- "$cwd"
        fi
        rm -f -- "$tmp"
-       }'';
+       }
+      function update() {
+        if [ "$1" = "server" ]; then
+          echo "Updating Server (192.168.0.28)..."
+          nixos-rebuild --target-host strange@192.168.0.28 --use-remote-sudo --ask-sudo-password switch --flake ~/nixos#Server
+        elif [ "$1" = "cube" ]; then
+          echo "Updating Cube (192.168.0.138)..."
+          nixos-rebuild --target-host strange@192.168.0.138 --use-remote-sudo --ask-sudo-password switch --flake ~/nixos#Cube
+        elif [ -n "$1" ]; then
+          echo "Updating $1..."
+          nixos-rebuild --target-host "strange@$1" --use-remote-sudo --ask-sudo-password switch --flake ~/nixos#$1
+        else
+          echo "Updating local system ($HOSTNAME)..."
+          sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME
+        fi
+      }'';
     shellAliases = {
       y = "yazi";
       cat = "bat";
@@ -201,7 +216,7 @@
       #nano = "code --wait --skip-welcome --skip-release-notes --disable-telemetry --skip-add-to-recently-opened";
       #vim = "lvim";
       ls = "eza";
-      update = "sudo nixos-rebuild switch --flake ~/nixos#$HOSTNAME";
+
       rogetfetch = "kitten icat -n --place 40x40@1x3 --scale-up --align left ~/Téléchargements/gif.gif | fastfetch --logo-width 15 --raw -";
       # Network tools reminders
       traceroute = "echo 'Use trip instead'";

@@ -45,7 +45,6 @@
     enable = true;
     extensions.crates-nvim.enable = true;
     dap.enable = true;
-    dap.adapter = "codelldb";
   };
   vim.keymaps = [
     {
