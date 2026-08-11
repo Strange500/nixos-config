@@ -134,17 +134,17 @@
       chaotic.nixosModules.default
       inputs.nur.modules.nixos.default
       inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
-      {
+      ({pkgs, ...}: {
         # Add nvf neovim to all systems
         environment.systemPackages = [
           (inputs.nvf.lib.neovimConfiguration {
-            pkgs = nixpkgs.legacyPackages.${system};
+            inherit pkgs;
             modules = [
               ./modules/apps/nvf
             ];
           }).neovim
         ];
-      }
+      })
     ];
 
     # Desktop-specific modules
@@ -219,11 +219,15 @@
       };
     };
 
-    packages."x86_64-linux".default =
+    packages."x86_64-linux".default = let
+      configuredPkgs = import nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
+    in
       (nvf.lib.neovimConfiguration {
-        pkgs = nixpkgs.legacyPackages."x86_64-linux";
-        modules = [
-        ];
+        pkgs = configuredPkgs;
+        modules = [];
       }).neovim;
     nixosConfigurations = {
       # Desktop workstation
@@ -249,16 +253,15 @@
         inherit system;
         modules = [
           ./hosts/installer/configuration.nix
-          {
+          ({pkgs, ...}: {
             # use the neovim package from the flake inputs
             environment.systemPackages = [
               (inputs.nvf.lib.neovimConfiguration {
-                pkgs = nixpkgs.legacyPackages.${system};
-                modules = [
-                ];
+                inherit pkgs;
+                modules = [];
               }).neovim
             ];
-          }
+          })
         ];
       };
     };
