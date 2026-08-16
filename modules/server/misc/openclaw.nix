@@ -41,9 +41,6 @@
           entries = {
             browser = {
               enabled = true;
-              config = {
-                executablePath = "/home/strange/.nix-profile/bin/chromium";
-              };
             };
             google = {
               enabled = true;
@@ -90,6 +87,7 @@
         workspaceDir = "/home/${config.qgroget.user.username}/.openclaw/workspace";
         environment = {
           GEMINI_API_KEY = config.sops.secrets."server/openclaw/gemini-api-key".path;
+          PATH = "${pkgs.chromium}/bin:/run/current-system/sw/bin:/home/${config.qgroget.user.username}/.nix-profile/bin";
         };
       };
     };
