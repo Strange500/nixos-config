@@ -8,7 +8,11 @@
     "openclaw-2026.6.33"
   ];
 
-  nixpkgs.overlays = [inputs.openclaw.overlays.default];
+  nixpkgs.overlays = [
+    (final: prev: {
+      openclawPackages = (inputs.openclaw.overlays.default final prev).openclawPackages;
+    })
+  ];
 
   # Define the SOPS secret for OpenClaw's environment variables
   sops.secrets."server/openclaw/env" = {
@@ -17,7 +21,6 @@
 
   home-manager.users.${config.qgroget.user.username} = {
     imports = [inputs.openclaw.homeManagerModules.openclaw];
-    nixpkgs.overlays = [inputs.openclaw.overlays.default];
 
     programs.openclaw = {
       enable = true;
