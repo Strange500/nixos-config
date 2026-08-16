@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   inputs,
   ...
 }: {
@@ -46,11 +47,23 @@
       };
     };
 
-    # Inject the environment file into the OpenClaw systemd user service
+    # Run OpenClaw as a background service
     systemd.user.services.openclaw = {
-      Service.EnvironmentFile = [
-        config.sops.secrets."server/openclaw/env".path
-      ];
+      Unit = {
+        Description = "OpenClaw Gateway";
+        After = ["network-online.target"];
+      };
+      Install = {
+        WantedBy = ["default.target"];
+      };
+      Service = {
+        ExecStart = "${pkgs.openclawPackages.openclaw}/bin/openclaw gateway";
+        Restart = "always";
+        RestartSec = "10s";
+        EnvironmentFile = [
+          config.sops.secrets."server/openclaw/env".path
+        ];
+      };
     };
   };
 }
