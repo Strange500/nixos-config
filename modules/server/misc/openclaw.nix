@@ -63,11 +63,11 @@
             contextTokens = 80000;
             compaction = {
               mode = "safeguard";
+              reserveTokensFloor = 24000;
             };
             heartbeat = {
               model = "google/gemini-3.1-flash-preview";
             };
-            reserveTokensFloor = 24000;
           };
         };
         channels = {
