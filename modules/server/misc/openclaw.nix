@@ -15,8 +15,11 @@
     })
   ];
 
-  # Define the SOPS secret for OpenClaw's environment variables
-  sops.secrets."server/openclaw/env" = {
+  # Define the SOPS secrets for OpenClaw
+  sops.secrets."server/openclaw/gemini-api-key" = {
+    owner = config.qgroget.user.username;
+  };
+  sops.secrets."server/openclaw/telegram-token" = {
     owner = config.qgroget.user.username;
   };
 
@@ -25,6 +28,12 @@
 
     programs.openclaw = {
       enable = true;
+
+      # Inject secrets via environment paths (OpenClaw reads the file contents)
+      environment = {
+        GEMINI_API_KEY = config.sops.secrets."server/openclaw/gemini-api-key".path;
+      };
+
       config = {
         agents = {
           defaults = {
@@ -36,6 +45,7 @@
         channels = {
           telegram = {
             enabled = true;
+            tokenFile = config.sops.secrets."server/openclaw/telegram-token".path;
             dmPolicy = "pairing";
             groups = {
               "*" = {
@@ -45,24 +55,11 @@
           };
         };
       };
-    };
 
-    # Run OpenClaw as a background service
-    systemd.user.services.openclaw = {
-      Unit = {
-        Description = "OpenClaw Gateway";
-        After = ["network-online.target"];
-      };
-      Install = {
-        WantedBy = ["default.target"];
-      };
-      Service = {
-        ExecStart = "${pkgs.openclawPackages.openclaw}/bin/openclaw gateway";
-        Restart = "always";
-        RestartSec = "10s";
-        EnvironmentFile = [
-          config.sops.secrets."server/openclaw/env".path
-        ];
+      instances.default = {
+        enable = true;
+        stateDir = "~/.openclaw";
+        workspaceDir = "~/.openclaw/workspace";
       };
     };
   };
