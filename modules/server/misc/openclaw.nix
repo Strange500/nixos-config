@@ -24,8 +24,26 @@
 
     programs.openclaw = {
       enable = true;
-      # You can add declarative configuration here if needed:
-      # config = { ... };
+      config = {
+        agents = {
+          defaults = {
+            model = {
+              primary = "google/gemini-3.1-pro-preview";
+            };
+          };
+        };
+        channels = {
+          telegram = {
+            enabled = true;
+            dmPolicy = "pairing";
+            groups = {
+              "*" = {
+                requireMention = true;
+              };
+            };
+          };
+        };
+      };
     };
 
     # Inject the environment file into the OpenClaw systemd user service
