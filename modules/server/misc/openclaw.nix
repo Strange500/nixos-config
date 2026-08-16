@@ -62,5 +62,8 @@
         workspaceDir = "/home/${config.qgroget.user.username}/.openclaw/workspace";
       };
     };
+
+    # Ensure the gateway starts on boot
+    systemd.user.services.openclaw-gateway.Install.WantedBy = ["default.target"];
   };
 }
