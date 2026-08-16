@@ -32,6 +32,9 @@
       enable = true;
 
       config = {
+        browser = {
+          executablePath = "${pkgs.chromium}/bin/chromium";
+        };
         gateway = {
           auth = {
             token = "server-6-local-gateway-token-xyz";
