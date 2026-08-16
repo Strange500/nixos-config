@@ -58,8 +58,8 @@
 
       instances.default = {
         enable = true;
-        stateDir = "~/.openclaw";
-        workspaceDir = "~/.openclaw/workspace";
+        stateDir = "/home/${config.qgroget.user.username}/.openclaw";
+        workspaceDir = "/home/${config.qgroget.user.username}/.openclaw/workspace";
       };
     };
   };
