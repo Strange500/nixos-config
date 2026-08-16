@@ -4,26 +4,35 @@
   pkgs,
   ...
 }: let
-  generateRouter = name: service: {
-    rule = "Host(`${
-      if service.subdomain != ""
-      then service.subdomain + "."
-      else ""
-    }${config.qgroget.server.domain}`)";
-    entryPoints = ["websecure"];
-    service = name;
-    tls =
-      {
-        certResolver =
-          if config.qgroget.server.test.enable
-          then "staging"
-          else "production";
-      }
-      // lib.optionalAttrs (service.type == "private") {
-        options = "mtls";
-      };
-    middlewares = lib.optionalAttrs (service.middlewares != []) service.middlewares;
-  };
+  generateRouter = name: service: let
+    baseMiddlewares =
+      if builtins.hasAttr "middlewares" service
+      then service.middlewares
+      else [];
+    finalMiddlewares = baseMiddlewares ++ lib.optional (name != "portfolio") "googlenoindex";
+  in
+    {
+      rule = "Host(`${
+        if service.subdomain != ""
+        then service.subdomain + "."
+        else ""
+      }${config.qgroget.server.domain}`)";
+      entryPoints = ["websecure"];
+      service = name;
+      tls =
+        {
+          certResolver =
+            if config.qgroget.server.test.enable
+            then "staging"
+            else "production";
+        }
+        // lib.optionalAttrs (service.type == "private") {
+          options = "mtls";
+        };
+    }
+    // lib.optionalAttrs (finalMiddlewares != []) {
+      middlewares = finalMiddlewares;
+    };
 
   generateService = name: service: {
     loadBalancer = {
@@ -145,12 +154,6 @@ in {
 
           websecure = {
             address = ":443";
-            http = {
-              middlewares = [
-                "googlenoindex"
-                #"geoblock-fr"
-              ];
-            };
             transport = {
               respondingTimeouts = {
                 readTimeout = 0;
