@@ -29,11 +29,6 @@
     programs.openclaw = {
       enable = true;
 
-      # Inject secrets via environment paths (OpenClaw reads the file contents)
-      environment = {
-        GEMINI_API_KEY = config.sops.secrets."server/openclaw/gemini-api-key".path;
-      };
-
       config = {
         agents = {
           defaults = {
@@ -60,6 +55,9 @@
         enable = true;
         stateDir = "/home/${config.qgroget.user.username}/.openclaw";
         workspaceDir = "/home/${config.qgroget.user.username}/.openclaw/workspace";
+        environment = {
+          GEMINI_API_KEY = config.sops.secrets."server/openclaw/gemini-api-key".path;
+        };
       };
     };
 
