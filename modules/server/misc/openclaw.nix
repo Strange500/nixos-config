@@ -39,7 +39,14 @@
         };
         plugins = {
           entries = {
+            browser = {
+              enabled = true;
+              config = {
+                executablePath = "/home/strange/.nix-profile/bin/chromium";
+              };
+            };
             google = {
+              enabled = true;
               config = {
                 webSearch = {
                   model = "gemini-3.1-flash-preview";
