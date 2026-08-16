@@ -60,6 +60,14 @@
             model = {
               primary = "google/gemini-3.1-flash-preview";
             };
+            contextTokens = 80000;
+            compaction = {
+              mode = "safeguard";
+            };
+            heartbeat = {
+              model = "google/gemini-3.1-flash-preview";
+            };
+            reserveTokensFloor = 24000;
           };
         };
         channels = {
