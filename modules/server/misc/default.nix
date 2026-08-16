@@ -5,6 +5,6 @@
     ./portfolio.nix
     # ./forgero.nix
     ./scrutiny.nix
-    ./nanobot.nix
+    ./openclaw.nix
   ];
 }
