@@ -33,7 +33,7 @@
         agents = {
           defaults = {
             model = {
-              primary = "google/gemini-3.1-pro-preview";
+              primary = "google/gemini-3.1-flash-preview";
             };
           };
         };
