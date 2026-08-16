@@ -20,25 +20,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1785877886,
-        "narHash": "sha256-H2CrAlJD9FsUbSEIhPVK3IyVjnK0vSxPruBef17GcBs=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784368054,
-        "narHash": "sha256-zF1iJkBQSDWmRO4/LEeHR1SpKY0lqZaxkoQJpPS9K9U=",
-=======
         "lastModified": 1786464219,
         "narHash": "sha256-WKqWL8r7CyTDYueTr2ffJ9ya50dellv6IR1JX5PghDY=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "aquamarine",
-<<<<<<< HEAD
-        "rev": "1a10fe26a9f7d989c359e6a9ea61aa2e44d06c36",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "9b5f14d9483445e766294eb8fbe0b8f370269ed0",
-=======
         "rev": "f3d1804205e8158c15595cdda1b566f93349ffae",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
@@ -168,25 +154,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786373615,
-        "narHash": "sha256-N+qcGJQpSllPWPNaqJAv+flcqiGH8YiiNGOoQO178Sc=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784965575,
-        "narHash": "sha256-AnIwmvd9Qcw7S3WtQNylk+bdpS0mwqEpCb2TxhT40u4=",
-=======
-        "lastModified": 1786457491,
-        "narHash": "sha256-kShaRvGZD9LvAKOlFtvf6fPj0nNHoFqfXV6vcQHJpDw=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786815638,
+        "narHash": "sha256-5Feu7QsMqbYZrAa3+Swe+t2HyiQ30miFDIcRJXs8x+Y=",
         "owner": "chaotic-cx",
         "repo": "nyx",
-<<<<<<< HEAD
-        "rev": "3b599e806222815806e277a20fdca62746381a1c",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "9274dc36b535421d2258c306dc96647bbd6392ff",
-=======
-        "rev": "8aabd4ff8e0b041d28ddfb5b6d849853756e3296",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "2cf39a198a95d2819576a5c28f4029ea9de45cff",
         "type": "github"
       },
       "original": {
@@ -610,25 +582,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786286733,
-        "narHash": "sha256-7dN93WKkEERgutPtTjK7SY3ZarO2LAU33A1+vKu+7cc=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784913159,
-        "narHash": "sha256-JWq0BfjO4ktpH5USfQNQzdvHpIDT8fSKD5K7LvdMRFs=",
-=======
-        "lastModified": 1786356609,
-        "narHash": "sha256-ou8fYz5w9yhXC8YbvvExybFIa19MyW5G/8dEPqa90hM=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786719456,
+        "narHash": "sha256-B74DLQs/VjlqyhnnX3tguWwghqJHWSJX30TKZuAljIg=",
         "owner": "nix-community",
         "repo": "home-manager",
-<<<<<<< HEAD
-        "rev": "367f7ef80856d18438953d54dda235d42a46ba31",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "079a3b5d1aa6a719920a51316253b7d6dd22738d",
-=======
-        "rev": "c30c7955cec30d664a9baced6bc0112e263d4647",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "83b7606dcf44abe3a94b86e8bb2b3355d22e8797",
         "type": "github"
       },
       "original": {
@@ -747,25 +705,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1785855875,
-        "narHash": "sha256-dpW3UKG2NTboxxYGzOX4nZiH8YI++CpgosHmVaquOEI=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1782566056,
-        "narHash": "sha256-haEZcHzYrePnjFOYSWTbxm/Nrla0aPslJfmvdCvqtVc=",
-=======
         "lastModified": 1786464367,
         "narHash": "sha256-k58p4wbzIXWyRWrW84pP8tD+iaZSSYiiM+fr0Auk4oU=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "hyprgraphics",
-<<<<<<< HEAD
-        "rev": "8699c38f0e4a1ca3bfc84f84ba020509ced1f133",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "c6e7b9f673f4360bc813d3dc75028f75ee88d3f8",
-=======
         "rev": "7c895c44e3ca6d28ed68ddd80ec02b02b925e7fc",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
@@ -793,25 +737,11 @@
         "xdph": "xdph"
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786378191,
-        "narHash": "sha256-74zp0pfh8yph6Fq+TyjeeXny+wMeNB/xiDcHXvJUFMg=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784980432,
-        "narHash": "sha256-MZQi0zqZ8c7eIxhhQzC5z7PHh8LWGRRjYqkX0GYbYBg=",
-=======
-        "lastModified": 1786471079,
-        "narHash": "sha256-PaTP5vVrr/jdtnGtvnHvZRpXeQAoHTN28bwU4N2ilS0=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786807079,
+        "narHash": "sha256-8Pyv0ORHhzsUElqqESECxSr3xr+SFibDZTizTF48k9I=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-<<<<<<< HEAD
-        "rev": "b5a6d81f473d5b3318ed8ae305f8c2de71faf9a6",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "453d96e92739a2a0b865cf9166d48ba14ec14b7b",
-=======
-        "rev": "24e23ca4bb6041014c3b784fdf5012b2fdae89ac",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "a1b9dc0e8cdfeca3e2d96a24b10b3d85e14fbd50",
         "type": "github"
       },
       "original": {
@@ -853,25 +783,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1784533903,
-        "narHash": "sha256-Ee78BRFi+MrmgHmmW+2dZUEI1R3cssEzza0ar3fsNX8=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784196523,
-        "narHash": "sha256-ahtKMGXFJdlQNhatQm1+BBU/pGfGYnAqQt3vWvq4p8s=",
-=======
         "lastModified": 1786464504,
         "narHash": "sha256-7sHwM86KILQyHDHDuE2SDBlQ2jvZ0EW3hY7sW009/cg=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "hyprland-guiutils",
-<<<<<<< HEAD
-        "rev": "a16ad89ed5fb4192c966018a80c652de8d96f748",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "a6ccb6cb112ed5a244c0191fb972347ecfa893e0",
-=======
         "rev": "4c30cf3097ea963c0e250749ee0c59f8b08816d6",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
@@ -1026,25 +942,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1785843795,
-        "narHash": "sha256-DFc543bQN94Kt+RsD3Hiu7qCA1uKdqaFJKPMjzANKGU=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784323413,
-        "narHash": "sha256-XnAVV+H4f8Xdv0yZcSwJ5kCjLyE8fHxPeLX6a3HSrAU=",
-=======
         "lastModified": 1786464080,
         "narHash": "sha256-W1hxvumEM57yV+QwsZ4QdAHEqOkr7e4S8VAkLX60qDE=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "hyprutils",
-<<<<<<< HEAD
-        "rev": "5a7b8cf221914ce4714407950e4ffbdddcd8b66f",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "5f03477ab3a005ff27c527486f551883535aea2f",
-=======
         "rev": "c157fe1e3092b980cc69315a6631f89aff09dcce",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
@@ -1097,25 +999,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1784465130,
-        "narHash": "sha256-ak5fWEmWZyax8trkV4aphdvjrbUiSyl6qS+y5GwBS7Y=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1778410714,
-        "narHash": "sha256-o6RzFj4nJXaPRY7EM01siuCQeT41RfwwmcmFQqwFJJg=",
-=======
         "lastModified": 1786464294,
         "narHash": "sha256-ZQsZ2WvBdkboCIyh8LStDPdAIARmxzn0XMNxxoOhjPE=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "hyprwire",
-<<<<<<< HEAD
-        "rev": "7d935bb54674aa0fbd327d2a6888bd0630079ed0",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "85148a8e612808cf5ddb25d0b3c5840f3498a7dc",
-=======
         "rev": "4ce7cd6b6128c1ac41caf23c58a30a26b327f9dd",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
@@ -1250,25 +1138,11 @@
     },
     "nixpkgs": {
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786106723,
-        "narHash": "sha256-zDSUbpoeo/9ZmD2+wXnzxoo1+uhL8vxc0b8yuYMKYq0=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784796856,
-        "narHash": "sha256-wWFrV5/Qbm+lyt5x20E/bSbfJiGKMo4RCxZV8cl/WZI=",
-=======
-        "lastModified": 1786384358,
-        "narHash": "sha256-RzPPiWeUtuvymnpuEWsdtzli5w4kjZs49FqEs3/1u+I=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786599213,
+        "narHash": "sha256-yNJd40f11EzXBjSByCB7IPpeFFAdeoSKKM67dGkfFoU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-<<<<<<< HEAD
-        "rev": "f13ff45afd1bb73e640eaa08a7066dbed07e3238",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "e2587caef70cea85dd97d7daab492899902dbf5d",
-=======
-        "rev": "2fcb964de67fcf60b43471c55d5d99e61a9ccb5a",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "0e251e24a4f24e036a084b6b4b2d2491af4167f4",
         "type": "github"
       },
       "original": {
@@ -1334,25 +1208,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786419488,
-        "narHash": "sha256-FXWZg/Ju/ci7GdfV+IxsB8hhlnDCI1Rew5u9NFhn0iI=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1785058333,
-        "narHash": "sha256-VxpkUwaXQMIrTqpVt1EenXAieYbbzCvA9yo1xiqONHU=",
-=======
-        "lastModified": 1786468209,
-        "narHash": "sha256-OcboqgQk2v8vQ9xk2d4PK/FgFY0781fqI7o+cpD5tZE=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786864879,
+        "narHash": "sha256-pM45YbaUYxmZWwpB5abIfoHPEHlGPC4oeQ33IgmVpC0=",
         "owner": "nix-community",
         "repo": "NUR",
-<<<<<<< HEAD
-        "rev": "d336ffe6d8ef30556634c2c25aec488008250d58",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "4a6ca8e2cf9fe5b8167f57e3a855cc3bbb825c61",
-=======
-        "rev": "57c4fe238720b56aa80810f5552b6f7a7c2894f6",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "9bdfb592c0f1dfc3f6368017c66e5583be99a69e",
         "type": "github"
       },
       "original": {
@@ -1395,25 +1255,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786307523,
-        "narHash": "sha256-RKnrspb7azG0ERNZgdumX3EEivFCD3Vtglwbf90T1K0=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784917177,
-        "narHash": "sha256-BunxD3nKN6oa4LXh9I3rAopolL0bloBtswKBXrm8hEE=",
-=======
-        "lastModified": 1786433999,
-        "narHash": "sha256-rbOp2g0UCYt+evTnCGCKBQGqSMfwX4RTXneNbeHqOAk=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786834952,
+        "narHash": "sha256-6HtmY+gcM5Ad9H2YEnHkHqmxLZK0La3sG/5eVhYMwZU=",
         "owner": "NotAShelf",
         "repo": "nvf",
-<<<<<<< HEAD
-        "rev": "23f994fcd754e9de067fa00cca891a774498825b",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "07d5eb208b8f16306b10342b634da7e07e926fa5",
-=======
-        "rev": "a213644cadd5f90bf18b0c409f08f282b30e55e3",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "4aaeee14d28434dcf9b8ce01eac9db9b215967a2",
         "type": "github"
       },
       "original": {
@@ -1558,25 +1404,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786334499,
-        "narHash": "sha256-g63bW8kYMVhJSncbPuqc1ugbd5ZL3YU3ieEVeaBq/0k=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1785044261,
-        "narHash": "sha256-ehF/c4fLdgmNu7YXEClnmwhoBYddhYIVoSQpsZoorC4=",
-=======
-        "lastModified": 1786420161,
-        "narHash": "sha256-PU4CY4GUCDFOoS67dGrc/fS6Y+d1cYZSh6nbgYqAAwE=",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "lastModified": 1786849542,
+        "narHash": "sha256-MS8cOa/ii1+QA8R3JWVzqEIoXimu9n50GwQDiBVTFOM=",
         "owner": "oxalica",
         "repo": "rust-overlay",
-<<<<<<< HEAD
-        "rev": "2cb7cad89f0326df860ca399e209352ba6a19ef9",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "fe2124391e739e7b3e8720cd8a73f06edd0aceba",
-=======
-        "rev": "3a646bd5daa3af78a78a1cb32329cb72d18fcae0",
->>>>>>> 51cb4e2 (flake.lock: Update)
+        "rev": "b211eadeba8b180da9453ec3413a8a3535c85b3f",
         "type": "github"
       },
       "original": {
@@ -1942,25 +1774,11 @@
         ]
       },
       "locked": {
-<<<<<<< HEAD
-        "lastModified": 1786032767,
-        "narHash": "sha256-C5K27sF/jaQe1BgB1/575r01oTAvw6mrDWPS1qUl6X0=",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "lastModified": 1784371182,
-        "narHash": "sha256-S8A1lezEalltWcCp3gAic5lssS0xTSISK6fKODefhOk=",
-=======
         "lastModified": 1786464334,
         "narHash": "sha256-/TBQT5rhBB2Dm4HoZzhGDaCwYmRTs3W3DPhMXFWc/BU=",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "owner": "hyprwm",
         "repo": "xdg-desktop-portal-hyprland",
-<<<<<<< HEAD
-        "rev": "688feb3d88404598f12440a668136e74044391de",
-||||||| parent of 51cb4e2 (flake.lock: Update)
-        "rev": "08d99f727944dd15e4740090305e31c5fb92a50a",
-=======
         "rev": "9f0e9ff02739cd538d39bd706422dc50e9ca60dd",
->>>>>>> 51cb4e2 (flake.lock: Update)
         "type": "github"
       },
       "original": {
