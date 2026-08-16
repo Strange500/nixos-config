@@ -26,10 +26,28 @@
   home-manager.users.${config.qgroget.user.username} = {
     imports = [inputs.openclaw.homeManagerModules.openclaw];
 
+    home.packages = [pkgs.chromium pkgs.nss];
+
     programs.openclaw = {
       enable = true;
 
       config = {
+        gateway = {
+          auth = {
+            token = "server-6-local-gateway-token-xyz";
+          };
+        };
+        plugins = {
+          entries = {
+            google = {
+              config = {
+                webSearch = {
+                  model = "gemini-3.1-flash-preview";
+                };
+              };
+            };
+          };
+        };
         agents = {
           defaults = {
             model = {
