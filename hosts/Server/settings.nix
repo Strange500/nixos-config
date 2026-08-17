@@ -19,7 +19,7 @@
           enable = true;
           tailscale = {
             enable = true;
-            autoConnect = true;
+            autoConnect = false;
           };
           sunshine.enable = false;
         };
