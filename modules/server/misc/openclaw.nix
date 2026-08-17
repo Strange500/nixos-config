@@ -36,12 +36,12 @@
       (pkgs.writeShellScriptBin "gog" ''
         export GOG_KEYRING_BACKEND=file
         export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
-        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gogcli "$@"
+        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
       '')
       (pkgs.writeShellScriptBin "gogcli" ''
         export GOG_KEYRING_BACKEND=file
         export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
-        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gogcli "$@"
+        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
       '')
     ];
 
