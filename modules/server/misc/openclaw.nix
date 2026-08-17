@@ -23,13 +23,26 @@
     owner = config.qgroget.user.username;
   };
 
+  sops.secrets."server/openclaw/gog-password" = {
+    owner = config.qgroget.user.username;
+  };
+
   home-manager.users.${config.qgroget.user.username} = {
     imports = [inputs.openclaw.homeManagerModules.openclaw];
 
     home.packages = [
       pkgs.chromium
       pkgs.nss
-      inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli
+      (pkgs.writeShellScriptBin "gog" ''
+        export GOG_KEYRING_BACKEND=file
+        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
+        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gogcli "$@"
+      '')
+      (pkgs.writeShellScriptBin "gogcli" ''
+        export GOG_KEYRING_BACKEND=file
+        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
+        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gogcli "$@"
+      '')
     ];
 
     programs.openclaw = {
