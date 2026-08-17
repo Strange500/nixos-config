@@ -26,7 +26,11 @@
   home-manager.users.${config.qgroget.user.username} = {
     imports = [inputs.openclaw.homeManagerModules.openclaw];
 
-    home.packages = [pkgs.chromium pkgs.nss];
+    home.packages = [
+      pkgs.chromium
+      pkgs.nss
+      inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli
+    ];
 
     programs.openclaw = {
       enable = true;
