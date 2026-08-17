@@ -22,8 +22,7 @@
   };
 
   services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "server";
+    useRoutingFeatures = lib.mkForce "server";
   };
 
   environment.systemPackages = [
