@@ -33,6 +33,8 @@
     home.packages = [
       pkgs.chromium
       pkgs.nss
+      pkgs.gh
+      pkgs.jq
       (pkgs.writeShellScriptBin "gog" ''
         export GOG_KEYRING_BACKEND=file
         export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
@@ -69,6 +71,12 @@
                   model = "gemini-3.1-flash-preview";
                 };
               };
+            };
+            github = {
+              enabled = true;
+            };
+            firecrawl = {
+              enabled = true;
             };
           };
         };
