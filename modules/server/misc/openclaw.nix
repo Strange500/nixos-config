@@ -110,6 +110,19 @@
           };
           list = [
             {
+              id = "assistant";
+              default = true;
+              description = "Tu es mon assistant principal et ma secrétaire personnelle. Ton rôle est d'organiser mes idées, de me répondre de façon claire, et surtout d'orchestrer et de déléguer les tâches aux autres agents quand c'est nécessaire. N'hésite pas à faire appel à eux.";
+              identity = {
+                name = "Claw";
+                emoji = "👩‍💼";
+              };
+              tools = {
+                allow = ["*"];
+              };
+              skills = ["*"];
+            }
+            {
               id = "coder";
               model = {
                 primary = "google/gemini-3.1-pro-preview";
