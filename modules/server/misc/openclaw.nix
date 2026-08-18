@@ -22,6 +22,9 @@
   sops.secrets."server/openclaw/telegram-token" = {
     owner = config.qgroget.user.username;
   };
+  sops.secrets."server/openclaw/gateway-token" = {
+    owner = config.qgroget.user.username;
+  };
 
   sops.secrets."server/openclaw/gog-password" = {
     owner = config.qgroget.user.username;
@@ -56,7 +59,11 @@
         };
         gateway = {
           auth = {
-            token = "server-6-local-gateway-token-xyz";
+            token = {
+              source = "file";
+              id = config.sops.secrets."server/openclaw/gateway-token".path;
+              provider = "local";
+            };
           };
           controlUi = {
             allowedOrigins = [
@@ -181,7 +188,6 @@
       };
     };
 
-    # Ensure the gateway starts on boot
     systemd.user.services.openclaw-gateway.Install.WantedBy = ["default.target"];
   };
 
