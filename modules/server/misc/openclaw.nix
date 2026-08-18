@@ -71,6 +71,14 @@
             ];
           };
         };
+        secrets = {
+          providers = {
+            local = {
+              source = "file";
+              path = "/";
+            };
+          };
+        };
         plugins = {
           entries = {
             browser = {
