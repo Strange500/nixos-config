@@ -5,9 +5,6 @@
 }: {
   # Define the SOPS secrets for Hermes
   sops.secrets."server/hermes/env" = {};
-  sops.secrets."server/hermes/gog-password" = {
-    owner = config.qgroget.user.username;
-  };
 
   # Keep user packages (chromium, gh, etc.)
   home-manager.users.${config.qgroget.user.username} = {
