@@ -119,15 +119,24 @@
                 name = "Coder";
                 emoji = "💻";
               };
+              tools = {
+                allow = ["*"];
+              };
+              skills = ["*"];
             }
             {
               id = "cleaner";
               workspace = "/home/strange/.openclaw/workspace/cleaner";
+              description = "Repository cleaner, focused on refactoring, removing dead code, and optimizing space.";
               identity = {
                 name = "Cleaner";
                 emoji = "🧹";
                 theme = "emerald";
               };
+              tools = {
+                allow = ["*"];
+              };
+              skills = ["*"];
             }
           ];
         };
