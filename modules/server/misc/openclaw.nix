@@ -94,6 +94,15 @@
             compaction = {
               mode = "safeguard";
               reserveTokensFloor = 24000;
+              memoryFlush = {
+                enabled = true;
+              };
+            };
+            memorySearch = {
+              experimental = {
+                sessionMemory = true;
+              };
+              sources = ["memory" "sessions"];
             };
             heartbeat = {
               model = "google/gemini-3.1-flash-preview";
