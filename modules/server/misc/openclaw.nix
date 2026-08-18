@@ -123,4 +123,10 @@
     # Ensure the gateway starts on boot
     systemd.user.services.openclaw-gateway.Install.WantedBy = ["default.target"];
   };
+
+  qgroget.services.openclaw = {
+    subdomain = "openclaw";
+    url = "http://127.0.0.1:18789";
+    type = "private";
+  };
 }
