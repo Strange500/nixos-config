@@ -27,24 +27,29 @@
     "d /opt/data/hermes 0755 root root -"
   ];
 
-  # Deploy Hermes Agent via Podman
-  virtualisation.oci-containers.backend = "podman";
-  virtualisation.oci-containers.containers."hermes" = {
-    image = "nousresearch/hermes-agent:latest";
-    autoStart = true;
-    volumes = [
-      "/opt/data/hermes:/opt/data"
-    ];
-    environmentFiles = [
-      "/var/lib/hermes/env"
-    ];
-    ports = [
-      "8642:8642"
-    ];
+  # Deploy Hermes Agent via Quadlet
+  virtualisation.quadlet = {
+    containers.hermes = {
+      autoStart = true;
+      containerConfig = {
+        name = "hermes";
+        image = "nousresearch/hermes-agent:latest";
+        environmentFiles = [
+          "/var/lib/hermes/env"
+        ];
+        publishPorts = ["8642:8642"];
+        volumes = [
+          "/opt/data/hermes:/opt/data:Z"
+        ];
+      };
+      serviceConfig = {
+        Restart = "unless-stopped";
+      };
+    };
   };
 
   # Generate environment file with secrets before the container starts
-  systemd.services."podman-hermes" = {
+  systemd.services.hermes = {
     serviceConfig = {
       ExecStartPre = [
         "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && echo \"GEMINI_API_KEY=$(cat ${config.sops.secrets."server/hermes/gemini-api-key".path})\" > /var/lib/hermes/env'"
