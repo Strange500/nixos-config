@@ -75,7 +75,8 @@
           providers = {
             local = {
               source = "file";
-              path = "/";
+              path = config.sops.secrets."server/openclaw/gateway-token".path;
+              mode = "singleValue";
             };
           };
         };
