@@ -135,3 +135,4 @@ sudo nixos-rebuild switch --flake ~/nixos#Server
 nix build .#checks.x86_64-linux.jellyfinTest
 nix build .#checks.x86_64-linux.jellyseerrTest
 ```
+# OpenClaw PR test
