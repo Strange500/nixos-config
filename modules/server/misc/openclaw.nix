@@ -126,11 +126,11 @@
           };
           list = [
             {
-              id = "assistant";
+              id = "chiron";
               default = true;
               description = "Tu es mon assistant principal et ma secrétaire personnelle. Ton rôle est d'organiser mes idées, de me répondre de façon claire, et surtout d'orchestrer et de déléguer les tâches aux autres agents quand c'est nécessaire. N'hésite pas à faire appel à eux.";
               identity = {
-                name = "Claw";
+                name = "Chiron";
                 emoji = "👩‍💼";
               };
               tools = {
@@ -139,13 +139,13 @@
               skills = ["*"];
             }
             {
-              id = "coder";
+              id = "prometheus";
               model = {
                 primary = "google/gemini-3.1-pro-preview";
               };
               description = "Expert software engineer, efficient and precise.";
               identity = {
-                name = "Coder";
+                name = "Prometheus";
                 emoji = "💻";
               };
               tools = {
@@ -154,14 +154,14 @@
               skills = ["*"];
             }
             {
-              id = "cleaner";
+              id = "hygieia";
               model = {
                 primary = "google/gemini-3.5-flash-lite";
               };
-              workspace = "/home/strange/.openclaw/workspace/cleaner";
+              workspace = "/home/strange/.openclaw/workspace/hygieia";
               description = "Mailbox cleaner, focused on sorting emails, deleting spam, and organizing the inbox.";
               identity = {
-                name = "Cleaner";
+                name = "Hygieia";
                 emoji = "🧹";
                 theme = "emerald";
               };
