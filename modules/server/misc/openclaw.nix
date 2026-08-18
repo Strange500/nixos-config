@@ -60,7 +60,7 @@
           };
           controlUi = {
             allowedOrigins = [
-              "https://openclaw.qgroget.com"
+              "https://openclaw.${config.qgroget.server.domain}"
             ];
           };
         };
@@ -108,6 +108,28 @@
               model = "google/gemini-3.1-flash-preview";
             };
           };
+          list = [
+            {
+              id = "coder";
+              model = {
+                primary = "google/gemini-2.0-pro-exp-02-05";
+              };
+              description = "Expert software engineer, efficient and precise.";
+              identity = {
+                name = "Coder";
+                emoji = "💻";
+              };
+            }
+            {
+              id = "cleaner";
+              workspace = "/home/strange/.openclaw/workspace/cleaner";
+              identity = {
+                name = "Cleaner";
+                emoji = "🧹";
+                theme = "emerald";
+              };
+            }
+          ];
         };
         channels = {
           telegram = {
