@@ -197,7 +197,25 @@
       };
     };
 
-    systemd.user.services.openclaw-gateway.Install.WantedBy = ["default.target"];
+    systemd.user.services.openclaw-gateway = {
+      Install.WantedBy = ["default.target"];
+      Service = {
+        # Empêche l'élévation de privilèges (rend sudo/su inopérants)
+        NoNewPrivileges = true;
+        RestrictSUIDSGID = true;
+
+        # Masque complètement les dossiers sensibles et la configuration système
+        InaccessiblePaths = [
+          "-/home/${config.qgroget.user.username}/nixos"
+          "-/home/${config.qgroget.user.username}/.ssh"
+          "-/home/${config.qgroget.user.username}/.gnupg"
+          "-/home/${config.qgroget.user.username}/.local/share/keyrings"
+          "-/run/wrappers/bin/sudo"
+          "-/run/wrappers/bin/su"
+          "-/run/wrappers/bin/doas"
+        ];
+      };
+    };
   };
 
   qgroget.services.openclaw = {
