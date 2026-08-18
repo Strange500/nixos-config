@@ -200,6 +200,12 @@
     systemd.user.services.openclaw-gateway = {
       Install.WantedBy = ["default.target"];
       Service = {
+        # Inject the GitHub token for gh cli
+        ExecStartPre = [
+          "${pkgs.bash}/bin/bash -c 'echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > %t/openclaw-env'"
+        ];
+        EnvironmentFile = ["-%t/openclaw-env"];
+
         # Empêche l'élévation de privilèges (rend sudo/su inopérants)
         NoNewPrivileges = true;
         RestrictSUIDSGID = true;
