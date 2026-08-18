@@ -4,34 +4,34 @@
   inputs,
   ...
 }: {
-  # OpenClaw is marked as insecure due to prompt injection risks
+  # Hermes is marked as insecure due to prompt injection risks
   nixpkgs.config.permittedInsecurePackages = [
-    "openclaw-2026.6.33"
+    "hermes-2026.6.33"
   ];
 
   nixpkgs.overlays = [
     (final: prev: {
-      openclawPackages = (inputs.openclaw.overlays.default final prev).openclawPackages;
+      hermesPackages = (inputs.hermes.overlays.default final prev).hermesPackages;
     })
   ];
 
-  # Define the SOPS secrets for OpenClaw
-  sops.secrets."server/openclaw/gemini-api-key" = {
+  # Define the SOPS secrets for Hermes
+  sops.secrets."server/hermes/gemini-api-key" = {
     owner = config.qgroget.user.username;
   };
-  sops.secrets."server/openclaw/telegram-token" = {
+  sops.secrets."server/hermes/telegram-token" = {
     owner = config.qgroget.user.username;
   };
-  sops.secrets."server/openclaw/gateway-token" = {
+  sops.secrets."server/hermes/gateway-token" = {
     owner = config.qgroget.user.username;
   };
 
-  sops.secrets."server/openclaw/gog-password" = {
+  sops.secrets."server/hermes/gog-password" = {
     owner = config.qgroget.user.username;
   };
 
   home-manager.users.${config.qgroget.user.username} = {
-    imports = [inputs.openclaw.homeManagerModules.openclaw];
+    imports = [inputs.hermes.homeManagerModules.hermes];
 
     home.packages = [
       pkgs.chromium
@@ -40,17 +40,17 @@
       pkgs.jq
       (pkgs.writeShellScriptBin "gog" ''
         export GOG_KEYRING_BACKEND=file
-        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
-        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
+        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/hermes/gog-password".path})
+        exec ${inputs.hermes.inputs.nix-hermes-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
       '')
       (pkgs.writeShellScriptBin "gogcli" ''
         export GOG_KEYRING_BACKEND=file
-        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/openclaw/gog-password".path})
-        exec ${inputs.openclaw.inputs.nix-openclaw-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
+        export GOG_KEYRING_PASSWORD=$(cat ${config.sops.secrets."server/hermes/gog-password".path})
+        exec ${inputs.hermes.inputs.nix-hermes-tools.packages.${pkgs.system}.gogcli}/bin/gog "$@"
       '')
     ];
 
-    programs.openclaw = {
+    programs.hermes = {
       enable = true;
 
       config = {
@@ -67,7 +67,7 @@
           };
           controlUi = {
             allowedOrigins = [
-              "https://openclaw.${config.qgroget.server.domain}"
+              "https://hermes.${config.qgroget.server.domain}"
             ];
           };
         };
@@ -75,7 +75,7 @@
           providers = {
             local = {
               source = "file";
-              path = config.sops.secrets."server/openclaw/gateway-token".path;
+              path = config.sops.secrets."server/hermes/gateway-token".path;
               mode = "singleValue";
             };
           };
@@ -158,7 +158,7 @@
               model = {
                 primary = "google/gemini-3.5-flash-lite";
               };
-              workspace = "/home/strange/.openclaw/workspace/hygieia";
+              workspace = "/home/strange/.hermes/workspace/hygieia";
               description = "Mailbox cleaner, focused on sorting emails, deleting spam, and organizing the inbox.";
               identity = {
                 name = "Hygieia";
@@ -190,7 +190,7 @@
         channels = {
           telegram = {
             enabled = true;
-            tokenFile = config.sops.secrets."server/openclaw/telegram-token".path;
+            tokenFile = config.sops.secrets."server/hermes/telegram-token".path;
             dmPolicy = "pairing";
             groups = {
               "*" = {
@@ -203,23 +203,23 @@
 
       instances.default = {
         enable = true;
-        stateDir = "/home/${config.qgroget.user.username}/.openclaw";
-        workspaceDir = "/home/${config.qgroget.user.username}/.openclaw/workspace";
+        stateDir = "/home/${config.qgroget.user.username}/.hermes";
+        workspaceDir = "/home/${config.qgroget.user.username}/.hermes/workspace";
         environment = {
-          GEMINI_API_KEY = config.sops.secrets."server/openclaw/gemini-api-key".path;
+          GEMINI_API_KEY = config.sops.secrets."server/hermes/gemini-api-key".path;
           PATH = "${pkgs.chromium}/bin:/run/current-system/sw/bin:/home/${config.qgroget.user.username}/.nix-profile/bin";
         };
       };
     };
 
-    systemd.user.services.openclaw-gateway = {
+    systemd.user.services.hermes-gateway = {
       Install.WantedBy = ["default.target"];
       Service = {
         # Inject the GitHub token for gh cli
         ExecStartPre = [
-          "${pkgs.bash}/bin/bash -c 'echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > %t/openclaw-env'"
+          "${pkgs.bash}/bin/bash -c 'echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > %t/hermes-env'"
         ];
-        EnvironmentFile = ["-%t/openclaw-env"];
+        EnvironmentFile = ["-%t/hermes-env"];
 
         # Empêche l'élévation de privilèges (rend sudo/su inopérants)
         NoNewPrivileges = true;
@@ -235,8 +235,8 @@
     };
   };
 
-  qgroget.services.openclaw = {
-    subdomain = "openclaw";
+  qgroget.services.hermes = {
+    subdomain = "hermes";
     url = "http://127.0.0.1:18789";
     type = "private";
   };

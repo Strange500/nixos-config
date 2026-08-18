@@ -5,6 +5,6 @@
     ./portfolio.nix
     # ./forgero.nix
     ./scrutiny.nix
-    ./openclaw.nix
+    ./hermes.nix
   ];
 }

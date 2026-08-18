@@ -100,8 +100,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     scrutiny-nixpkgs.url = "github:Samasaur1/nixpkgs/3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
-    openclaw = {
-      url = "github:openclaw/nix-openclaw";
+    hermes = {
+      url = "github:0xrsydn/nix-hermes-agent";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -124,7 +124,7 @@
     game-installer,
     celler,
     scrutiny-nixpkgs,
-    openclaw,
+    hermes,
     ...
   } @ inputs: let
     system = "x86_64-linux";
