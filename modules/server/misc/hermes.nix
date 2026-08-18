@@ -1,19 +1,12 @@
 {
   config,
   pkgs,
-  inputs,
   ...
 }: {
   # Define the SOPS secrets for Hermes
-  sops.secrets."server/hermes/gemini-api-key" = {
-    owner = config.qgroget.user.username;
-  };
-  sops.secrets."server/hermes/telegram-token" = {
-    owner = config.qgroget.user.username;
-  };
-  sops.secrets."server/hermes/gateway-token" = {
-    owner = config.qgroget.user.username;
-  };
+  sops.secrets."server/hermes/gemini-api-key" = {};
+  sops.secrets."server/hermes/telegram-token" = {};
+  sops.secrets."server/hermes/gateway-token" = {};
   sops.secrets."server/hermes/gog-password" = {
     owner = config.qgroget.user.username;
   };
@@ -25,38 +18,45 @@
       pkgs.nss
       pkgs.gh
       pkgs.jq
+      pkgs.gogcli
     ];
   };
 
-  # Hermes Agent NixOS Module
-  imports = [
-    inputs.hermes.nixosModules.default
+  # Setup persistent directory for Hermes state
+  systemd.tmpfiles.rules = [
+    "d /opt/data/hermes 0755 root root -"
   ];
 
-  services.hermes-agent = {
-    enable = true;
-    container.enable = false;
-    addToSystemPackages = true;
-
-    # We do NOT define settings here so the migration command (`hermes claw migrate`)
-    # can safely write the migrated config into ~/.hermes/config.yaml without NixOS overwriting it.
+  # Deploy Hermes Agent via Podman
+  virtualisation.oci-containers.backend = "podman";
+  virtualisation.oci-containers.containers."hermes" = {
+    image = "nousresearch/hermes-agent:latest";
+    autoStart = true;
+    volumes = [
+      "/opt/data/hermes:/opt/data"
+    ];
+    environmentFiles = [
+      "/var/lib/hermes/env"
+    ];
+    ports = [
+      "8642:8642"
+    ];
   };
 
-  # Generate environment file with secrets before the service starts
-  systemd.services.hermes-agent = {
+  # Generate environment file with secrets before the container starts
+  systemd.services."podman-hermes" = {
     serviceConfig = {
       ExecStartPre = [
         "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && echo \"GEMINI_API_KEY=$(cat ${config.sops.secrets."server/hermes/gemini-api-key".path})\" > /var/lib/hermes/env'"
         "+${pkgs.bash}/bin/bash -c 'echo \"TELEGRAM_TOKEN=$(cat ${config.sops.secrets."server/hermes/telegram-token".path})\" >> /var/lib/hermes/env'"
-        "+${pkgs.bash}/bin/bash -c 'echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" >> /var/lib/hermes/env'"
+        "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" >> /var/lib/hermes/env; fi'"
       ];
-      EnvironmentFile = ["-/var/lib/hermes/env"];
     };
   };
 
   qgroget.services.hermes = {
     subdomain = "hermes";
-    url = "http://127.0.0.1:18789"; # Ensure this matches Hermes default port
+    url = "http://127.0.0.1:8642";
     type = "private";
   };
 }
