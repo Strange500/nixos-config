@@ -4,9 +4,7 @@
   ...
 }: {
   # Define the SOPS secrets for Hermes
-  sops.secrets."server/hermes/gemini-api-key" = {};
-  sops.secrets."server/hermes/telegram-token" = {};
-  sops.secrets."server/hermes/gateway-token" = {};
+  sops.secrets."server/hermes/env" = {};
   sops.secrets."server/hermes/gog-password" = {
     owner = config.qgroget.user.username;
   };
@@ -35,7 +33,8 @@
         name = "hermes";
         image = "nousresearch/hermes-agent:latest";
         environmentFiles = [
-          "/var/lib/hermes/env"
+          "${config.sops.secrets."server/hermes/env".path}"
+          "/var/lib/hermes/dynamic-env"
         ];
         publishPorts = ["8642:8642"];
         volumes = [
@@ -48,13 +47,12 @@
     };
   };
 
-  # Generate environment file with secrets before the container starts
+  # Generate dynamic environment file for GH_TOKEN before the container starts
   systemd.services.hermes = {
     serviceConfig = {
       ExecStartPre = [
-        "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && echo \"GEMINI_API_KEY=$(cat ${config.sops.secrets."server/hermes/gemini-api-key".path})\" > /var/lib/hermes/env'"
-        "+${pkgs.bash}/bin/bash -c 'echo \"TELEGRAM_TOKEN=$(cat ${config.sops.secrets."server/hermes/telegram-token".path})\" >> /var/lib/hermes/env'"
-        "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" >> /var/lib/hermes/env; fi'"
+        "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && touch /var/lib/hermes/dynamic-env'"
+        "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > /var/lib/hermes/dynamic-env; fi'"
       ];
     };
   };
