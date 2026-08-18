@@ -61,7 +61,7 @@
           auth = {
             token = {
               source = "file";
-              id = config.sops.secrets."server/openclaw/gateway-token".path;
+              id = "value";
               provider = "local";
             };
           };
