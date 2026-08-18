@@ -170,6 +170,21 @@
               };
               skills = ["*"];
             }
+            {
+              id = "hephaestus";
+              model = {
+                primary = "google/gemini-3.5-flash";
+              };
+              description = "Ingénieur rapide et habile. Parfait pour les scripts d'automatisation, les tâches de code de difficulté moyenne et les itérations rapides.";
+              identity = {
+                name = "Hephaestus";
+                emoji = "🛠️";
+              };
+              tools = {
+                allow = ["*"];
+              };
+              skills = ["*"];
+            }
           ];
         };
         channels = {
