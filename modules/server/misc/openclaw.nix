@@ -58,6 +58,11 @@
           auth = {
             token = "server-6-local-gateway-token-xyz";
           };
+          controlUi = {
+            allowedOrigins = [
+              "https://openclaw.qgroget.com"
+            ];
+          };
         };
         plugins = {
           entries = {
