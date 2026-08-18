@@ -73,7 +73,7 @@
               enabled = true;
               config = {
                 webSearch = {
-                  model = "gemini-3.1-flash-preview";
+                  model = "google/gemini-3.5-flash-lite";
                 };
               };
             };
@@ -88,7 +88,7 @@
         agents = {
           defaults = {
             model = {
-              primary = "google/gemini-3.1-flash-preview";
+              primary = "google/gemini-3.5-flash-lite";
             };
             contextTokens = 80000;
             compaction = {
@@ -105,14 +105,14 @@
               sources = ["memory" "sessions"];
             };
             heartbeat = {
-              model = "google/gemini-3.1-flash-preview";
+              model = "google/gemini-2.5-flash-lite";
             };
           };
           list = [
             {
               id = "coder";
               model = {
-                primary = "google/gemini-2.0-pro-exp-02-05";
+                primary = "google/gemini-3.1-pro-preview";
               };
               description = "Expert software engineer, efficient and precise.";
               identity = {
@@ -126,8 +126,11 @@
             }
             {
               id = "cleaner";
+              model = {
+                primary = "google/gemini-3.5-flash-lite";
+              };
               workspace = "/home/strange/.openclaw/workspace/cleaner";
-              description = "Repository cleaner, focused on refactoring, removing dead code, and optimizing space.";
+              description = "Mailbox cleaner, focused on sorting emails, deleting spam, and organizing the inbox.";
               identity = {
                 name = "Cleaner";
                 emoji = "🧹";
