@@ -29,7 +29,7 @@
       containerConfig = {
         name = "hermes";
         image = "docker.io/nousresearch/hermes-agent:latest";
-        network = "host";
+        networks = "host";
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
