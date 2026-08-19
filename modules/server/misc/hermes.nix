@@ -29,7 +29,7 @@
       containerConfig = {
         name = "hermes";
         image = "docker.io/nousresearch/hermes-agent:latest";
-        networks = "host";
+        pod = config.virtualisation.quadlet.pods.honcho.ref;
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
@@ -52,6 +52,29 @@
         Restart = "always";
         After = ["honcho-api.service"];
         Requires = ["honcho-api.service"];
+      };
+    };
+    containers.hermes-dashboard = {
+      autoStart = true;
+      containerConfig = {
+        name = "hermes-dashboard";
+        image = "docker.io/nousresearch/hermes-agent:latest";
+        pod = config.virtualisation.quadlet.pods.honcho.ref;
+        environmentFiles = [
+          "${config.sops.secrets."server/hermes/env".path}"
+          "/var/lib/hermes/dynamic-env"
+        ];
+        volumes = [
+          "/persist/hermes:/opt/data"
+        ];
+        podmanArgs = [
+          "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"0.0.0.0\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
+        ];
+      };
+      serviceConfig = {
+        Restart = "always";
+        After = ["hermes.service"];
+        Requires = ["hermes.service"];
       };
     };
   };
