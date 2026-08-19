@@ -4,7 +4,7 @@
   inputs,
   ...
 }: let
-  hermes-pkg = inputs.hermes-agent.packages.${pkgs.system}.desktop;
+  hermes-pkg = inputs.hermes-agent.packages.${pkgs.system}.default;
 in {
   # Define the SOPS secrets for Hermes
   sops.secrets."server/hermes/env" = {};
