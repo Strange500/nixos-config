@@ -49,11 +49,11 @@ in {
         };
         volumes = [
           "/opt/data/honcho/db:/var/lib/postgresql/data/pgdata:Z"
-          "${honchoInitSql}:/docker-entrypoint-initdb.d/init.sql:Z"
+          "${honchoInitSql}:/docker-entrypoint-initdb.d/init.sql:ro"
         ];
       };
       serviceConfig = {
-        Restart = "unless-stopped";
+        Restart = "always";
         RestartSec = "5s";
       };
     };
@@ -69,7 +69,7 @@ in {
         ];
       };
       serviceConfig = {
-        Restart = "unless-stopped";
+        Restart = "always";
         RestartSec = "5s";
       };
     };
@@ -95,11 +95,11 @@ in {
           "--entrypoint=[\"sh\",\"docker/entrypoint.sh\"]"
         ];
         volumes = [
-          "${honchoConfigToml}:/app/config.toml:ro,Z"
+          "${honchoConfigToml}:/app/config.toml:ro"
         ];
       };
       serviceConfig = {
-        Restart = "unless-stopped";
+        Restart = "always";
         RestartSec = "5s";
       };
       unitConfig = {
@@ -130,11 +130,11 @@ in {
           "--entrypoint=[\"/app/.venv/bin/python\",\"-m\",\"src.deriver\"]"
         ];
         volumes = [
-          "${honchoConfigToml}:/app/config.toml:ro,Z"
+          "${honchoConfigToml}:/app/config.toml:ro"
         ];
       };
       serviceConfig = {
-        Restart = "unless-stopped";
+        Restart = "always";
         RestartSec = "5s";
       };
       unitConfig = {
