@@ -59,7 +59,7 @@
       containerConfig = {
         name = "hermes-dashboard";
         image = "docker.io/nousresearch/hermes-agent:latest";
-        pod = config.virtualisation.quadlet.pods.honcho.ref;
+        network = "host";
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
@@ -68,7 +68,7 @@
           "/persist/hermes:/opt/data"
         ];
         podmanArgs = [
-          "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"0.0.0.0\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
+          "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"127.0.0.1\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
         ];
       };
       serviceConfig = {
