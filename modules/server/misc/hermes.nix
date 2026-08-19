@@ -37,6 +37,10 @@
         volumes = [
           "/opt/data/hermes:/opt/data:Z"
         ];
+        podmanArgs = [
+          "--tty"
+          "--interactive"
+        ];
       };
       serviceConfig = {
         Restart = "unless-stopped";
