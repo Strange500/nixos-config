@@ -93,5 +93,8 @@
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
     type = "private";
+    traefikDynamicConfig = {
+      http.services.hermes.loadBalancer.passHostHeader = false;
+    };
   };
 }
