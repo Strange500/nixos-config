@@ -6,6 +6,7 @@
   honchoInitSql = pkgs.writeText "honcho-init.sql" ''
     CREATE EXTENSION IF NOT EXISTS vector;
   '';
+  inherit (config.virtualisation.quadlet) pods;
 in {
   sops.secrets."server/honcho/env" = {};
 
@@ -16,16 +17,28 @@ in {
   ];
 
   virtualisation.quadlet = {
-    networks.honcho = {
-      networkConfig = {};
+    pods.honcho = {
+      autoStart = true;
+      podConfig = {
+        name = "honcho";
+        publishPorts = [
+          "127.0.0.1:5432:5432"
+          "127.0.0.1:6379:6379"
+          "127.0.0.1:8000:8000"
+        ];
+      };
+      unitConfig = {
+        Requires = ["network-online.target"];
+        After = ["network-online.target"];
+      };
     };
 
     containers.honcho-db = {
       autoStart = true;
       containerConfig = {
         name = "honcho-db";
+        pod = pods.honcho.ref;
         image = "docker.io/pgvector/pgvector:pg15";
-        networks = ["honcho"];
         environments = {
           POSTGRES_DB = "postgres";
           POSTGRES_USER = "postgres";
@@ -37,7 +50,6 @@ in {
           "/opt/data/honcho/db:/var/lib/postgresql/data/pgdata:Z"
           "${honchoInitSql}:/docker-entrypoint-initdb.d/init.sql:Z"
         ];
-        publishPorts = ["127.0.0.1:5432:5432"];
       };
       serviceConfig = {
         Restart = "unless-stopped";
@@ -49,12 +61,11 @@ in {
       autoStart = true;
       containerConfig = {
         name = "honcho-redis";
+        pod = pods.honcho.ref;
         image = "docker.io/redis:8.2";
-        networks = ["honcho"];
         volumes = [
           "/opt/data/honcho/redis:/data:Z"
         ];
-        publishPorts = ["127.0.0.1:6379:6379"];
       };
       serviceConfig = {
         Restart = "unless-stopped";
@@ -66,18 +77,16 @@ in {
       autoStart = true;
       containerConfig = {
         name = "honcho-api";
+        pod = pods.honcho.ref;
         image = "ghcr.io/plastic-labs/honcho:latest";
-        networks = ["honcho"];
         environmentFiles = [
           "${config.sops.secrets."server/honcho/env".path}"
         ];
         environments = {
-          DB_CONNECTION_URI = "postgresql+psycopg://postgres:postgres@honcho-db:5432/postgres";
-          CACHE_URL = "redis://honcho-redis:6379/0?suppress=true";
+          DB_CONNECTION_URI = "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/postgres";
+          CACHE_URL = "redis://127.0.0.1:6379/0?suppress=true";
           CACHE_ENABLED = "true";
         };
-        publishPorts = ["127.0.0.1:8000:8000"];
-        # Overriding entrypoint
         podmanArgs = [
           "--entrypoint=[\"sh\",\"docker/entrypoint.sh\"]"
         ];
@@ -86,20 +95,24 @@ in {
         Restart = "unless-stopped";
         RestartSec = "5s";
       };
+      unitConfig = {
+        Requires = ["honcho-db.service" "honcho-redis.service"];
+        After = ["honcho-db.service" "honcho-redis.service"];
+      };
     };
 
     containers.honcho-deriver = {
       autoStart = true;
       containerConfig = {
         name = "honcho-deriver";
+        pod = pods.honcho.ref;
         image = "ghcr.io/plastic-labs/honcho:latest";
-        networks = ["honcho"];
         environmentFiles = [
           "${config.sops.secrets."server/honcho/env".path}"
         ];
         environments = {
-          DB_CONNECTION_URI = "postgresql+psycopg://postgres:postgres@honcho-db:5432/postgres";
-          CACHE_URL = "redis://honcho-redis:6379/0?suppress=true";
+          DB_CONNECTION_URI = "postgresql+psycopg://postgres:postgres@127.0.0.1:5432/postgres";
+          CACHE_URL = "redis://127.0.0.1:6379/0?suppress=true";
           CACHE_ENABLED = "true";
         };
         podmanArgs = [
@@ -109,6 +122,10 @@ in {
       serviceConfig = {
         Restart = "unless-stopped";
         RestartSec = "5s";
+      };
+      unitConfig = {
+        Requires = ["honcho-db.service" "honcho-redis.service"];
+        After = ["honcho-db.service" "honcho-redis.service"];
       };
     };
   };
