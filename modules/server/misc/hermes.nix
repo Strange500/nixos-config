@@ -90,7 +90,9 @@
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
     type = "private";
+    middlewares = ["hermes-origin"];
     traefikDynamicConfig = {
+      http.middlewares.hermes-origin.headers.customRequestHeaders.Origin = "http://127.0.0.1:9119";
       http.services.hermes.loadBalancer.passHostHeader = false;
     };
   };
