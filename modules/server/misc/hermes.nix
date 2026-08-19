@@ -28,7 +28,7 @@
       autoStart = true;
       containerConfig = {
         name = "hermes";
-        image = "nousresearch/hermes-agent:latest";
+        image = "docker.io/nousresearch/hermes-agent:latest";
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
