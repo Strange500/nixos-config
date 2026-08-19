@@ -60,7 +60,7 @@
 
   qgroget.services.hermes = {
     subdomain = "hermes";
-    url = "http://127.0.0.1:8642";
+    url = "http://127.0.0.1:9119";
     type = "private";
   };
 }
