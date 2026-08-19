@@ -1,11 +1,8 @@
 {
   config,
   pkgs,
-  inputs,
   ...
-}: let
-  hermes-pkg = inputs.hermes-agent.packages.${pkgs.system}.default;
-in {
+}: {
   # Define the SOPS secrets for Hermes
   sops.secrets."server/hermes/env" = {};
 
@@ -25,46 +22,47 @@ in {
     "d /persist/hermes 0755 root root -"
   ];
 
-  # Deploy Hermes Agent natively via systemd using the Nix flake package
-  systemd.services.hermes = {
-    description = "Hermes Agent Native Service";
-    wantedBy = ["multi-user.target"];
-    after = ["network-online.target"];
-    path = [hermes-pkg pkgs.bash];
+  # Deploy Hermes Agent via Quadlet
+  virtualisation.quadlet = {
+    containers.hermes = {
+      autoStart = true;
+      containerConfig = {
+        name = "hermes";
+        image = "docker.io/nousresearch/hermes-agent:latest";
+        network = "host";
+        environmentFiles = [
+          "${config.sops.secrets."server/hermes/env".path}"
+          "/var/lib/hermes/dynamic-env"
+        ];
+        environment = {
+          PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
+        };
+        volumes = [
+          "/persist/hermes:/opt/data"
+          "/nix/store:/nix/store:ro"
+          "/home/strange:/home/strange"
+          "/run/current-system/sw/bin:/run/current-system/sw/bin:ro"
+        ];
+        podmanArgs = [
+          "--tty"
+          "--interactive"
+        ];
+      };
+      serviceConfig = {
+        Restart = "always";
+        After = ["honcho-api.service"];
+        Requires = ["honcho-api.service"];
+      };
+    };
+  };
 
+  # Generate dynamic environment file for GH_TOKEN before the container starts
+  systemd.services.hermes = {
     serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      WorkingDirectory = "/persist/hermes";
-      EnvironmentFile = [
-        config.sops.secrets."server/hermes/env".path
-        "/var/lib/hermes/dynamic-env"
-      ];
       ExecStartPre = [
         "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && touch /var/lib/hermes/dynamic-env'"
         "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > /var/lib/hermes/dynamic-env; fi'"
       ];
-      ExecStart = "${pkgs.bash}/bin/bash -c 'exec hermes gateway start'";
-    };
-  };
-
-  systemd.services.hermes-dashboard = {
-    description = "Hermes Agent Dashboard Native Service";
-    wantedBy = ["multi-user.target"];
-    after = ["hermes.service"];
-    requires = ["hermes.service"];
-    path = [hermes-pkg pkgs.bash];
-
-    serviceConfig = {
-      Type = "simple";
-      Restart = "always";
-      WorkingDirectory = "/persist/hermes";
-      EnvironmentFile = [
-        config.sops.secrets."server/hermes/env".path
-        "/var/lib/hermes/dynamic-env"
-      ];
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
-      ExecStart = "${pkgs.bash}/bin/bash -c 'exec hermes dashboard --host 127.0.0.1 --port 9119 --no-open'";
     };
   };
 
