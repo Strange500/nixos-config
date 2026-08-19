@@ -34,6 +34,10 @@
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
         ];
+        environments = {
+          PATH = "/opt/hermes/.venv/bin:/command:/opt/hermes/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
+          XDG_CONFIG_HOME = "/home/strange/.config";
+        };
         volumes = [
           "/persist/hermes:/opt/data:Z"
           "/nix/store:/nix/store:ro"
@@ -49,6 +53,10 @@
         Restart = "always";
         After = ["honcho-api.service"];
         Requires = ["honcho-api.service"];
+        ExecStartPre = [
+          "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && touch /var/lib/hermes/dynamic-env'"
+          "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > /var/lib/hermes/dynamic-env; echo \"GITHUB_TOKEN=$(cat /run/user/1000/secrets/github_token)\" >> /var/lib/hermes/dynamic-env; fi'"
+        ];
       };
     };
     containers.hermes-dashboard = {
