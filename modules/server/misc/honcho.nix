@@ -39,7 +39,10 @@ in {
         ];
         publishPorts = ["127.0.0.1:5432:5432"];
       };
-      serviceConfig.Restart = "unless-stopped";
+      serviceConfig = {
+        Restart = "unless-stopped";
+        RestartSec = "5s";
+      };
     };
 
     containers.honcho-redis = {
@@ -53,7 +56,10 @@ in {
         ];
         publishPorts = ["127.0.0.1:6379:6379"];
       };
-      serviceConfig.Restart = "unless-stopped";
+      serviceConfig = {
+        Restart = "unless-stopped";
+        RestartSec = "5s";
+      };
     };
 
     containers.honcho-api = {
@@ -76,7 +82,10 @@ in {
           "--entrypoint=[\"sh\",\"docker/entrypoint.sh\"]"
         ];
       };
-      serviceConfig.Restart = "unless-stopped";
+      serviceConfig = {
+        Restart = "unless-stopped";
+        RestartSec = "5s";
+      };
     };
 
     containers.honcho-deriver = {
@@ -97,7 +106,10 @@ in {
           "--entrypoint=[\"/app/.venv/bin/python\",\"-m\",\"src.deriver\"]"
         ];
       };
-      serviceConfig.Restart = "unless-stopped";
+      serviceConfig = {
+        Restart = "unless-stopped";
+        RestartSec = "5s";
+      };
     };
   };
 }
