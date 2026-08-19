@@ -35,7 +35,7 @@
           "/var/lib/hermes/dynamic-env"
         ];
         volumes = [
-          "/persist/hermes:/opt/data"
+          "/persist/hermes:/opt/data:Z"
           "/nix/store:/nix/store:ro"
           "/home/strange:/home/strange"
           "/run/current-system/sw/bin:/run/current-system/sw/bin:ro"
@@ -62,7 +62,7 @@
           "/var/lib/hermes/dynamic-env"
         ];
         volumes = [
-          "/persist/hermes:/opt/data"
+          "/persist/hermes:/opt/data:Z"
         ];
         podmanArgs = [
           "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"127.0.0.1\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
