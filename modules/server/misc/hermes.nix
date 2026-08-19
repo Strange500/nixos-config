@@ -34,7 +34,7 @@
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
         ];
-        environment = {
+        environments = {
           PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
         };
         volumes = [
