@@ -42,7 +42,9 @@ DEFAULT_TTL_SECONDS = 300
 [embedding.model_config]
 transport = "openai"
 model = "openai/text-embedding-3-small"
+[embedding.model_config.overrides]
 base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 # ---------------------------------------------------------------------------
 # Deriver — observation extraction (runs every message, needs speed + tools)
@@ -63,9 +65,15 @@ FLUSH_ENABLED = false
 transport = "openai"
 model = "z-ai/glm-4.7-flash"
 thinking_budget_tokens = 1
+[deriver.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [deriver.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-4.7-flash"
+[deriver.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 # ---------------------------------------------------------------------------
 # Dialectic — multi-level reasoning for peer.chat
@@ -83,9 +91,15 @@ MAX_OUTPUT_TOKENS = 250
 transport = "openai"
 model = "z-ai/glm-4.7-flash"
 thinking_budget_tokens = 1
+[dialectic.levels.minimal.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dialectic.levels.minimal.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-4.7-flash"
+[dialectic.levels.minimal.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dialectic.levels.low]
 MAX_TOOL_ITERATIONS = 5
@@ -93,9 +107,15 @@ MAX_TOOL_ITERATIONS = 5
 transport = "openai"
 model = "z-ai/glm-4.7-flash"
 thinking_budget_tokens = 1
+[dialectic.levels.low.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dialectic.levels.low.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-4.7-flash"
+[dialectic.levels.low.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dialectic.levels.medium]
 MAX_TOOL_ITERATIONS = 2
@@ -103,9 +123,15 @@ MAX_TOOL_ITERATIONS = 2
 transport = "openai"
 model = "x-ai/grok-4.1-fast"
 thinking_budget_tokens = 1
+[dialectic.levels.medium.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dialectic.levels.medium.model_config.fallback]
 transport = "openai"
 model = "grok-41-fast"
+[dialectic.levels.medium.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dialectic.levels.high]
 MAX_TOOL_ITERATIONS = 4
@@ -113,9 +139,15 @@ MAX_TOOL_ITERATIONS = 4
 transport = "openai"
 model = "x-ai/grok-4.1-fast"
 thinking_budget_tokens = 1
+[dialectic.levels.high.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dialectic.levels.high.model_config.fallback]
 transport = "openai"
 model = "grok-41-fast"
+[dialectic.levels.high.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dialectic.levels.max]
 MAX_TOOL_ITERATIONS = 10
@@ -123,9 +155,15 @@ MAX_TOOL_ITERATIONS = 10
 transport = "openai"
 model = "z-ai/glm-5"
 thinking_budget_tokens = 1
+[dialectic.levels.max.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dialectic.levels.max.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-5"
+[dialectic.levels.max.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 # ---------------------------------------------------------------------------
 # Summary — session summarization
@@ -141,9 +179,15 @@ MAX_TOKENS_LONG = 4000
 transport = "openai"
 model = "z-ai/glm-4.7-flash"
 thinking_budget_tokens = 1
+[summary.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [summary.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-4.7-flash"
+[summary.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 # ---------------------------------------------------------------------------
 # Dream — memory consolidation (runs rarely, needs best quality)
@@ -162,17 +206,29 @@ HISTORY_TOKEN_LIMIT = 16384
 transport = "openai"
 model = "z-ai/glm-5"
 thinking_budget_tokens = 1
+[dream.model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 [dream.model_config.fallback]
 transport = "openai"
 model = "zai-org-glm-5"
+[dream.model_config.fallback.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dream.deduction_model_config]
 transport = "openai"
 model = "x-ai/grok-4.1-fast"
+[dream.deduction_model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [dream.induction_model_config]
 transport = "openai"
 model = "x-ai/grok-4.1-fast"
+[dream.induction_model_config.overrides]
+base_url = "https://openrouter.ai/api/v1"
+api_key_env = "OPENAI_API_KEY"
 
 [peer_card]
 ENABLED = true
