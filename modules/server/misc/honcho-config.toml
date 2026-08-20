@@ -39,22 +39,10 @@ ENABLED = true
 URL = "redis://redis:6379/0?suppress=true"
 DEFAULT_TTL_SECONDS = 300
 
-# ---------------------------------------------------------------------------
-# LLM providers
-#   "vllm"   = primary   — set in .env: LLM_VLLM_API_KEY + LLM_VLLM_BASE_URL
-#   "custom"  = backup    — set in .env: LLM_OPENAI_COMPATIBLE_API_KEY
-# ---------------------------------------------------------------------------
-[llm]
-DEFAULT_MAX_TOKENS = 2500
-EMBEDDING_PROVIDER = "openrouter"
-
-# Embedding key, URL, and model are set via env vars (LLM_EMBEDDING_*)
-# so they can differ per deployment without editing this file.
-# If LLM_EMBEDDING_API_KEY is empty, falls back to LLM_OPENAI_COMPATIBLE_API_KEY.
-# If LLM_EMBEDDING_BASE_URL is empty, falls back to OPENAI_COMPATIBLE_BASE_URL below.
-
-# Backup provider base URL (set in .env or overridden by setup script)
-OPENAI_COMPATIBLE_BASE_URL = "https://api.venice.ai/api/v1"
+[embedding.model_config]
+transport = "openai"
+model = "openai/text-embedding-3-small"
+base_url = "https://openrouter.ai/api/v1"
 
 # ---------------------------------------------------------------------------
 # Deriver — observation extraction (runs every message, needs speed + tools)
