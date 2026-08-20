@@ -64,17 +64,20 @@ ENABLED = true
 WORKERS = 1
 POLLING_SLEEP_INTERVAL_SECONDS = 1.0
 STALE_SESSION_TIMEOUT_MINUTES = 5
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-4.7-flash"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-4.7-flash"
 DEDUPLICATE = true
 MAX_OUTPUT_TOKENS = 4096
-THINKING_BUDGET_TOKENS = 1
 MAX_INPUT_TOKENS = 23000
 WORKING_REPRESENTATION_MAX_OBSERVATIONS = 100
 REPRESENTATION_BATCH_MAX_TOKENS = 1024
 FLUSH_ENABLED = false
+
+[deriver.model_config]
+transport = "vllm"
+model = "z-ai/glm-4.7-flash"
+thinking_budget_tokens = 1
+[deriver.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-4.7-flash"
 
 # ---------------------------------------------------------------------------
 # Dialectic — multi-level reasoning for peer.chat
@@ -86,45 +89,55 @@ HISTORY_TOKEN_LIMIT = 8192
 SESSION_HISTORY_MAX_TOKENS = 4096
 
 [dialectic.levels.minimal]
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-4.7-flash"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-4.7-flash"
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 1
 MAX_OUTPUT_TOKENS = 250
+[dialectic.levels.minimal.model_config]
+transport = "vllm"
+model = "z-ai/glm-4.7-flash"
+thinking_budget_tokens = 1
+[dialectic.levels.minimal.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-4.7-flash"
 
 [dialectic.levels.low]
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-4.7-flash"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-4.7-flash"
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 5
+[dialectic.levels.low.model_config]
+transport = "vllm"
+model = "z-ai/glm-4.7-flash"
+thinking_budget_tokens = 1
+[dialectic.levels.low.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-4.7-flash"
 
 [dialectic.levels.medium]
-PROVIDER = "vllm"
-MODEL = "x-ai/grok-4.1-fast"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "grok-41-fast"
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 2
+[dialectic.levels.medium.model_config]
+transport = "vllm"
+model = "x-ai/grok-4.1-fast"
+thinking_budget_tokens = 1
+[dialectic.levels.medium.model_config.fallback]
+transport = "custom"
+model = "grok-41-fast"
 
 [dialectic.levels.high]
-PROVIDER = "vllm"
-MODEL = "x-ai/grok-4.1-fast"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "grok-41-fast"
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 4
+[dialectic.levels.high.model_config]
+transport = "vllm"
+model = "x-ai/grok-4.1-fast"
+thinking_budget_tokens = 1
+[dialectic.levels.high.model_config.fallback]
+transport = "custom"
+model = "grok-41-fast"
 
 [dialectic.levels.max]
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-5"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-5"
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 10
+[dialectic.levels.max.model_config]
+transport = "vllm"
+model = "z-ai/glm-5"
+thinking_budget_tokens = 1
+[dialectic.levels.max.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-5"
 
 # ---------------------------------------------------------------------------
 # Summary — session summarization
@@ -133,13 +146,16 @@ MAX_TOOL_ITERATIONS = 10
 ENABLED = true
 MESSAGES_PER_SHORT_SUMMARY = 20
 MESSAGES_PER_LONG_SUMMARY = 60
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-4.7-flash"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-4.7-flash"
 MAX_TOKENS_SHORT = 1000
 MAX_TOKENS_LONG = 4000
-THINKING_BUDGET_TOKENS = 1
+
+[summary.model_config]
+transport = "vllm"
+model = "z-ai/glm-4.7-flash"
+thinking_budget_tokens = 1
+[summary.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-4.7-flash"
 
 # ---------------------------------------------------------------------------
 # Dream — memory consolidation (runs rarely, needs best quality)
@@ -150,16 +166,25 @@ DOCUMENT_THRESHOLD = 50
 IDLE_TIMEOUT_MINUTES = 60
 MIN_HOURS_BETWEEN_DREAMS = 8
 ENABLED_TYPES = ["omni"]
-PROVIDER = "vllm"
-MODEL = "z-ai/glm-5"
-BACKUP_PROVIDER = "custom"
-BACKUP_MODEL = "zai-org-glm-5"
 MAX_OUTPUT_TOKENS = 16384
-THINKING_BUDGET_TOKENS = 1
 MAX_TOOL_ITERATIONS = 20
 HISTORY_TOKEN_LIMIT = 16384
-DEDUCTION_MODEL = "x-ai/grok-4.1-fast"
-INDUCTION_MODEL = "x-ai/grok-4.1-fast"
+
+[dream.model_config]
+transport = "vllm"
+model = "z-ai/glm-5"
+thinking_budget_tokens = 1
+[dream.model_config.fallback]
+transport = "custom"
+model = "zai-org-glm-5"
+
+[dream.deduction_model_config]
+transport = "vllm"
+model = "x-ai/grok-4.1-fast"
+
+[dream.induction_model_config]
+transport = "vllm"
+model = "x-ai/grok-4.1-fast"
 
 [peer_card]
 ENABLED = true
