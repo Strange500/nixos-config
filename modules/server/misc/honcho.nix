@@ -88,9 +88,7 @@ in {
           DB_CONNECTION_URI = "postgresql+psycopg://honcho:honcho@127.0.0.1:5432/honcho";
           CACHE_URL = "redis://127.0.0.1:6379/0?suppress=true";
           CACHE_ENABLED = "true";
-          LLM_VLLM_BASE_URL = "https://openrouter.ai/api/v1";
-          LLM_EMBEDDING_BASE_URL = "https://openrouter.ai/api/v1";
-          LLM_EMBEDDING_MODEL = "openai/text-embedding-3-small";
+          OPENAI_BASE_URL = "https://openrouter.ai/api/v1";
         };
         podmanArgs = [
           "--entrypoint=[\"sh\",\"docker/entrypoint.sh\"]"
