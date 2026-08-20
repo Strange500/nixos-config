@@ -19,7 +19,7 @@
 
   # Setup persistent directory for Hermes state
   systemd.tmpfiles.rules = [
-    "d /persist/hermes 0755 root root -"
+    "d /persist/hermes 0755 10000 10000 -"
   ];
 
   # Deploy Hermes Agent via Quadlet
@@ -81,16 +81,6 @@
         After = ["hermes.service"];
         Requires = ["hermes.service"];
       };
-    };
-  };
-
-  # Generate dynamic environment file for GH_TOKEN before the container starts
-  systemd.services.hermes = {
-    serviceConfig = {
-      ExecStartPre = [
-        "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && touch /var/lib/hermes/dynamic-env'"
-        "+${pkgs.bash}/bin/bash -c 'if [ -f /run/user/1000/secrets/github_token ]; then echo \"GH_TOKEN=$(cat /run/user/1000/secrets/github_token)\" > /var/lib/hermes/dynamic-env; fi'"
-      ];
     };
   };
 
