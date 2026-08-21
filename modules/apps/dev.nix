@@ -21,6 +21,21 @@
       sha256 = "01i92ryr2s9v6bpbpf9q7x2sajm7apik4s6g6wzhigxa13bp339h";
     };
   };
+
+  # Custom VSCode extension: ACP Client (Agent Client Protocol) by formulahendry.
+  # Lets VS Code talk to any ACP-compatible agent over stdio (JSON-RPC), e.g.
+  # Hermes Agent. Not yet in nixpkgs, so we pull the VSIX from Open VSX.
+  acp-client-extension = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "acp-client";
+      publisher = "formulahendry";
+      version = "0.2.0";
+    };
+    vsix = pkgs.fetchurl {
+      url = "https://open-vsx.org/api/formulahendry/acp-client/0.2.0/file/formulahendry.acp-client-0.2.0.vsix";
+      sha256 = "aef8eabe9d311e07c8a34eaaa8c2a965ddb8d06a00f09d651fab54557de55139";
+    };
+  };
 in {
   home.packages = lib.mkIf config.qgroget.nixos.apps.dev.enable (
     with pkgs;
@@ -156,61 +171,85 @@ in {
           ]
           ++ [
             dynamic-base16-dankshell
+          ]
+          ++ lib.optionals config.qgroget.nixos.apps.dev.acp.enable [
+            acp-client-extension
           ];
-        userSettings = {
-          "files.autoSave" = "afterDelay";
-          "remote.SSH.configFile" = "/home/${config.qgroget.user.username}/.ssh/config";
-          "github.copilot.enable" = {
-            "*" = true;
-            "plaintext" = true;
-            "markdown" = true;
-            "scminput" = false;
-          };
-          "nix.serverPath" = "nixd";
-          "nix.enableLanguageServer" = true;
-          "nix.serverSettings" = {
-            "nixd" = {
-              "formatting" = {
-                "command" = ["alejandra"];
-              };
-              "nixpkgs" = {
-                "expr" = "import (builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").inputs.nixpkgs { }";
-              };
-              "options" = {
-                "nixos" = {
-                  "expr" = "(builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").nixosConfigurations.Clovis.options";
+        userSettings =
+          {
+            "files.autoSave" = "afterDelay";
+            "remote.SSH.configFile" = "/home/${config.qgroget.user.username}/.ssh/config";
+            "github.copilot.enable" = {
+              "*" = true;
+              "plaintext" = true;
+              "markdown" = true;
+              "scminput" = false;
+            };
+            "nix.serverPath" = "nixd";
+            "nix.enableLanguageServer" = true;
+            "nix.serverSettings" = {
+              "nixd" = {
+                "formatting" = {
+                  "command" = ["alejandra"];
                 };
-                "home-manager" = {
-                  "expr" = "(builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").nixosConfigurations.Clovis.options.home-manager.users.type.getSubOptions []";
+                "nixpkgs" = {
+                  "expr" = "import (builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").inputs.nixpkgs { }";
+                };
+                "options" = {
+                  "nixos" = {
+                    "expr" = "(builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").nixosConfigurations.Clovis.options";
+                  };
+                  "home-manager" = {
+                    "expr" = "(builtins.getFlake \"${config.qgroget.nixos.settings.confDirectory}\").nixosConfigurations.Clovis.options.home-manager.users.type.getSubOptions []";
+                  };
                 };
               };
             };
+            "java.gradle.buildServer.enabled" = "off";
+            "latex-workshop.latex.autoBuild.run" = "onSave";
+            "latex-workshop.latex.recipes" = [
+              {
+                "name" = "latexmk (pdf)";
+                "tools" = ["latexmk"];
+              }
+            ];
+            "latex-workshop.latex.tools" = [
+              {
+                "name" = "latexmk";
+                "command" = "latexmk";
+                "args" = [
+                  "-synctex=1"
+                  "-interaction=nonstopmode"
+                  "-file-line-error"
+                  "-pdf"
+                  "%DOC%"
+                ];
+              }
+            ];
+            "workbench.colorTheme" = "Dynamic Base16 DankShell";
+            "http.systemCertificatesNode" = true;
+            "editor.semanticHighlighting.enabled" = true;
+          }
+          // lib.optionalAttrs config.qgroget.nixos.apps.dev.acp.enable {
+            # ACP Client: Hermes Agent reachable over SSH from anywhere (solution B).
+            # Runs remotely: ssh <host> podman exec -i hermes hermes acp
+            "acp.agents" = {
+              "Hermes Agent" = {
+                command = "ssh";
+                args = [
+                  "-T"
+                  config.qgroget.nixos.apps.dev.acp.sshHost
+                  "podman"
+                  "exec"
+                  "-i"
+                  "hermes"
+                  "hermes"
+                  "acp"
+                ];
+              };
+            };
+            "acp.autoApprovePermissions" = "manual";
           };
-          "java.gradle.buildServer.enabled" = "off";
-          "latex-workshop.latex.autoBuild.run" = "onSave";
-          "latex-workshop.latex.recipes" = [
-            {
-              "name" = "latexmk (pdf)";
-              "tools" = ["latexmk"];
-            }
-          ];
-          "latex-workshop.latex.tools" = [
-            {
-              "name" = "latexmk";
-              "command" = "latexmk";
-              "args" = [
-                "-synctex=1"
-                "-interaction=nonstopmode"
-                "-file-line-error"
-                "-pdf"
-                "%DOC%"
-              ];
-            }
-          ];
-          "workbench.colorTheme" = "Dynamic Base16 DankShell";
-          "http.systemCertificatesNode" = true;
-          "editor.semanticHighlighting.enabled" = true;
-        };
       };
     };
   };
