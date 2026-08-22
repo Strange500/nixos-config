@@ -52,7 +52,7 @@ in {
 
         # Flutter
         flutter
-        android-studio-full
+        android-studio
 
         antigravity-cli
       ]
