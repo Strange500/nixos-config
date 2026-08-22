@@ -119,7 +119,7 @@ in {
         };
         extraConfig = ''
           Match LocalPort 22
-          AllowUsers ${config.qgroget.user.username} workflow
+          AllowUsers ${config.qgroget.user.username} workflow hermes
         '';
 
         hostKeys = [

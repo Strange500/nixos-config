@@ -22,6 +22,56 @@
     "d /persist/hermes 0755 10000 10000 -"
   ];
 
+  # User hermes on host for remote management & agent integration
+  users.users.hermes = {
+    isNormalUser = true;
+    home = "/home/hermes";
+    shell = pkgs.zsh;
+    description = "Hermes Agent";
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJNOmRynM+21pbOfNV+di0ZuYzzz0SptYG212pqsm5ZW hermes-agent@qgroget.com"
+    ];
+    extraGroups = [
+      "docker"
+      "nix-users"
+      "systemd-journal"
+      "media"
+    ];
+  };
+
+  # Scoped sudo rules for hermes (no full root access)
+  security.sudo.extraRules = [
+    {
+      users = ["hermes"];
+      commands = [
+        {
+          command = "/run/current-system/sw/bin/systemctl status *";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "/run/current-system/sw/bin/systemctl is-active *";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "/run/current-system/sw/bin/systemctl restart hermes.service";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "/run/current-system/sw/bin/systemctl restart hermes-dashboard.service";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "/run/current-system/sw/bin/systemctl restart honcho-api.service";
+          options = ["NOPASSWD"];
+        }
+        {
+          command = "/run/current-system/sw/bin/journalctl *";
+          options = ["NOPASSWD"];
+        }
+      ];
+    }
+  ];
+
   # Deploy Hermes Agent via Quadlet
   virtualisation.quadlet = {
     containers.hermes = {
