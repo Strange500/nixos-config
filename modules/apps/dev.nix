@@ -232,13 +232,14 @@ in {
           }
           // lib.optionalAttrs config.qgroget.nixos.apps.dev.acp.enable {
             # ACP Client: Hermes Agent reachable over SSH from anywhere (solution B).
-            # Runs remotely: ssh <host> podman exec -i hermes hermes acp
+            # Runs remotely: ssh <host> sudo podman exec -i hermes hermes acp
             "acp.agents" = {
               "Hermes Agent" = {
                 command = "ssh";
                 args = [
                   "-T"
                   config.qgroget.nixos.apps.dev.acp.sshHost
+                  "sudo"
                   "podman"
                   "exec"
                   "-i"
