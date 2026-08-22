@@ -32,7 +32,7 @@
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJNOmRynM+21pbOfNV+di0ZuYzzz0SptYG212pqsm5ZW hermes-agent@qgroget.com"
     ];
     extraGroups = [
-      "docker"
+      "podman"
       "nix-users"
       "systemd-journal"
       "media"
@@ -66,6 +66,11 @@
         }
         {
           command = "/run/current-system/sw/bin/journalctl *";
+          options = ["NOPASSWD"];
+        }
+        {
+          # Allow hermes to exec into the (root) hermes container for ACP
+          command = "/run/current-system/sw/bin/podman exec *";
           options = ["NOPASSWD"];
         }
       ];
