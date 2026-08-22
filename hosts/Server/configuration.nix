@@ -66,6 +66,10 @@
 
     containers.enable = true;
 
+    # Allow short-name resolution (e.g. `podman run hello-world`) so that
+    # rootless users can pull & run images without fully-qualified names.
+    containers.registries.search = [ "docker.io" ];
+
     containers.storage.settings = {
       storage = {
         driver = "overlay";
