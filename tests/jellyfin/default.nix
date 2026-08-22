@@ -52,7 +52,6 @@ pkgs.testers.nixosTest {
     };
   };
   testScript = ''
-    import time
     start_all()
     server.wait_for_unit("jellyfin.service")
     server.wait_for_open_port(8096)
