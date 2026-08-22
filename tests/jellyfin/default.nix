@@ -57,12 +57,10 @@ pkgs.testers.nixosTest {
     server.wait_for_unit("jellyfin.service")
     server.wait_for_open_port(8096)
 
-    # Wait a bit for jellyfin to be fully started
-    time.sleep(50)
-
-    # Health check
-    server.succeed("curl -f http://localhost:8096/health")
-    client.succeed("curl -f http://server:8096/health")
+    # Jellyfin keeps returning 503 on /health until fully initialized;
+    # the fixed sleep was flaky, so poll until it accepts requests.
+    server.wait_until_succeeds("curl -f http://localhost:8096/health", timeout=180)
+    client.wait_until_succeeds("curl -f http://server:8096/health", timeout=60)
 
     print("All Jellyfin tests passed!")
   '';
