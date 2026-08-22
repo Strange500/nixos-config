@@ -17,7 +17,10 @@
         };
         remote-access = {
           enable = true;
-          tailscale.enable = false;
+          tailscale = {
+            enable = true;
+            autoConnect = false;
+          };
           sunshine.enable = false;
         };
         apps = {
