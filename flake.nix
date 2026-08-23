@@ -229,6 +229,20 @@
         pkgs = configuredPkgs;
         modules = [];
       }).neovim;
+
+    # Standalone Home Manager config for the `hermes` host user, so the agent
+    # can `home-manager switch --flake .#hermes` rootlessly (touches only
+    # /home/hermes, never system units or prod).
+    homeConfigurations = {
+      hermes = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${system};
+        extraSpecialArgs = {
+          inherit inputs;
+        };
+        modules = [./home/hermes.nix];
+      };
+    };
+
     nixosConfigurations = {
       # Desktop workstation
       Clovis = mkSystem "Clovis" desktopModules;

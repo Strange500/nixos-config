@@ -17,6 +17,11 @@
     ];
   };
 
+  # The `hermes` host user's Home Manager config (git/gh CLI + rootless quadlet
+  # sandbox) is managed STANDALONE, not here: see `home/hermes.nix` and the
+  # `homeConfigurations.hermes` flake output. The agent activates it rootlessly
+  # via `home-manager switch --flake .#hermes`, touching only /home/hermes.
+
   # Setup persistent directory for Hermes state
   systemd.tmpfiles.rules = [
     "d /persist/hermes 0755 10000 10000 -"
@@ -28,11 +33,15 @@
     home = "/home/hermes";
     shell = pkgs.zsh;
     description = "Hermes Agent";
+    # Keep user services (rootless quadlets) alive across reboots without login.
+    linger = true;
+    # Dynamic subuid/subgid ranges for rootless multi-user podman.
+    autoSubUidGidRange = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJNOmRynM+21pbOfNV+di0ZuYzzz0SptYG212pqsm5ZW hermes-agent@qgroget.com"
     ];
     extraGroups = [
-      "docker"
+      "podman"
       "nix-users"
       "systemd-journal"
       "media"
