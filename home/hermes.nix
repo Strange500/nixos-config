@@ -42,7 +42,7 @@
     };
     containerConfig = {
       image = "docker.io/mendhak/http-https-echo:31";
-      publishPorts = ["127.0.0.1:8080:8080"];
+      publishPorts = ["127.0.0.1:12000:8080"];
       userns = "keep-id";
     };
   };
