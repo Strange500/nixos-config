@@ -23,6 +23,8 @@
   home-manager.users.hermes = {
     imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
 
+    home.stateVersion = "25.11";
+
     virtualisation.quadlet.containers.echo-server = {
       autoStart = true;
       serviceConfig = {
