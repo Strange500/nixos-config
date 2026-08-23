@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  inputs,
   ...
 }: {
   # Define the SOPS secrets for Hermes
@@ -18,26 +17,10 @@
     ];
   };
 
-  # Rootless service sandbox for the `hermes` host user (Home Manager scoped:
-  # `home-manager switch` touches only /home/hermes, never system units or prod).
-  home-manager.users.hermes = {
-    imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
-
-    home.stateVersion = "25.11";
-
-    virtualisation.quadlet.containers.echo-server = {
-      autoStart = true;
-      serviceConfig = {
-        Restart = "always";
-        RestartSec = "10";
-      };
-      containerConfig = {
-        image = "docker.io/mendhak/http-https-echo:31";
-        publishPorts = ["127.0.0.1:8080:8080"];
-        userns = "keep-id";
-      };
-    };
-  };
+  # The `hermes` host user's Home Manager config (git/gh CLI + rootless quadlet
+  # sandbox) is managed STANDALONE, not here: see `home/hermes.nix` and the
+  # `homeConfigurations.hermes` flake output. The agent activates it rootlessly
+  # via `home-manager switch --flake .#hermes`, touching only /home/hermes.
 
   # Setup persistent directory for Hermes state
   systemd.tmpfiles.rules = [
