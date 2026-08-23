@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   # Define the SOPS secrets for Hermes
@@ -17,6 +18,25 @@
     ];
   };
 
+  # Rootless service sandbox for the `hermes` host user (Home Manager scoped:
+  # `home-manager switch` touches only /home/hermes, never system units or prod).
+  home-manager.users.hermes = {
+    imports = [inputs.quadlet-nix.homeManagerModules.quadlet];
+
+    virtualisation.quadlet.containers.echo-server = {
+      autoStart = true;
+      serviceConfig = {
+        Restart = "always";
+        RestartSec = "10";
+      };
+      containerConfig = {
+        image = "docker.io/mendhak/http-https-echo:31";
+        publishPorts = ["127.0.0.1:8080:8080"];
+        userns = "keep-id";
+      };
+    };
+  };
+
   # Setup persistent directory for Hermes state
   systemd.tmpfiles.rules = [
     "d /persist/hermes 0755 10000 10000 -"
@@ -28,11 +48,15 @@
     home = "/home/hermes";
     shell = pkgs.zsh;
     description = "Hermes Agent";
+    # Keep user services (rootless quadlets) alive across reboots without login.
+    linger = true;
+    # Dynamic subuid/subgid ranges for rootless multi-user podman.
+    autoSubUidGidRange = true;
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJNOmRynM+21pbOfNV+di0ZuYzzz0SptYG212pqsm5ZW hermes-agent@qgroget.com"
     ];
     extraGroups = [
-      "docker"
+      "podman"
       "nix-users"
       "systemd-journal"
       "media"
