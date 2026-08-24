@@ -213,6 +213,8 @@ in {
     Z ${cfg.containerDir}/questarr 0700 arr media -
   '';
 
+  environment.etc."traefik/dynamic/inject-basic-arr.toml".source = "/run/traefik/secureConf/inject-basic-arr.toml";
+
   sops.secrets = {
     "server/arrs/username" = {
       owner = "traefik";
