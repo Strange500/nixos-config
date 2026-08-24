@@ -58,14 +58,7 @@ in {
       };
     };
 
-    systemd.services.traefik.preStart = ''
-      mkdir -p /run/traefik/secureConf
-      conf=$(cat ${traefikDynamicConfigFile})
-      # cat > /run/traefik/secureConf/traefik-dynamic.toml <<EOF
-      # ${traefikDynamicConfigFile}
-      # EOF
-      echo "$conf" > /run/traefik/secureConf/traefik-dynamic.toml
-    '';
+    environment.etc."traefik/dynamic/nix-routes.toml".source = traefikDynamicConfigFile;
 
     services.traefik = {
       enable = true;
@@ -104,15 +97,7 @@ in {
 
         # System dynamic config (regenerated at each rebuild).
         providers.file = {
-          filename = "";
-          directory = "/run/traefik/secureConf";
-          watch = true;
-        };
-
-        # User-declared routes (rootless, via Home Manager). Hot-reloaded on
-        # change thanks to `watch`, without rebuild nor restart of Traefik.
-        providers.users.file = {
-          directory = "/var/lib/traefik/dynamic";
+          directory = "/etc/traefik/dynamic";
           watch = true;
         };
 
@@ -181,28 +166,32 @@ in {
         services = config.qgroget.services;
       };
     in {
-      http = dynamicHttp // {
-        middlewares = dynamicHttp.middlewares // {
-          geoblock-fr = {
-            plugin = {
-              geoblock = {
-                silentStartUp = false;
-                allowLocalRequests = true;
-                logLocalRequests = false;
-                logAllowedRequests = false;
-                logApiRequests = true;
-                api = "https://get.geojs.io/v1/ip/country/{ip}";
-                apiTimeoutMs = 750;
-                cacheSize = 15;
-                forceMonthlyUpdate = true;
-                allowUnknownCountries = false;
-                unknownCountryApiResponse = "nil";
-                countries = ["FR"];
+      http =
+        dynamicHttp
+        // {
+          middlewares =
+            dynamicHttp.middlewares
+            // {
+              geoblock-fr = {
+                plugin = {
+                  geoblock = {
+                    silentStartUp = false;
+                    allowLocalRequests = true;
+                    logLocalRequests = false;
+                    logAllowedRequests = false;
+                    logApiRequests = true;
+                    api = "https://get.geojs.io/v1/ip/country/{ip}";
+                    apiTimeoutMs = 750;
+                    cacheSize = 15;
+                    forceMonthlyUpdate = true;
+                    allowUnknownCountries = false;
+                    unknownCountryApiResponse = "nil";
+                    countries = ["FR"];
+                  };
+                };
               };
             };
-          };
         };
-      };
 
       tls = {
         options = {
