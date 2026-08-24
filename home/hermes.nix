@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./modules/traefik-router.nix
     inputs.quadlet-nix.homeManagerModules.quadlet
   ];
 
@@ -21,13 +22,19 @@
   # Git identity + gh CLI so the `hermes` agent can clone/commit over SSH.
   programs.git = {
     enable = true;
-    userName = "hermes-agent";
-    userEmail = "hermes-agent@qgroget.com";
+    settings = {
+      user = {
+        name = "hermes-agent";
+        email = "hermes-agent@qgroget.com";
+      };
+    };
   };
 
   programs.gh = {
     enable = true;
-    gitProtocol = "ssh";
+    settings = {
+      git_protocol = "ssh";
+    };
   };
 
   programs.home-manager.enable = true;
@@ -45,5 +52,16 @@
       publishPorts = ["127.0.0.1:12000:8080"];
       userns = "keep-id";
     };
+  };
+
+  # Declare the rootless `echo-server` the same way the server declares its own
+  # services: `qgroget.services.<name>` + subdomain/url. The traefik-router
+  # module generates the full dynamic config (router + service + cert resolver)
+  # and writes it under /var/lib/traefik/dynamic/, hot-reloaded by Traefik.
+  qgroget.traefikRouter.enable = true;
+  qgroget.services.echo = {
+    subdomain = "echo";
+    url = "http://127.0.0.1:12000";
+    type = "public";
   };
 }

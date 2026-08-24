@@ -11,6 +11,7 @@
     ./modules/desktop/hyprDesktop.nix
     ./modules/apps/desktopsApps.nix
     ./modules/shared
+    ./home/modules/traefik-router.nix
     inputs.sops-nix.homeManagerModule
     inputs.dms.homeModules.dank-material-shell
   ];

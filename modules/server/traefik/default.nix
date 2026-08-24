@@ -4,43 +4,7 @@
   pkgs,
   ...
 }: let
-  generateRouter = name: service: let
-    baseMiddlewares =
-      if builtins.hasAttr "middlewares" service
-      then service.middlewares
-      else [];
-    finalMiddlewares = baseMiddlewares ++ lib.optional (name != "portfolio") "googlenoindex";
-  in
-    {
-      rule = "Host(`${
-        if service.subdomain != ""
-        then service.subdomain + "."
-        else ""
-      }${config.qgroget.server.domain}`)";
-      entryPoints = ["websecure"];
-      service = name;
-      tls =
-        {
-          certResolver =
-            if config.qgroget.server.test.enable
-            then "staging"
-            else "production";
-        }
-        // lib.optionalAttrs (service.type == "private") {
-          options = "mtls";
-        };
-    }
-    // lib.optionalAttrs (finalMiddlewares != []) {
-      middlewares = finalMiddlewares;
-    };
-
-  generateService = name: service: {
-    loadBalancer = {
-      servers = [
-        {url = "${service.url}";}
-      ];
-    };
-  };
+  traefikLib = import ../../../lib/traefik.nix {inherit lib;};
 
   services = config.qgroget.services;
 
@@ -57,8 +21,20 @@ in {
 
     systemd.tmpfiles.rules = [
       "d /plugins-storage 0755 traefik traefik -"
-      "d /var/lib/traefik 0700 traefik traefik -"
+      "d /var/lib/traefik 0710 traefik traefik-users -"
+      "d /var/lib/traefik/dynamic 2770 traefik traefik-users -"
+      "Z /var/lib/traefik/dynamic 2770 traefik traefik-users -"
+      "L+ /var/lib/traefik/dynamic/nix-routes.toml - - - - ${traefikDynamicConfigFile}"
     ];
+
+    # Rootless users declare their own Traefik routes via Home Manager (written
+    # to /var/lib/traefik/dynamic/<username>.toml). The `traefik-users` group
+    # gates write access to that directory (mode 2770, setgid so newly created
+    # files stay in the group); Traefik reads them through the `users` file
+    # provider below.
+    users.groups.traefik-users = {};
+    users.users.traefik.extraGroups = ["traefik-users"];
+    users.users.${config.qgroget.user.username}.extraGroups = ["traefik-users"];
 
     sops = {
       secrets."server/traefik/clientCaCert" = {
@@ -76,21 +52,12 @@ in {
           {
             directory = "${config.services.traefik.dataDir}";
             user = "traefik";
-            group = "traefik";
-            mode = "u=rwx,g=rx,o=";
+            group = "traefik-users";
+            mode = "0710";
           }
         ];
       };
     };
-
-    systemd.services.traefik.preStart = ''
-      mkdir -p /run/traefik/secureConf
-      conf=$(cat ${traefikDynamicConfigFile})
-      # cat > /run/traefik/secureConf/traefik-dynamic.toml <<EOF
-      # ${traefikDynamicConfigFile}
-      # EOF
-      echo "$conf" > /run/traefik/secureConf/traefik-dynamic.toml
-    '';
 
     services.traefik = {
       enable = true;
@@ -127,10 +94,9 @@ in {
           };
         };
 
-        # set provider file to null and poit  diretory in dynamic config
+        # System dynamic config (regenerated at each rebuild).
         providers.file = {
-          filename = "";
-          directory = "/run/traefik/secureConf";
+          directory = "/var/lib/traefik/dynamic";
           watch = true;
         };
 
@@ -192,39 +158,39 @@ in {
       };
     };
 
-    qgroget.services.proxy.traefikDynamicConfig = {
-      http = {
-        routers = lib.mapAttrs (name: service: generateRouter name service) config.qgroget.services;
-        services = lib.mapAttrs (name: service: generateService name service) config.qgroget.services;
-        middlewares = {
-          googlenoindex = {
-            headers = {
-              customResponseHeaders = {
-                X-Robots-Tag = "noindex";
-              };
-            };
-          };
-
-          geoblock-fr = {
-            plugin = {
-              geoblock = {
-                silentStartUp = false;
-                allowLocalRequests = true;
-                logLocalRequests = false;
-                logAllowedRequests = false;
-                logApiRequests = true;
-                api = "https://get.geojs.io/v1/ip/country/{ip}";
-                apiTimeoutMs = 750;
-                cacheSize = 15;
-                forceMonthlyUpdate = true;
-                allowUnknownCountries = false;
-                unknownCountryApiResponse = "nil";
-                countries = ["FR"];
-              };
-            };
-          };
-        };
+    qgroget.services.proxy.traefikDynamicConfig = let
+      dynamicHttp = traefikLib.mkDynamicHttp {
+        domain = config.qgroget.server.domain;
+        testEnable = config.qgroget.server.test.enable;
+        services = config.qgroget.services;
       };
+    in {
+      http =
+        dynamicHttp
+        // {
+          middlewares =
+            dynamicHttp.middlewares
+            // {
+              geoblock-fr = {
+                plugin = {
+                  geoblock = {
+                    silentStartUp = false;
+                    allowLocalRequests = true;
+                    logLocalRequests = false;
+                    logAllowedRequests = false;
+                    logApiRequests = true;
+                    api = "https://get.geojs.io/v1/ip/country/{ip}";
+                    apiTimeoutMs = 750;
+                    cacheSize = 15;
+                    forceMonthlyUpdate = true;
+                    allowUnknownCountries = false;
+                    unknownCountryApiResponse = "nil";
+                    countries = ["FR"];
+                  };
+                };
+              };
+            };
+        };
 
       tls = {
         options = {
