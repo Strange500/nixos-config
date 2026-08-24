@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  traefikLib = import ../../lib/traefik.nix {inherit lib;};
+  traefikLib = import ../../../lib/traefik.nix {inherit lib;};
 
   services = config.qgroget.services;
 
