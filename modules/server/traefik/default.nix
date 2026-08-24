@@ -24,6 +24,7 @@ in {
       "d /var/lib/traefik 0700 traefik traefik -"
       "d /var/lib/traefik/dynamic 2770 traefik traefik-users -"
       "Z /var/lib/traefik/dynamic 2770 traefik traefik-users -"
+      "L+ /var/lib/traefik/dynamic/nix-routes.toml - - - - ${traefikDynamicConfigFile}"
     ];
 
     # Rootless users declare their own Traefik routes via Home Manager (written
@@ -57,8 +58,6 @@ in {
         ];
       };
     };
-
-    environment.etc."traefik/dynamic/nix-routes.toml".source = traefikDynamicConfigFile;
 
     services.traefik = {
       enable = true;
@@ -97,7 +96,7 @@ in {
 
         # System dynamic config (regenerated at each rebuild).
         providers.file = {
-          directory = "/etc/traefik/dynamic";
+          directory = "/var/lib/traefik/dynamic";
           watch = true;
         };
 

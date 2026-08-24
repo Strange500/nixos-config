@@ -83,9 +83,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.file."/var/lib/traefik/dynamic/${config.home.username}.toml" = {
-      source = tomlFormat.generate "traefik-router-${config.home.username}.toml" dynamicConf;
-      force = true;
-    };
+    home.activation.deployTraefikRouter = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD cp -f ${tomlFormat.generate "traefik-router-${config.home.username}.toml" dynamicConf} /var/lib/traefik/dynamic/${config.home.username}.toml
+    '';
   };
 }

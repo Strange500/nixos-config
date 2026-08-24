@@ -211,9 +211,8 @@ in {
     Z ${cfg.containerDir}/bazarr 0700 arr media -
     Z ${cfg.containerDir}/prowlarr 0700 arr media -
     Z ${cfg.containerDir}/questarr 0700 arr media -
+    L+ /var/lib/traefik/dynamic/inject-basic-arr.toml - - - - /run/traefik/secureConf/inject-basic-arr.toml
   '';
-
-  environment.etc."traefik/dynamic/inject-basic-arr.toml".source = "/run/traefik/secureConf/inject-basic-arr.toml";
 
   sops.secrets = {
     "server/arrs/username" = {
