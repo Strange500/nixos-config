@@ -4,43 +4,7 @@
   pkgs,
   ...
 }: let
-  generateRouter = name: service: let
-    baseMiddlewares =
-      if builtins.hasAttr "middlewares" service
-      then service.middlewares
-      else [];
-    finalMiddlewares = baseMiddlewares ++ lib.optional (name != "portfolio") "googlenoindex";
-  in
-    {
-      rule = "Host(`${
-        if service.subdomain != ""
-        then service.subdomain + "."
-        else ""
-      }${config.qgroget.server.domain}`)";
-      entryPoints = ["websecure"];
-      service = name;
-      tls =
-        {
-          certResolver =
-            if config.qgroget.server.test.enable
-            then "staging"
-            else "production";
-        }
-        // lib.optionalAttrs (service.type == "private") {
-          options = "mtls";
-        };
-    }
-    // lib.optionalAttrs (finalMiddlewares != []) {
-      middlewares = finalMiddlewares;
-    };
-
-  generateService = name: service: {
-    loadBalancer = {
-      servers = [
-        {url = "${service.url}";}
-      ];
-    };
-  };
+  traefikLib = import ../../lib/traefik.nix {inherit lib;};
 
   services = config.qgroget.services;
 
@@ -210,19 +174,15 @@ in {
       };
     };
 
-    qgroget.services.proxy.traefikDynamicConfig = {
-      http = {
-        routers = lib.mapAttrs (name: service: generateRouter name service) config.qgroget.services;
-        services = lib.mapAttrs (name: service: generateService name service) config.qgroget.services;
-        middlewares = {
-          googlenoindex = {
-            headers = {
-              customResponseHeaders = {
-                X-Robots-Tag = "noindex";
-              };
-            };
-          };
-
+    qgroget.services.proxy.traefikDynamicConfig = let
+      dynamicHttp = traefikLib.mkDynamicHttp {
+        domain = config.qgroget.server.domain;
+        testEnable = config.qgroget.server.test.enable;
+        services = config.qgroget.services;
+      };
+    in {
+      http = dynamicHttp // {
+        middlewares = dynamicHttp.middlewares // {
           geoblock-fr = {
             plugin = {
               geoblock = {

@@ -48,22 +48,14 @@
     };
   };
 
-  # Expose the rootless `echo-server` behind the central Traefik proxy through a
-  # Home Manager-declared route — no root, no rebuild, hot-reloaded on switch.
-  qgroget.traefikRouter = {
-    enable = true;
-    config = {
-      http = {
-        routers.echo = {
-          rule = "Host(`echo.qgroget.com`)";
-          entryPoints = ["websecure"];
-          service = "echo";
-          tls.certResolver = "production";
-        };
-        services.echo.loadBalancer.servers = [
-          {url = "http://127.0.0.1:12000";}
-        ];
-      };
-    };
+  # Declare the rootless `echo-server` the same way the server declares its own
+  # services: `qgroget.services.<name>` + subdomain/url. The traefik-router
+  # module generates the full dynamic config (router + service + cert resolver)
+  # and writes it under /var/lib/traefik/dynamic/, hot-reloaded by Traefik.
+  qgroget.traefikRouter.enable = true;
+  qgroget.services.echo = {
+    subdomain = "echo";
+    url = "http://127.0.0.1:12000";
+    type = "public";
   };
 }
