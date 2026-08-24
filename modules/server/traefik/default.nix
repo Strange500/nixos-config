@@ -21,7 +21,7 @@ in {
 
     systemd.tmpfiles.rules = [
       "d /plugins-storage 0755 traefik traefik -"
-      "d /var/lib/traefik 0700 traefik traefik -"
+      "d /var/lib/traefik 0710 traefik traefik-users -"
       "d /var/lib/traefik/dynamic 2770 traefik traefik-users -"
       "Z /var/lib/traefik/dynamic 2770 traefik traefik-users -"
       "L+ /var/lib/traefik/dynamic/nix-routes.toml - - - - ${traefikDynamicConfigFile}"
@@ -52,8 +52,8 @@ in {
           {
             directory = "${config.services.traefik.dataDir}";
             user = "traefik";
-            group = "traefik";
-            mode = "u=rwx,g=rx,o=";
+            group = "traefik-users";
+            mode = "0710";
           }
         ];
       };

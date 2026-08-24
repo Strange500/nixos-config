@@ -22,13 +22,19 @@
   # Git identity + gh CLI so the `hermes` agent can clone/commit over SSH.
   programs.git = {
     enable = true;
-    userName = "hermes-agent";
-    userEmail = "hermes-agent@qgroget.com";
+    settings = {
+      user = {
+        name = "hermes-agent";
+        email = "hermes-agent@qgroget.com";
+      };
+    };
   };
 
   programs.gh = {
     enable = true;
-    gitProtocol = "ssh";
+    settings = {
+      git_protocol = "ssh";
+    };
   };
 
   programs.home-manager.enable = true;
