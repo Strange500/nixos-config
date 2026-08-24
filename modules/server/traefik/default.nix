@@ -58,7 +58,18 @@ in {
     systemd.tmpfiles.rules = [
       "d /plugins-storage 0755 traefik traefik -"
       "d /var/lib/traefik 0700 traefik traefik -"
+      "d /var/lib/traefik/dynamic 2770 traefik traefik-users -"
+      "Z /var/lib/traefik/dynamic 2770 traefik traefik-users -"
     ];
+
+    # Rootless users declare their own Traefik routes via Home Manager (written
+    # to /var/lib/traefik/dynamic/<username>.toml). The `traefik-users` group
+    # gates write access to that directory (mode 2770, setgid so newly created
+    # files stay in the group); Traefik reads them through the `users` file
+    # provider below.
+    users.groups.traefik-users = {};
+    users.users.traefik.extraGroups = ["traefik-users"];
+    users.users.${config.qgroget.user.username}.extraGroups = ["traefik-users"];
 
     sops = {
       secrets."server/traefik/clientCaCert" = {
@@ -127,10 +138,17 @@ in {
           };
         };
 
-        # set provider file to null and poit  diretory in dynamic config
+        # System dynamic config (regenerated at each rebuild).
         providers.file = {
           filename = "";
           directory = "/run/traefik/secureConf";
+          watch = true;
+        };
+
+        # User-declared routes (rootless, via Home Manager). Hot-reloaded on
+        # change thanks to `watch`, without rebuild nor restart of Traefik.
+        providers.users.file = {
+          directory = "/var/lib/traefik/dynamic";
           watch = true;
         };
 

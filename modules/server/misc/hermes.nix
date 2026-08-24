@@ -45,6 +45,7 @@
       "nix-users"
       "systemd-journal"
       "media"
+      "traefik-users"
     ];
   };
 

@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./modules/traefik-router.nix
     inputs.quadlet-nix.homeManagerModules.quadlet
   ];
 
@@ -44,6 +45,25 @@
       image = "docker.io/mendhak/http-https-echo:31";
       publishPorts = ["127.0.0.1:12000:8080"];
       userns = "keep-id";
+    };
+  };
+
+  # Expose the rootless `echo-server` behind the central Traefik proxy through a
+  # Home Manager-declared route — no root, no rebuild, hot-reloaded on switch.
+  qgroget.traefikRouter = {
+    enable = true;
+    config = {
+      http = {
+        routers.echo = {
+          rule = "Host(`echo.qgroget.com`)";
+          entryPoints = ["websecure"];
+          service = "echo";
+          tls.certResolver = "production";
+        };
+        services.echo.loadBalancer.servers = [
+          {url = "http://127.0.0.1:12000";}
+        ];
+      };
     };
   };
 }
