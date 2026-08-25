@@ -31,5 +31,6 @@
   environment.etc."gitconfig".text = ''
     [safe]
       directory = /home/${config.qgroget.user.username}/nixos
+      directory = /mnt/data/share/nixos-config
   '';
 }
