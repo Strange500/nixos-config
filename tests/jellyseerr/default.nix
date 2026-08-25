@@ -24,7 +24,7 @@ pkgs.testers.nixosTest {
   testScript = ''
     start_all()
 
-    server.wait_for_unit("jellyseerr.service")
+    server.wait_for_unit("seerr.service")
     server.wait_for_open_port(5055)
 
     # Health check
