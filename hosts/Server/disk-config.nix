@@ -312,6 +312,7 @@
       enable = true;
       hideMounts = true;
       directories = [
+        "/home"
         "/var/lib/sops"
         "/var/lib/nixos"
         "/var/lib/bluetooth"

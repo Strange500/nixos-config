@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # `misc` host user: rootless container sandbox for self-hosted services
   # (currently the portfolio). No SSH access; managed standalone via
   # `home-manager switch --flake .#misc` (see home/misc.nix).
