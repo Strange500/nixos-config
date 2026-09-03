@@ -4,7 +4,10 @@
       auto-update = false;
       theme = "wide";
       desktop = {
-        monitors = [", preferred, auto, 1"];
+        monitors = [
+          "DP-2, preferred, 0x0, 1"
+          "HDMI-A-1, preferred, 1920x0, 1"
+        ];
       };
       remote-access = {
         enable = true;
