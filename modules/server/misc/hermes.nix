@@ -78,6 +78,11 @@
           command = "/run/current-system/sw/bin/journalctl *";
           options = ["NOPASSWD"];
         }
+        {
+          # Allow hermes to exec into the (root) hermes container for ACP
+          command = "/run/current-system/sw/bin/podman exec *";
+          options = ["NOPASSWD"];
+        }
       ];
     }
   ];
