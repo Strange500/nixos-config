@@ -171,7 +171,6 @@
       impermanence.nixosModules.impermanence
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
-      portfolio.nixosModules.default
       celler.nixosModules.cellerd
       # {
       #   nixpkgs.overlays = [
@@ -240,6 +239,17 @@
           inherit inputs;
         };
         modules = [./home/hermes.nix];
+      };
+
+      # Standalone Home Manager config for the `misc` host user, so the rootless
+      # portfolio container can be activated via `home-manager switch --flake
+      # .#misc` (touches only /home/misc, never system units or prod).
+      misc = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.${system};
+        extraSpecialArgs = {
+          inherit inputs;
+        };
+        modules = [./home/misc.nix];
       };
     };
 

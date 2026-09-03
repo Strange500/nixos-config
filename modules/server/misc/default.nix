@@ -2,7 +2,7 @@
   imports = [
     ./obsidian.nix
     ./fileServer.nix
-    ./portfolio.nix
+    ./misc.nix
     # ./forgero.nix
     ./scrutiny.nix
     ./hermes.nix
