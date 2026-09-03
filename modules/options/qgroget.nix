@@ -146,6 +146,29 @@
               default = false;
               description = "Enable VirtualBox support.";
             };
+            acp = lib.mkOption {
+              type = lib.types.submodule {
+                options = {
+                  enable = lib.mkOption {
+                    type = lib.types.bool;
+                    default = true;
+                    description = "Enable the VS Code ACP Client for Hermes Agent.";
+                  };
+                  sshHost = lib.mkOption {
+                    type = lib.types.str;
+                    default = "hermes.qgroget.com";
+                    description = ''
+                      SSH target (host or user@host) used by the ACP Client in
+                      VS Code to reach the machine running the Hermes container.
+                      The ACP Agent runs remotely via: ssh <host> podman exec -i
+                      hermes hermes acp
+                    '';
+                  };
+                };
+              };
+              default = {};
+              description = "VS Code <-> Hermes Agent connection over the ACP protocol (stdio over SSH).";
+            };
           };
           media = lib.mkOption {
             type = lib.types.bool;
