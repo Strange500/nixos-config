@@ -1,7 +1,9 @@
 {pkgs, ...}: {
   # `misc` host user: rootless container sandbox for self-hosted services
-  # (currently the portfolio). No SSH access; managed standalone via
-  # `home-manager switch --flake .#misc` (see home/misc.nix).
+  # (currently the portfolio). No SSH access. Its Home Manager config is declared
+  # once in home/misc.nix and deployed BOTH by `nixos-rebuild switch` (via
+  # home-manager.users.misc) AND manually with `home-manager switch --flake .#misc`
+  # (via the homeConfigurations.misc output).
   users.users.misc = {
     isNormalUser = true;
     home = "/home/misc";

@@ -18,9 +18,11 @@
   };
 
   # The `hermes` host user's Home Manager config (git/gh CLI + rootless quadlet
-  # sandbox) is managed STANDALONE, not here: see `home/hermes.nix` and the
-  # `homeConfigurations.hermes` flake output. The agent activates it rootlessly
-  # via `home-manager switch --flake .#hermes`, touching only /home/hermes.
+  # sandbox) is declared once in `home/hermes.nix` and deployed BOTH ways: it is
+  # registered under `home-manager.users.hermes` (see modules/system/home-manager.nix)
+  # so `nixos-rebuild switch` applies it automatically, and is exposed as the
+  # `homeConfigurations.hermes` flake output so the agent can still activate it
+  # rootlessly via `home-manager switch --flake .#hermes`, touching only /home/hermes.
 
   # Setup persistent directory for Hermes state
   systemd.tmpfiles.rules = [
