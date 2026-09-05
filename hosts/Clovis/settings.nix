@@ -25,6 +25,7 @@
         crypto = true;
       };
       gaming = true;
+      dictation = true;
     };
   };
 }
