@@ -64,4 +64,27 @@
     url = "http://127.0.0.1:12000";
     type = "public";
   };
+
+  virtualisation.quadlet.containers.echo-server-bis = {
+    autoStart = true;
+    serviceConfig = {
+      Restart = "always";
+      RestartSec = "10";
+    };
+    containerConfig = {
+      image = "docker.io/mendhak/http-https-echo:31";
+      publishPorts = ["127.0.0.1:12001:8080"];
+      userns = "keep-id";
+    };
+  };
+
+  # Declare the rootless `echo-server` the same way the server declares its own
+  # services: `qgroget.services.<name>` + subdomain/url. The traefik-router
+  # module generates the full dynamic config (router + service + cert resolver)
+  # and writes it under /var/lib/traefik/dynamic/, hot-reloaded by Traefik.
+  qgroget.services.echo-bis = {
+    subdomain = "echo-bis";
+    url = "http://127.0.0.1:12001";
+    type = "public";
+  };
 }
