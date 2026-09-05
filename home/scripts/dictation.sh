@@ -57,7 +57,7 @@ stop_and_inject() {
 
   # The recorder is a child of the PREVIOUS keypress process, so `wait` can't
   # see it. Poll until the WAV stops growing so whisper reads a complete file.
-  local size last=-1 i=0
+  local size last=-1
   for _ in $(seq 1 40); do
     size="$(stat -c %s "$WAV" 2>/dev/null || echo 0)"
     [ "$size" -gt 0 ] && [ "$size" = "$last" ] && break
