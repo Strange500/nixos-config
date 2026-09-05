@@ -39,15 +39,16 @@ in {
       GH_TOKEN = "$(cat ${config.sops.secrets."github_token".path})";
     };
     stateVersion = "25.11";
-    packages = (lib.mkIf (config.qgroget.nixos.isDesktop) [
-      pkgs.discord
-      pkgs.moonlight-qt
-      pkgs.nautilus
-      pkgs.dejavu_fonts
-      pkgs.nerd-fonts.jetbrains-mono
-    ]) ++ (lib.optionals config.qgroget.nixos.dictation [
-      dictationAgent
-    ]);
+    packages = lib.mkIf (config.qgroget.nixos.isDesktop) (
+      [
+        pkgs.discord
+        pkgs.moonlight-qt
+        pkgs.nautilus
+        pkgs.dejavu_fonts
+        pkgs.nerd-fonts.jetbrains-mono
+      ]
+      ++ lib.optionals config.qgroget.nixos.dictation [dictationAgent]
+    );
     file = {
       # Niri keybind for dictation. Always present (empty when disabled) so the
       # `include "dms/dictation.kdl"` in config.kdl never references a missing
