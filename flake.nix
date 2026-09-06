@@ -49,12 +49,12 @@
     };
 
     nur = {
-      url = "github:nix-community/NUR";
+      url = "github:nix-community/NUR?";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     impermanence = {
-      url = "github:nix-community/impermanence";
+      url = "github:nix-community/impermanence?rev=69ecf31e8fddc9354a4b418f3a517445d486bb54";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -133,7 +133,7 @@
       sops-nix.nixosModules.sops
       chaotic.nixosModules.default
       inputs.nur.modules.nixos.default
-      inputs.nur.legacyPackages.${system}.repos.iopq.modules.xraya
+      ./modules/iopq-modules/xraya.nix
       ({pkgs, ...}: {
         # Add nvf neovim to all systems
         environment.systemPackages = [
