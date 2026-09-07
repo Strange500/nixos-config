@@ -195,6 +195,11 @@
           default = true;
           description = "Enable gaming apps and configurations.";
         };
+        dictation = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable universal voice dictation (toggle agent + ydotool keyboard emulation).";
+        };
         remote-access = {
           enable = lib.mkOption {
             type = lib.types.bool;

@@ -6,5 +6,6 @@
     ../system/bluetooth/bluetooth.nix
     ../system/login/login.nix
     ../system/boot/plymouth.nix
+    ../system/dictation.nix
   ];
 }
