@@ -59,7 +59,9 @@ in {
         text =
           if config.qgroget.nixos.dictation
           then ''
-            Mod+D hotkey-overlay-title="Dictée vocale" { spawn "${lib.getExe dictationAgent}"; }
+            binds {
+              Mod+D hotkey-overlay-title="Dictée vocale" { spawn "${lib.getExe dictationAgent}"; }
+            }
           ''
           else "";
       };
