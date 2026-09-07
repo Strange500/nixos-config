@@ -18,9 +18,12 @@
     inherit services;
   };
 
+  # Filter out empty `routers` or `services` so TOML generator doesn't emit empty tables, which Traefik rejects
+  cleanHttp = lib.filterAttrs (n: v: v != {}) generatedHttp;
+
   # Per-service escape hatch (`traefikDynamicConfig`), folded at the dynamic
   # config root exactly like the server-side `mergedTraefikConfig`.
-  generated = lib.foldl' lib.recursiveUpdate {http = generatedHttp;} (
+  generated = lib.foldl' lib.recursiveUpdate {http = cleanHttp;} (
     map (svc: svc.traefikDynamicConfig) (lib.attrValues services)
   );
 

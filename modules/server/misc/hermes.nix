@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: {
   # Define the SOPS secrets for Hermes
@@ -99,6 +100,8 @@
         environments = {
           PATH = "/opt/hermes/.venv/bin:/command:/opt/hermes/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
           XDG_CONFIG_HOME = "/home/strange/.config";
+          HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
+          HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
         };
         volumes = [
           "/persist/hermes:/opt/data:Z"
@@ -131,11 +134,16 @@
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
         ];
+        environments = {
+          HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
+          HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
+          HERMES_DASHBOARD_PUBLIC_URL = "https://hermes.${config.qgroget.server.domain}";
+        };
         volumes = [
           "/persist/hermes:/opt/data:Z"
         ];
         podmanArgs = [
-          "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"127.0.0.1\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
+          "--entrypoint=[\"hermes\", \"dashboard\", \"--host\", \"0.0.0.0\", \"--port\", \"9119\", \"--no-open\", \"--skip-build\"]"
         ];
       };
       serviceConfig = {
@@ -149,11 +157,28 @@
   qgroget.services.hermes = {
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
-    type = "private";
-    middlewares = ["hermes-origin"];
-    traefikDynamicConfig = {
-      http.middlewares.hermes-origin.headers.customRequestHeaders.Origin = "http://127.0.0.1:9119";
-      http.services.hermes.loadBalancer.passHostHeader = false;
-    };
+    type = "public";
   };
+
+  services.authelia.instances.qgroget.settings.identity_providers.oidc.clients = [
+    {
+      client_id = "hermes";
+      client_name = "hermes";
+      public = true;
+      authorization_policy = "two_factor";
+      require_pkce = true;
+      pkce_challenge_method = "S256";
+      redirect_uris = [
+        "https://hermes.${config.qgroget.server.domain}/"
+        "https://hermes.${config.qgroget.server.domain}/callback"
+        "https://hermes.${config.qgroget.server.domain}/auth/callback"
+        "https://hermes.${config.qgroget.server.domain}"
+      ];
+      scopes = [
+        "openid"
+        "profile"
+        "email"
+      ];
+    }
+  ];
 }
