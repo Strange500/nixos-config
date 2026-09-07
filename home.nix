@@ -7,8 +7,15 @@
 }: let
   # Voice dictation toggle agent (issue #48). Pure user-space: toggles a
   # background `pw-record`, then transcribes (whisper-cpp) and types the result
-  # via `ydotool type` into the focused window. No root/sudo at runtime — the
-  # ydotool daemon + uinput access are provisioned by modules/system/dictation.nix.
+  # into the focused window. Because `ydotool type` assumes a US-QWERTY keymap
+  # regardless of the real layout, the text is first passed through `azerty-remap`
+  # so French AZERTY output is reproduced correctly. No root/sudo at runtime —
+  # the ydotool daemon + uinput access are provisioned by modules/system/dictation.nix.
+  azertyRemap = pkgs.writeShellApplication {
+    name = "azerty-remap";
+    runtimeInputs = [ pkgs.python3 ];
+    text = ''exec python3 ${./home/scripts/azerty_remap.py} "$@"'';
+  };
   dictationAgent = pkgs.writeShellApplication {
     name = "dictation";
     runtimeInputs = with pkgs; [
@@ -17,6 +24,7 @@
       ydotool
       libnotify # notify-send for user feedback
       coreutils # sed, tr, grep, sleep
+      azertyRemap
     ];
     text = builtins.readFile ./home/scripts/dictation.sh;
   };

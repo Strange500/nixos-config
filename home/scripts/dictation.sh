@@ -95,9 +95,11 @@ stop_and_inject() {
   fi
 
   # Type the recognized text into the focused window, preserving French
-  # accents (UTF-8). ydotool injects key events so it respects the active
-  # keyboard layout.
-  if ! echo -n "$text" | ydotool type --file - 2>/dev/null; then
+  # accents (UTF-8). `ydotool type` hardcodes a US-QWERTY keymap and ignores
+  # the active layout, so on AZERTY it would garble the text (que -> aue) and
+  # drop accented letters. `azerty-remap` rewrites the text to the US
+  # keystrokes that reproduce it on an AZERTY keyboard before injection.
+  if ! printf '%s' "$text" | azerty-remap | ydotool type --file - 2>/dev/null; then
     notify "❌ Dictée" "Échec de l'injection (ydotoold démarré ?)."
     return 1
   fi
