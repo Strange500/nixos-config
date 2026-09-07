@@ -98,6 +98,14 @@ in {
       secrets."tailscale/oauth/key" = {
       };
     };
+    # Persist Tailscale node identity/auth across reboots. Without this,
+    # impermanence wipes /var/lib/tailscale on every boot, so tailscaled loses
+    # its node key and auth → the interface never comes up automatically and
+    # the reconnect script has to re-register an ephemeral node each time.
+    environment.persistence."/persist".directories =
+      lib.mkIf (config.qgroget.nixos.remote-access.tailscale.enable) [
+        "/var/lib/tailscale"
+      ];
     environment.systemPackages =
       lib.mkIf (config.qgroget.nixos.remote-access.tailscale.enable)
       [
