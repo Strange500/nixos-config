@@ -1,6 +1,7 @@
 {...}: {
   config = {
     qgroget.nixos = {
+      auto-update = false;
       desktop = {
         monitors = [", preferred, auto, 1"];
       };
@@ -20,6 +21,7 @@
         crypto = false;
       };
       gaming = false;
+      dictation = true;
     };
   };
 }
