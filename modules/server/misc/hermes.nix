@@ -100,6 +100,8 @@
         environments = {
           PATH = "/opt/hermes/.venv/bin:/command:/opt/hermes/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
           XDG_CONFIG_HOME = "/home/strange/.config";
+          HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
+          HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
         };
         volumes = [
           "/persist/hermes:/opt/data:Z"
@@ -132,6 +134,10 @@
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
         ];
+        environments = {
+          HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
+          HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
+        };
         volumes = [
           "/persist/hermes:/opt/data:Z"
         ];
@@ -151,19 +157,30 @@
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
     type = "public";
-    middlewares = ["hermes-origin" "SSO"];
+    middlewares = ["hermes-origin"];
     traefikDynamicConfig = {
       http.middlewares.hermes-origin.headers.customRequestHeaders.Origin = "http://127.0.0.1:9119";
       http.services.hermes.loadBalancer.passHostHeader = false;
     };
   };
 
-  services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+  services.authelia.instances.qgroget.settings.identity_providers.oidc.clients = [
     {
-      domain = "hermes.${config.qgroget.server.domain}";
-      policy = "two_factor";
-      subject = [
-        "group:admin"
+      client_id = "hermes";
+      client_name = "hermes";
+      public = true;
+      authorization_policy = "two_factor";
+      require_pkce = true;
+      pkce_challenge_method = "S256";
+      redirect_uris = [
+        "https://hermes.${config.qgroget.server.domain}/"
+        "https://hermes.${config.qgroget.server.domain}/callback"
+        "https://hermes.${config.qgroget.server.domain}"
+      ];
+      scopes = [
+        "openid"
+        "profile"
+        "email"
       ];
     }
   ];
