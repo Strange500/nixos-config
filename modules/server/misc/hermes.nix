@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: {
   # Define the SOPS secrets for Hermes
@@ -149,11 +150,21 @@
   qgroget.services.hermes = {
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
-    type = "private";
-    middlewares = ["hermes-origin"];
+    type = "public";
+    middlewares = ["hermes-origin" "SSO"];
     traefikDynamicConfig = {
       http.middlewares.hermes-origin.headers.customRequestHeaders.Origin = "http://127.0.0.1:9119";
       http.services.hermes.loadBalancer.passHostHeader = false;
     };
   };
+
+  services.authelia.instances.qgroget.settings.access_control.rules = lib.mkAfter [
+    {
+      domain = "hermes.${config.qgroget.server.domain}";
+      policy = "two_factor";
+      subject = [
+        "group:admin"
+      ];
+    }
+  ];
 }
