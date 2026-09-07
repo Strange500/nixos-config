@@ -137,6 +137,7 @@
         environments = {
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
+          HERMES_DASHBOARD_PUBLIC_URL = "https://hermes.${config.qgroget.server.domain}";
         };
         volumes = [
           "/persist/hermes:/opt/data:Z"
@@ -157,11 +158,6 @@
     subdomain = "hermes";
     url = "http://127.0.0.1:9119";
     type = "public";
-    middlewares = ["hermes-origin"];
-    traefikDynamicConfig = {
-      http.middlewares.hermes-origin.headers.customRequestHeaders.Origin = "http://127.0.0.1:9119";
-      http.services.hermes.loadBalancer.passHostHeader = false;
-    };
   };
 
   services.authelia.instances.qgroget.settings.identity_providers.oidc.clients = [
@@ -175,6 +171,7 @@
       redirect_uris = [
         "https://hermes.${config.qgroget.server.domain}/"
         "https://hermes.${config.qgroget.server.domain}/callback"
+        "https://hermes.${config.qgroget.server.domain}/auth/callback"
         "https://hermes.${config.qgroget.server.domain}"
       ];
       scopes = [
