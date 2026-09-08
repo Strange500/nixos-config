@@ -6,7 +6,7 @@
 
 
 
-output "HDMI-A-1" {
+output "HDMI-A-2" {
     // Enable/disable outputs by their names.
     // You can find output names using `nirictl outputs`.
  
