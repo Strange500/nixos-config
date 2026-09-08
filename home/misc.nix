@@ -16,17 +16,21 @@
 
   programs.home-manager.enable = true;
 
-  # Redeploy wrapper: a stable-path script (no sudoers escaping of `:`/`#` in the
-  # flake URL) that the Hermes agent calls via `sudo -u misc` after bumping the
-  # `portfolio` flake input or updating content. Resolves home-manager from the
-  # profile (so it survives activations) and switches the misc generation only.
+  # Redeploy wrapper: builds the `misc` home-configuration's activation package
+  # from the pinned flake and runs it. This is the rootless, CLI-free way to do
+  # what `home-manager switch` does: `nix build
+  # ...#homeConfigurations.misc.activationPackage` (a "home-manager-generation"
+  # whose `activate` script performs the switch + backups + systemd-user reload).
+  # No dependence on a `home-manager` CLI being present in the `misc` profile.
+  # Hermes calls this via `sudo -u misc /home/misc/.local/bin/deploy-portfolio`.
   home.file.".local/bin/deploy-portfolio" = {
     executable = true;
     text = ''
       #!/usr/bin/env bash
       set -euo pipefail
-      export PATH="/home/misc/.nix-profile/bin:''${PATH}"
-      exec home-manager switch --flake "github:strange500/nixos-config#misc" -b backup "$@"
+      FLAKE="github:strange500/nixos-config#homeConfigurations.misc.activationPackage"
+      out="$(nix --extra-experimental-features 'nix-command flakes' build "$FLAKE" --no-link --print-out-paths)"
+      exec "$out/activate"
     '';
   };
 
