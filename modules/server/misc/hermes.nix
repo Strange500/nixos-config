@@ -87,11 +87,13 @@
         # the systemd user unit). Runs strictly as `misc` — touches only
         # /home/misc, NEVER system units or prod. No arbitrary args beyond the
         # wrapper script, which hardcodes the flake URL.
-        {
-          command = "/home/misc/.local/bin/deploy-portfolio";
-          options = ["NOPASSWD"];
-          runAs = "misc";
-        }
+        runAs = ["misc"];
+        commands = [
+          {
+            command = "/home/misc/.local/bin/deploy-portfolio";
+            options = ["NOPASSWD"];
+          }
+        ];
       ];
     }
   ];
