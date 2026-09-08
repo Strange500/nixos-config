@@ -91,7 +91,7 @@
     # wrapper script, which hardcodes the flake URL.
     {
       users = ["hermes"];
-      runAs = ["misc"];
+      runAs = "misc";
       commands = [
         {
           command = "/home/misc/.local/bin/deploy-portfolio";
