@@ -1284,11 +1284,11 @@
         "systems": "systems_7"
       },
       "locked": {
-        "lastModified": 1788794854,
-        "narHash": "sha256-QyAJRRb1jAswuv4wlMBJdCxvqQ3TYh8/Nl6/HAtVBdc=",
+        "lastModified": 1788891287,
+        "narHash": "sha256-68J85us2H8ufkln6W7cjqAkgyG15eM0ePJK3g5oXrGU=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "6395e723ca066516eff7046e0090db9af08d2d91",
+        "rev": "9107b383344e9096c936e4883f5526e4f55402a9",
         "type": "github"
       },
       "original": {
