@@ -16,6 +16,20 @@
 
   programs.home-manager.enable = true;
 
+  # Redeploy wrapper: a stable-path script (no sudoers escaping of `:`/`#` in the
+  # flake URL) that the Hermes agent calls via `sudo -u misc` after bumping the
+  # `portfolio` flake input or updating content. Resolves home-manager from the
+  # profile (so it survives activations) and switches the misc generation only.
+  home.file.".local/bin/deploy-portfolio" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export PATH="/home/misc/.nix-profile/bin:''${PATH}"
+      exec home-manager switch --flake "github:strange500/nixos-config#misc" -b backup "$@"
+    '';
+  };
+
   # Rootless portfolio: run the real Next.js standalone production server
   # (`server.js`, not a static export) directly, as a systemd user unit under
   # the `misc` user. `home-manager switch --flake .#misc` touches only
