@@ -41,6 +41,7 @@
         "/etc/NetworkManager"
         "/etc/ssh"
         "/root/.ssh"
+        "/var/lib/tailscale"
       ];
       files = [
         "/etc/machine-id"

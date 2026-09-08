@@ -321,6 +321,7 @@
         "/var/lib/systemd"
         "/etc/NetworkManager"
         "/root/.ssh"
+        "/var/lib/tailscale"
       ];
       files = [
         "/etc/machine-id"
