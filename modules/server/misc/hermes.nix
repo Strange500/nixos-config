@@ -83,6 +83,22 @@
         }
       ];
     }
+    # Scoped portfolio redeploy: let the Hermes agent trigger a rootless
+    # `home-manager switch` of the `misc` user's generation (rebuilds the
+    # Next.js portfolio from the pinned `portfolio` flake input and restarts
+    # the systemd user unit). Runs strictly as `misc` — touches only
+    # /home/misc, NEVER system units or prod. No arbitrary args beyond the
+    # wrapper script, which hardcodes the flake URL.
+    {
+      users = ["hermes"];
+      runAs = "misc";
+      commands = [
+        {
+          command = "/home/misc/.local/bin/deploy-portfolio";
+          options = ["NOPASSWD"];
+        }
+      ];
+    }
   ];
 
   # Deploy Hermes Agent via Quadlet
