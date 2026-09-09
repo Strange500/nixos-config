@@ -5,10 +5,6 @@
 }: let
   cfg = config.qgroget.server.comin;
 in {
-  options.qgroget.server.comin = {
-    enable = lib.mkEnableOption "comin GitOps deployment for the Server host";
-  };
-
   config = lib.mkIf cfg.enable {
     services.comin = {
       enable = true;
