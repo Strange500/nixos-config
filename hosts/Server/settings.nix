@@ -6,6 +6,7 @@
         test.enable = false;
         calibre-importer.enable = true;
         grimmory.enable = true;
+        comin.enable = true;
       };
       nixos = {
         auto-update = false;

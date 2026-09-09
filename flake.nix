@@ -107,6 +107,10 @@
       url = "github:blitz/celler";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    comin = {
+      url = "github:nlewo/comin/v0.14.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     scrutiny-nixpkgs.url = "github:Samasaur1/nixpkgs/3d83e50bd8f1336dfc55c627fdf52f96512ef8f6";
   };
 
@@ -128,6 +132,7 @@
     nvf,
     game-installer,
     celler,
+    comin,
     scrutiny-nixpkgs,
     ...
   } @ inputs: let
@@ -181,6 +186,7 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       celler.nixosModules.cellerd
+      comin.nixosModules.comin
       # {
       #   nixpkgs.overlays = [
       #     (final: prev: {

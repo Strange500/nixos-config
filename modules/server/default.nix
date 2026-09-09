@@ -14,6 +14,7 @@
     ./backup
     ./misc
     ./automation
+    ./comin.nix
     # ./homeAssistant
   ];
 }
