@@ -106,6 +106,9 @@
         grimmory = {
           enable = lib.mkEnableOption "Grimmory eBook and Manga Organizer/Reader";
         };
+        comin = {
+          enable = lib.mkEnableOption "comin GitOps deployment for the Server host";
+        };
       };
       nixos = {
         auto-update = lib.mkOption {
