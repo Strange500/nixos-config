@@ -75,14 +75,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # PR-preview build of the portfolio, pinned to the feature branch under
-    # review. Served privately at test-portfolio.qgroget.com (rootless service
-    # under the `hermes` host user) so a PR can be reviewed before merge.
-    portfolio-test = {
-      url = "github:strange500/nextPortfolio/feat/resume-us-ats-pipeline";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     dms = {
       url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -126,7 +118,6 @@
     impermanence,
     quadlet-nix,
     portfolio,
-    portfolio-test,
     jovian-nixos,
     rust-overlay,
     nvf,
