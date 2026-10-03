@@ -67,6 +67,8 @@ in {
 
   systemd.tmpfiles.rules = [
     "d ${repoPath} 0750 restic restic - -"
+    "d /var/lib/restic 0750 restic restic - -"
+    "d /var/cache/restic 0750 restic restic - -"
   ];
 
   # Capability wrapper limited to restic group
@@ -152,6 +154,12 @@ in {
           onFailure = ["backup-failure-notify@%n.service"];
           serviceConfig = {
             Type = "oneshot";
+            User = "restic";
+            Group = "restic";
+            Environment = [
+              "HOME=/var/lib/restic"
+              "XDG_CACHE_HOME=/var/cache/restic"
+            ];
             ExecStart = pkgs.writeShellScript "restic-maintenance" ''
               set -euo pipefail
               for name in ${lib.concatMapStringsSep " " (e: lib.escapeShellArg e.name) backupsList}; do
