@@ -1,8 +1,15 @@
 {
   config,
   lib,
+  pkgs,
   ...
-}: {
+}: let
+  pinned = import ../container-images.nix { inherit pkgs lib; };
+  vaultwardenImage = pinned.mkPinnedImage {
+    imageName = "docker.io/vaultwarden/server";
+    imageDigest = "sha256:1587c45feaa479f1f5e8af3b00eded36bff77bcf1880cf8dbf0541706dd470e0";
+  };
+in {
   qgroget.services = {
     vaultwarden = {
       subdomain = "vaultwarden";
@@ -48,7 +55,7 @@
       autoStart = true;
 
       containerConfig = {
-        image = "docker.io/vaultwarden/server:latest";
+        image = "docker-archive:${vaultwardenImage}";
         user = "${toString config.users.users.vaultwarden.uid}:${toString config.users.groups.password-manager.gid}";
 
         # Environment variables

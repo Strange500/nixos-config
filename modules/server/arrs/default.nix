@@ -61,6 +61,16 @@
     questarr = "ghcr.io/doezer/questarr:latest";
   };
 
+  # Nix-pinned images (content-addressed in /nix/store, updated on rebuild).
+  # See modules/server/container-images.nix for the mechanics + hash bootstrap.
+  pin = import ../container-images.nix { inherit pkgs lib; };
+  pinnedSonarr = pin.mkPinnedImage {
+    # lscr.io/linuxserver/sonarr redirects to ghcr.io/linuxserver/sonarr; the
+    # digest below is read from the ghcr.io registry directly.
+    imageName = "ghcr.io/linuxserver/sonarr";
+    imageDigest = "sha256:f247545d23ba8b233d6604575347e48a623fe6ad75dda02348bf81917f3b5c06";
+  };
+
   quiClientId = "KddfAIwLB0R5G.r3UlGpXmoSPmpy9XxXc9AsbBBPbqrgpRv4RHOHQhUkS.gkZyfUswykmCz0";
 
   inherit (config.virtualisation.quadlet) pods;
@@ -290,7 +300,7 @@ in {
           {
             name = cfg.containers.sonarr;
             pod = pods.${cfg.podName}.ref;
-            image = images.sonarr;
+            image = "docker-archive:${pinnedSonarr}";
             volumes = [
               "${cfg.containerDir}/sonarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
