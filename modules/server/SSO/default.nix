@@ -1,5 +1,6 @@
-{config, ...}: let
+{config, pkgs, lib, ...}: let
   authelia = "authelia-qgroget";
+  images = import ../images.nix { inherit pkgs lib; };
 in {
   systemd.tmpfiles.rules = [
     "d /var/lib/${authelia}/logs 0700 ${authelia} ${authelia} - -"
@@ -259,7 +260,7 @@ in {
         autoStart = true;
         containerConfig = {
           name = "lldap-pg";
-          image = "postgres:15-alpine";
+          image = "docker-archive:${images.postgres}";
           publishPorts = [
             "5434:5432"
           ];

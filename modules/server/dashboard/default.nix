@@ -4,6 +4,7 @@
   pkgs,
   ...
 }: let
+  images = import ../images.nix { inherit pkgs lib; };
   icons = {
     jellyfin = "sh-jellyfin";
     adguardhome = "sh-adguard-home";
@@ -173,7 +174,7 @@ in {
         autoStart = true;
         containerConfig = {
           name = "dashy";
-          image = "lissy93/dashy:latest";
+          image = "docker-archive:${images.dashy}";
           publishPorts = [
             "2659:8080"
           ];

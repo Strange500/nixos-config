@@ -49,28 +49,9 @@
   };
   traefikHeaderSecret = tomlFmt.generate "inject-basic-arr.tpl.toml" traefikHeaderRaw;
 
-  images = {
-    sonarrAnime = "lscr.io/linuxserver/sonarr:latest";
-    radarrAnime = "lscr.io/linuxserver/radarr:latest";
-    sonarr = "lscr.io/linuxserver/sonarr:latest";
-    radarr = "lscr.io/linuxserver/radarr:latest";
-    bazarr = "lscr.io/linuxserver/bazarr:latest";
-    flaresolverr = "ghcr.io/flaresolverr/flaresolverr:latest";
-    prowlarr = "lscr.io/linuxserver/prowlarr:latest";
-    qui = "ghcr.io/autobrr/qui:latest";
-    questarr = "ghcr.io/doezer/questarr:latest";
-  };
-
   # Nix-pinned images (content-addressed in /nix/store, updated on rebuild).
-  # See modules/server/container-images.nix for the mechanics + hash bootstrap.
-  pin = import ../container-images.nix { inherit pkgs lib; };
-  pinnedSonarr = pin.mkPinnedImage {
-    # lscr.io/linuxserver/sonarr redirects to ghcr.io/linuxserver/sonarr; the
-    # digest below is read from the ghcr.io registry directly.
-    imageName = "ghcr.io/linuxserver/sonarr";
-    imageDigest = "sha256:f247545d23ba8b233d6604575347e48a623fe6ad75dda02348bf81917f3b5c06";
-    sha256 = "sha256-gAsW1bJZUxVxcg6pex9Iu1LqSI7LwVq+vP3xm8Yk+84=";
-  };
+  # Central registry lives in modules/server/images.nix.
+  images = import ../images.nix { inherit pkgs lib; };
 
   quiClientId = "KddfAIwLB0R5G.r3UlGpXmoSPmpy9XxXc9AsbBBPbqrgpRv4RHOHQhUkS.gkZyfUswykmCz0";
 
@@ -301,7 +282,7 @@ in {
           {
             name = cfg.containers.sonarr;
             pod = pods.${cfg.podName}.ref;
-            image = "docker-archive:${pinnedSonarr}";
+            image = "docker-archive:${images.sonarr}";
             volumes = [
               "${cfg.containerDir}/sonarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -316,7 +297,7 @@ in {
         containerConfig = {
           name = cfg.containers.qui;
           pod = pods.${cfg.podName}.ref;
-          image = images.qui;
+          image = "docker-archive:${images.qui}";
           environmentFiles = [
             config.sops.secrets."server/qui/env".path
           ];
@@ -340,7 +321,7 @@ in {
           {
             name = cfg.containers.radarr;
             pod = pods.${cfg.podName}.ref;
-            image = images.radarr;
+            image = "docker-archive:${images.radarr}";
             volumes = [
               "${cfg.containerDir}/radarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -356,7 +337,7 @@ in {
           {
             name = cfg.containers.sonarrAnime;
             pod = pods.${cfg.podName}.ref;
-            image = images.sonarrAnime;
+            image = "docker-archive:${images.sonarr}";
             volumes = [
               "${cfg.containerDir}/sonarr-anime/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -372,7 +353,7 @@ in {
           {
             name = cfg.containers.radarrAnime;
             pod = pods.${cfg.podName}.ref;
-            image = images.radarrAnime;
+            image = "docker-archive:${images.radarr}";
             volumes = [
               "${cfg.containerDir}/radarr-anime/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -388,7 +369,7 @@ in {
           {
             name = cfg.containers.prowlarr;
             pod = pods.${cfg.podName}.ref;
-            image = images.prowlarr;
+            image = "docker-archive:${images.prowlarr}";
             volumes = [
               "${cfg.containerDir}/prowlarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -404,7 +385,7 @@ in {
           {
             name = cfg.containers.bazarr;
             pod = pods.${cfg.podName}.ref;
-            image = images.bazarr;
+            image = "docker-archive:${images.bazarr}";
             volumes = [
               "${cfg.containerDir}/bazarr/config:/config:Z"
               "${cfg.mediaDir}:/media:Z"
@@ -419,7 +400,7 @@ in {
         containerConfig = {
           name = cfg.containers.questarr;
           pod = pods.${cfg.podName}.ref;
-          image = images.questarr;
+          image = "docker-archive:${images.questarr}";
           environments = {
             PUID = toString config.users.users.arr.uid;
             PGID = toString config.users.groups.media.gid;
