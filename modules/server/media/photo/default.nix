@@ -266,6 +266,16 @@ in {
     "Z ${config.qgroget.server.containerDir}/immich-pg/data 0700 immich-pg immich -"
   ];
 
+  qgroget.backups.immich-db = {
+    paths = [
+      "${config.qgroget.server.containerDir}/immich-pg/data"
+    ];
+    systemdUnits = [
+      "immich-server.service"
+      "immich-pg.service"
+    ];
+  };
+
   qgroget.services.immich = {
     subdomain = "immich";
     url = "http://[::1]:${toString cfg.port}";
