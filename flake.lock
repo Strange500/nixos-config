@@ -1415,6 +1415,26 @@
         "type": "github"
       }
     },
+    "nixos-hardware": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1790948122,
+        "narHash": "sha256-fDMYyzY1lI5b8RuCMrvoaIgTeRwNnTG4dNk1ucROlQE=",
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "rev": "0953bb1a609df63013176e3463393f8df993d3ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixos-hardware",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "celler": "celler",
@@ -1430,6 +1450,7 @@
         "impermanence": "impermanence",
         "jovian-nixos": "jovian-nixos",
         "nix-jetbrains-plugins": "nix-jetbrains-plugins",
+        "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",
         "nvf": "nvf",
