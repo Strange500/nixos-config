@@ -90,6 +90,10 @@ in {
     "git/ssh/private" = {
       mode = "0600";
     };
+    # URL of the self-hosted n8n Telegram-alert webhook (the path is the secret).
+    "n8n/alertWebhookUrl" = {
+      mode = "0400";
+    };
   };
 
   services.restic.backups = backupsAttrset;
@@ -145,6 +149,7 @@ in {
         };
         restic-maintenance = {
           description = "Restic prune & check (all repos)";
+          onFailure = ["backup-failure-notify@%n.service"];
           serviceConfig = {
             Type = "oneshot";
             ExecStart = pkgs.writeShellScript "restic-maintenance" ''
@@ -163,6 +168,31 @@ in {
           };
         };
       }
+      {
+        # OnFailure target for every backup unit: posts a Telegram alert via the
+        # self-hosted n8n webhook. %i carries the failed unit's name.
+        "backup-failure-notify@" = {
+          description = "Notify (Telegram via n8n) about failed backup unit %i";
+          serviceConfig = {
+            Type = "oneshot";
+            Nice = 10;
+            ExecStart = "${pkgs.writeShellScript "backup-failure-notify" ''
+              set -euo pipefail
+              unit="$1"
+              host="$(hostname)"
+              title="Backup échoué ($host)"
+              msg="$unit a échoué le $(date '+%Y-%m-%d %H:%M') sur $host. Diagnostic: journalctl -u $unit"
+              payload="$(${pkgs.jq}/bin/jq -nc --arg t "$title" --arg x "$msg" '{title:$t, text:$x}')"
+              ${pkgs.curl}/bin/curl -fsS -m 30 -X POST \
+                -H 'Content-Type: application/json' \
+                --data "$payload" \
+                "$(cat ${config.sops.secrets."n8n/alertWebhookUrl".path})"
+            ''} %i";
+          };
+        };
+        # Alert (n8n/Telegram) if the weekly Borg push to the pi fails.
+        "borgbackup-job-sunday-backup".onFailure = ["backup-failure-notify@%n.service"];
+      }
     ]
     # Per-backup network deps
     ++ (map
@@ -172,6 +202,7 @@ in {
       in {
         "restic-backups-${name}" = {
           wantedBy = lib.mkForce []; # ensure no auto-start
+          onFailure = ["backup-failure-notify@%n.service"];
           # If some backups need network (e.g., rclone/rest-server)
           unitConfig = lib.mkIf requiresNet {
             Wants = ["network-online.target"];
