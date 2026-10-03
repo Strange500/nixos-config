@@ -26,13 +26,14 @@
     {
       imageName,
       imageDigest,
+      # Flat sha256 (nix SRI) of the skopeo docker-archive output. Bootstrap with
+      # the `lib.fakeSha256` default: the FIRST build of the image fails with
+      # `hash mismatch ... got sha256-<REAL>`, and you paste that value here.
+      sha256 ? lib.fakeSha256,
       finalImageName ? imageName,
       finalImageTag ? "latest",
     }:
     pkgs.dockerTools.pullImage {
-      inherit imageName imageDigest finalImageName finalImageTag;
-      # Placeholder — replace with the flat sha256 revealed by the first build
-      # (`hash mismatch ... got sha256-...`). See header note.
-      sha256 = lib.fakeSha256;
+      inherit imageName imageDigest sha256 finalImageName finalImageTag;
     };
 }

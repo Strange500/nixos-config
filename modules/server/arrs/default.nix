@@ -69,6 +69,7 @@
     # digest below is read from the ghcr.io registry directly.
     imageName = "ghcr.io/linuxserver/sonarr";
     imageDigest = "sha256:f247545d23ba8b233d6604575347e48a623fe6ad75dda02348bf81917f3b5c06";
+    sha256 = "sha256-gAsW1bJZUxVxcg6pex9Iu1LqSI7LwVq+vP3xm8Yk+84=";
   };
 
   quiClientId = "KddfAIwLB0R5G.r3UlGpXmoSPmpy9XxXc9AsbBBPbqrgpRv4RHOHQhUkS.gkZyfUswykmCz0";
