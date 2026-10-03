@@ -1,8 +1,10 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }: let
+  images = import ../images.nix { inherit pkgs lib; };
   honchoInitSql = pkgs.writeText "honcho-init.sql" ''
     CREATE EXTENSION IF NOT EXISTS vector;
   '';
@@ -40,7 +42,7 @@ in {
       containerConfig = {
         name = "honcho-db";
         pod = pods.honcho.ref;
-        image = "docker.io/pgvector/pgvector:pg15";
+        image = "docker-archive:${images.pgvector}";
         environments = {
           POSTGRES_DB = "honcho";
           POSTGRES_USER = "honcho";
@@ -64,7 +66,7 @@ in {
       containerConfig = {
         name = "honcho-redis";
         pod = pods.honcho.ref;
-        image = "docker.io/redis:8.2";
+        image = "docker-archive:${images.redis}";
         volumes = [
           "/opt/data/honcho/redis:/data:Z"
         ];
@@ -80,7 +82,7 @@ in {
       containerConfig = {
         name = "honcho-api";
         pod = pods.honcho.ref;
-        image = "ghcr.io/plastic-labs/honcho:latest";
+        image = "docker-archive:${images.honcho}";
         environmentFiles = [
           "${config.sops.secrets."server/honcho/env".path}"
         ];
@@ -112,7 +114,7 @@ in {
       containerConfig = {
         name = "honcho-deriver";
         pod = pods.honcho.ref;
-        image = "ghcr.io/plastic-labs/honcho:latest";
+        image = "docker-archive:${images.honcho}";
         environmentFiles = [
           "${config.sops.secrets."server/honcho/env".path}"
         ];

@@ -1,8 +1,11 @@
 {
   config,
   lib,
+  pkgs,
   ...
-}: {
+}: let
+  images = import ../images.nix { inherit pkgs lib; };
+in {
   qgroget.services = {
     vaultwarden = {
       subdomain = "vaultwarden";
@@ -48,7 +51,7 @@
       autoStart = true;
 
       containerConfig = {
-        image = "docker.io/vaultwarden/server:latest";
+        image = "docker-archive:${images.vaultwarden}";
         user = "${toString config.users.users.vaultwarden.uid}:${toString config.users.groups.password-manager.gid}";
 
         # Environment variables

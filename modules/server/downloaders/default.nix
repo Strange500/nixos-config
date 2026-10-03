@@ -50,11 +50,7 @@
     Restart = "unless-stopped";
   };
 
-  images = {
-    gluetun = "qmcgaw/gluetun";
-    qbittorrent = "lscr.io/linuxserver/qbittorrent:latest";
-    nicotinePlus = "ghcr.io/fletchto99/nicotine-plus-docker:latest";
-  };
+  images = import ../images.nix { inherit pkgs lib; };
 
   ini = pkgs.formats.ini {};
 
@@ -303,7 +299,7 @@ in {
         containerConfig = {
           name = cfg.containers.gluetun;
           pod = pods.${cfg.podName}.ref;
-          image = images.gluetun;
+          image = "docker-archive:${images.gluetun}";
           environmentFiles = [
             config.sops.secrets."server/gluetun/env".path
           ];
@@ -324,7 +320,7 @@ in {
           {
             name = cfg.containers.qbittorrent;
             pod = pods.${cfg.podName}.ref;
-            image = images.qbittorrent;
+            image = "docker-archive:${images.qbittorrent}";
             environments =
               commonEnv
               // {
@@ -357,7 +353,7 @@ in {
         containerConfig =
           {
             name = cfg.containers.qbittorrentBis;
-            image = images.qbittorrent;
+            image = "docker-archive:${images.qbittorrent}";
             pod = pods.${cfg.podName}.ref;
             environments =
               commonEnv

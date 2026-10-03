@@ -1,4 +1,6 @@
-{config, ...}: {
+{config, pkgs, lib, ...}: let
+  images = import ../images.nix { inherit pkgs lib; };
+in {
   qgroget.services.obsidian = {
     subdomain = "obsidian";
     url = "http://127.0.0.1:5984";
@@ -40,7 +42,7 @@
       autoStart = true;
       containerConfig = {
         name = "obsidian-livesync";
-        image = "couchdb:latest";
+        image = "docker-archive:${images.couchdb}";
         environmentFiles = [
           "${config.sops.secrets."server/obsidian-livesync/env".path}"
         ];

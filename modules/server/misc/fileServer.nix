@@ -1,8 +1,11 @@
 {
   config,
   pkgs,
+  lib,
   ...
-}: {
+}: let
+  images = import ../images.nix { inherit pkgs lib; };
+in {
   qgroget.services.file = {
     subdomain = "file";
     url = "http://127.0.0.1:8095";
@@ -27,7 +30,7 @@
       autoStart = true;
       containerConfig = {
         name = "file-server";
-        image = "docker.io/caddy:alpine";
+        image = "docker-archive:${images.caddy}";
         publishPorts = ["8095:8095"];
         volumes = [
           "/etc/caddy/file-server.Caddyfile:/etc/caddy/Caddyfile:ro"

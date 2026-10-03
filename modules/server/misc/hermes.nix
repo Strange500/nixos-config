@@ -3,7 +3,9 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  images = import ../images.nix { inherit pkgs lib; };
+in {
   # Define the SOPS secrets for Hermes
   sops.secrets."server/hermes/env" = {};
 
@@ -107,7 +109,7 @@
       autoStart = true;
       containerConfig = {
         name = "hermes";
-        image = "docker.io/nousresearch/hermes-agent:latest";
+        image = "docker-archive:${images.hermes}";
         pod = config.virtualisation.quadlet.pods.honcho.ref;
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
@@ -144,7 +146,7 @@
       autoStart = true;
       containerConfig = {
         name = "hermes-dashboard";
-        image = "docker.io/nousresearch/hermes-agent:latest";
+        image = "docker-archive:${images.hermes}";
         networks = ["host"];
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"

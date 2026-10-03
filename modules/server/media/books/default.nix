@@ -6,6 +6,7 @@
 }: let
   cfg = config.qgroget.server.calibre-importer;
   grimmoryCfg = config.qgroget.server.grimmory;
+  images = import ../../images.nix { inherit pkgs lib; };
 in {
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
@@ -26,7 +27,7 @@ in {
         autoStart = true;
         containerConfig = {
           name = "calibre-web-automated";
-          image = "docker.io/crocodilestick/calibre-web-automated:latest";
+          image = "docker-archive:${images.calibre}";
           environments = {
             PUID = "972";
             PGID = "973";
@@ -72,7 +73,7 @@ in {
         autoStart = true;
         containerConfig = {
           name = "mariadb";
-          image = "lscr.io/linuxserver/mariadb:11.4.8";
+          image = "docker-archive:${images.mariadb}";
           pod = "grimmory-pod.pod";
           environments = {
             PUID = "972";
@@ -93,7 +94,7 @@ in {
         autoStart = true;
         containerConfig = {
           name = "grimmory";
-          image = "docker.io/grimmory/grimmory:latest";
+          image = "docker-archive:${images.grimmory}";
           pod = "grimmory-pod.pod";
           environments = {
             USER_ID = "972";
