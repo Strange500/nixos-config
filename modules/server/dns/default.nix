@@ -22,6 +22,7 @@
         ];
         bind_hosts = [
           "127.0.0.1"
+          "::1"
           "${config.qgroget.server.network.ip}"
         ];
         upstream_dns = [
@@ -60,9 +61,9 @@
     enable = true;
     settings = {
       server = {
-        interface = ["127.0.0.1"];
+        interface = ["127.0.0.1" "::1"];
         port = 5335;
-        access-control = ["127.0.0.1 allow"];
+        access-control = ["127.0.0.1 allow" "::1 allow"];
         harden-glue = true;
         harden-dnssec-stripped = true;
         use-caps-for-id = false;
