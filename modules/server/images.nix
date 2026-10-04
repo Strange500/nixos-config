@@ -101,8 +101,8 @@ in {
   };
   dashy = pin.mkPinnedImage {
     imageName = "docker.io/lissy93/dashy";
-    imageDigest = "sha256:7d08e815d937e62d14dba19a851d6e507bb48852bb5dc7b870645d43ccaabc9a";
-    sha256 = "sha256-sswAVkz100jGda95iRLQKMQ2hc8IYw1MQsz+1hyTp/I=";
+    imageDigest = "sha256:2b9be857a826a4b3dfe95f55ce61a467e63efec1a12ba9e25529f50bf658cfba";
+    sha256 = "sha256-IVzqAed1tZEe5AyFdJGmQLU31wUsUnoiSPvT9KK7nlY=";
   };
 
   # --- vaultwarden ---
