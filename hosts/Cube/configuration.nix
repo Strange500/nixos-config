@@ -90,6 +90,26 @@
     };
   };
 
+  # --- Gaming tuning (Cube-specific) ---
+  # Low-latency desktop kernel
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+
+  boot.kernelParams = [
+    "amd_pstate=active" # prefer amd-pstate EPP governor for lower latency
+    "amdgpu.ppfeaturemask=0xffffffff" # unlock CoreCtrl undervolt/OC/fan control
+  ];
+
+  # esync/fsync (Proton/Wine) needs a much higher map count
+  boot.kernel.sysctl."vm.max_map_count" = 2147483642;
+
+  environment.systemPackages = with pkgs; [
+    mangohud # FPS overlay + framerate limiter
+    corectrl # AMD GPU/CPU tuning GUI
+    heroic # Epic/GOG launcher
+    lutris # non-Steam launcher
+    gamescope # per-game compositor (HDR, upscale, nested)
+  ];
+
   boot.loader.grub = {
     enable = true;
     efiSupport = true;
