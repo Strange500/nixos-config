@@ -67,8 +67,8 @@ in {
   # --- misc infra ---
   caddy = pin.mkPinnedImage {
     imageName = "docker.io/library/caddy";
-    imageDigest = "sha256:881bbc60f9986d5ab8e7cfd6cf7e4ef3c9c0439fef2429d035d065577882f028";
-    sha256 = "sha256-1d80xW7ArVmYwcYfZ5beQwSRTJUnuySqUEGLwyar4Ig=";
+    imageDigest = "sha256:d8542f48d34a9cf4e4c11a478865229840e87e4c96ea3f439101f31a5d35f75f";
+    sha256 = "sha256-9s0U+Lt1dF5BIOxs8Z4uvwowHaJGO7xWBSSQOXm3pfw=";
     finalImageTag = "alpine";
   };
   pgvector = pin.mkPinnedImage {
