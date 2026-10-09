@@ -1529,11 +1529,11 @@
         "systems": "systems_9"
       },
       "locked": {
-        "lastModified": 1791016738,
-        "narHash": "sha256-fJfkP7I6tyjRbk7EDxUDAOUQ0437jOW6Q0VkzwlHts0=",
+        "lastModified": 1791557002,
+        "narHash": "sha256-Y5dbnCA7ZeW54QYG+jRi/DZGew1Itjc3z2W2rofK6ms=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "b7aee9822d6993de854339bf4c36f3c134dba6f6",
+        "rev": "4b00e928b4790f53a7bdd92b74b0b74d567afec2",
         "type": "github"
       },
       "original": {
