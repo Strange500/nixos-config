@@ -80,6 +80,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Private preview instance (test-portfolio.qgroget.com, mTLS) served
+    # rootless under the `hermes` user. Pinned to nextPortfolio main so the
+    # current CV/portfolio changes can be reviewed before promoting prod.
+    portfolio-test = {
+      url = "github:strange500/nextPortfolio";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     dms = {
       url = "github:AvengeMedia/DankMaterialShell/stable";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -123,6 +131,7 @@
     impermanence,
     quadlet-nix,
     portfolio,
+    portfolio-test,
     jovian-nixos,
     rust-overlay,
     nvf,
