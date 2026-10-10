@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applications · Job Dashboard</title>
+<style>
+  :root {
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#2a3340;
+    --txt:#e6edf3; --muted:#8b98a5; --accent:#4f8cff; --accent2:#56d364;
+    --g1:#ffcf57; --g2:#ff8c42; --g3:#ff5f8f; --g4:#a3ffbf; --g5:#ff7b7b;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--txt); font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; padding:16px; }
+  h1 { font-size:18px; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+  h1 span { font-size:12px; color:var(--muted); font-weight:400; }
+  .bar { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .btn { background:var(--panel2); color:var(--txt); border:1px solid var(--line); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px; }
+  .btn:hover { border-color:var(--accent); }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:#0b0f17; font-weight:600; }
+  .stats { display:flex; gap:6px; flex-wrap:wrap; }
+  .stat { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:4px 10px; font-size:12px; color:var(--muted); }
+  .stat b { color:var(--txt); }
+  .kanban { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:start; }
+  @media(max-width:1100px){ .kanban{grid-template-columns:repeat(2,1fr);} }
+  @media(max-width:640px){ .kanban{grid-template-columns:1fr;} }
+  .col { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px; }
+  .col h2 { font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:8px; display:flex; justify-content:space-between; }
+  .col h2 b { color:var(--txt); }
+  .card { background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:10px; margin-bottom:8px; cursor:pointer; transition:border-color .15s; position:relative; }
+  .card:hover { border-color:var(--accent); }
+  .card .c { font-weight:600; }
+  .card .t { font-size:12px; color:var(--muted); margin-top:2px; }
+  .card .meta { font-size:11px; color:var(--muted); margin-top:6px; display:flex; gap:8px; flex-wrap:wrap; }
+  .tag { background:rgba(79,140,255,.12); color:var(--g2); border-radius:4px; padding:0 5px; font-size:10px; font-weight:600; }
+  .tag.rust { color:var(--g4); }
+  .tag.loc { color:var(--muted); }
+  .card a { color:var(--accent); text-decoration:none; font-size:11px; }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:10; }
+  .modal.open { display:flex; }
+  .modal-box { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:18px; width:min(560px,94vw); max-height:90vh; overflow:auto; }
+  .modal-box h3 { margin-bottom:14px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:4px; }
+  .grid label.full { grid-column:1/-1; }
+  input,select,textarea { background:#0d1117; border:1px solid var(--line); color:var(--txt); border-radius:6px; padding:7px 9px; font-size:13px; }
+  textarea { resize:vertical; min-height:60px; }
+  .actions { display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
+  .del { color:var(--g5); }
+  .empty { color:var(--muted); font-size:12px; padding:6px 2px; }
+  .count { background:var(--panel2); border-radius:10px; padding:0 7px; font-size:11px; }
+</style>
+</head>
+<body>
+<h1>⚡ Applications USA <span id="sub">stage · Rust prioritaire</span></h1>
+<div class="bar">
+  <button class="btn primary" onclick="openModal()">+ Nouvelle candidature</button>
+  <div class="stats" id="stats"></div>
+</div>
+<div class="kanban" id="kanban"></div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3 id="m_title">Nouvelle candidature</h3>
+    <div class="grid">
+      <label>Entreprise<input id="f_company" placeholder="TikTok"></label>
+      <label>Poste<input id="f_title" placeholder="SRE Intern"></label>
+      <label>Lieu<input id="f_location" placeholder="San Jose, CA"></label>
+      <label>Statut<select id="f_status">
+        <option value="backlog">📥 À postuler</option>
+        <option value="applied">✈️ Postulé</option>
+        <option value="interview">🗨️ Entretien</option>
+        <option value="offer">🎉 Offre</option>
+        <option value="rejected">❌ Refusé</option>
+      </select></label>
+      <label>Deadline<input id="f_deadline" placeholder="2026-12-15"></label>
+      <label>Salaire (indicatif)<input id="f_salary" placeholder="$45-60/h"></label>
+      <label class="full">Lien (offre/candidature)<input id="f_url" placeholder="https://..."></label>
+      <label class="full">Source<input id="f_source" placeholder="Simplify / LinkedIn / crypto…"></label>
+      <label class="full">Notes<textarea id="f_notes" placeholder="Stack, remarques, points d'attention…"></textarea></label>
+    </div>
+    <div class="actions">
+      <button class="btn del" id="f_delete" onclick="delJob()" style="display:none; margin-right:auto;">Supprimer</button>
+      <button class="btn" onclick="closeModal()">Annuler</button>
+      <button class="btn primary" onclick="saveJob()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLUMNS = [
+  {k:"backlog",  label:"📥 À postuler",  num:1},
+  {k:"applied",  label:"✈️ Postulé",     num:2},
+  {k:"interview",label:"🗨️ Entretien",  num:3},
+  {k:"offer",    label:"🎉 Offre",       num:4},
+  {k:"rejected", label:"❌ Refusé",      num:5},
+];
+let jobs = [];
+let editing = null;
+
+async function api(path, opts){
+  const r = await fetch(path, {headers:{"Content-Type":"application/json"}, ...opts});
+  if(!r.ok) throw new Error(await r.text());
+  return r.status===204?null:r.json();
+}
+async function load(){
+  jobs = await api("/api/jobs");
+  render(); renderStats();
+}
+function render(){
+  const kb = document.getElementById("kanban");
+  kb.innerHTML = "";
+  for(const col of COLUMNS){
+    const list = jobs.filter(j=>j.status===col.k);
+    const el = document.createElement("div"); el.className="col";
+    el.innerHTML = `<h2>${col.label} <b class="count">${list.length}</b></h2>`;
+    if(!list.length){ el.innerHTML += `<div class="empty">—</div>`; }
+    list.forEach(j => el.appendChild(card(j)));
+    kb.appendChild(el);
+  }
+}
+function card(j){
+  const d = document.createElement("div"); d.className="card"; d.onclick=()=>openModal(j);
+  const isRust = /rust/i.test(j.title+" "+j.notes);
+  let lochtml = "";
+  (j.location||"").split(/[;,]/).forEach(s=>s=s.trim());
+  const tags = `${isRust?'<span class="tag rust">RUST</span>':''}${j.salary?'<span class="tag">'+j.salary+'</span>':''}`;
+  const meta = [];
+  if(j.deadline) meta.push("📅 "+j.deadline);
+  if(j.added_at) meta.push("+"+j.added_at);
+  d.innerHTML = `<div class="c">${j.company||"?"}</div>
+    <div class="t">${j.title||""} ${tags}</div>
+    <div class="meta">${meta.join(" · ")}${j.url?' · <a href="'+j.url+'" target="_blank" onclick="event.stopPropagation()">lien ↗</a>':''}</div>`;
+  return d;
+}
+function openModal(j){
+  editing = j||null;
+  document.getElementById("m_title").textContent = j?"Modifier la candidature":"Nouvelle candidature";
+  document.getElementById("f_delete").style.display = j?"":"none";
+  ["company","title","location","status","deadline","salary","url","source","notes"].forEach(f=>{
+    document.getElementById("f_"+f).value = j?(j[f]||""):(f==="status"?"backlog":"");
+  });
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal(){ document.getElementById("modal").classList.remove("open"); editing=null; }
+async function saveJob(){
+  const body = {};
+  ["company","title","location","status","deadline","salary","url","source","notes"].forEach(f=>{
+    body[f] = document.getElementById("f_"+f).value.trim();
+  });
+  if(!body.company && !body.title){ alert("Entreprise ou poste requis"); return; }
+  if(editing) await api("/api/jobs/"+editing.id, {method:"PATCH", body:JSON.stringify(body)});
+  else await api("/api/jobs", {method:"POST", body:JSON.stringify(body)});
+  closeModal(); load();
+}
+async function delJob(){
+  if(!editing || !confirm("Supprimer cette candidature ?")) return;
+  await api("/api/jobs/"+editing.id, {method:"DELETE"});
+  closeModal(); load();
+}
+async function renderStats(){
+  const st = await api("/api/stats");
+  const el = document.getElementById("stats");
+  el.innerHTML = `<span class="stat">Total <b>${st.total}</b></span>
+    <span class="stat">À postuler <b>${st.backlog}</b></span>
+    <span class="stat">Postulé <b>${st.applied}</b></span>
+    <span class="stat">Entretiens <b>${st.interview}</b></span>
+    <span class="stat">Offres <b>${st.offer}</b></span>
+    <span class="stat">Refus <b>${st.rejected}</b></span>`;
+}
+load();
+</script>
+</body>
+</html>

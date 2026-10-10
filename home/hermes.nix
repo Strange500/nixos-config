@@ -54,6 +54,34 @@
     '';
   };
 
+  # Job-application tracker for the US internship hunt. A tiny, dependency-free
+  # Python stdlib server serving a single-page kanban dashboard + JSON API.
+  # Files land in /home/hermes/job-dashboard/ (persisted ZFS pool), so data.json
+  # survives reboots. Exposed at jobs.qgroget.com (private, mTLS) behind Traefik.
+  home.file."job-dashboard/server.py".source = ./job-dashboard/server.py;
+  home.file."job-dashboard/index.html".source = ./job-dashboard/index.html;
+
+  systemd.user.services.job-dashboard = {
+    Unit = {
+      Description = "Job application tracker (dashboard + API)";
+      After = ["network.target"];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.python3}/bin/python3 %h/job-dashboard/server.py";
+      Restart = "always";
+      RestartSec = "5";
+      Environment = [
+        "HOSTNAME=127.0.0.1"
+        "PORT=3003"
+      ];
+      WorkingDirectory = "%h/job-dashboard";
+    };
+    Install = {
+      WantedBy = ["default.target"];
+    };
+  };
+
   # Private preview instance of the portfolio. Runs the `portfolio-test` flake
   # input (nextPortfolio main) as a rootless systemd user service on a dedicated
   # port, entirely under the `hermes` user. Served at test-portfolio.qgroget.com.
@@ -87,6 +115,12 @@
   qgroget.services.test-portfolio = {
     subdomain = "test-portfolio";
     url = "http://127.0.0.1:3002";
+    type = "private";
+  };
+
+  qgroget.services.jobs = {
+    subdomain = "jobs";
+    url = "http://127.0.0.1:3003";
     type = "private";
   };
 }
