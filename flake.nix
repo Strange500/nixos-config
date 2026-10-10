@@ -178,6 +178,7 @@
           environment.systemPackages = [pkgs.my-rust];
         }
       )
+      protontricksTestSkip
     ];
 
     # Server-specific modules
@@ -203,7 +204,22 @@
     # Gaming-specific modules (for Steam Deck-like devices)
     gamingModules = [
       jovian-nixos.nixosModules.default
+      protontricksTestSkip
     ];
+
+    # Work around upstream protontricks 1.15.0: `test_get_runtime_library_paths`
+    # calls `@steamRun@ /sbin/ldconfig -XNv` (via nixpkgs' steam-run.patch),
+    # which can't bring up the Steam runtime inside the nix sandbox, so the test
+    # always fails and blocks every host that pulls protontricks.
+    protontricksTestSkip = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          protontricks = prev.protontricks.overrideAttrs (old: {
+            disabledTests = (old.disabledTests or []) ++ ["test_get_runtime_library_paths"];
+          });
+        })
+      ];
+    };
 
     # Helper function to create a NixOS system configuration
     mkSystem = hostname: extraModules:
