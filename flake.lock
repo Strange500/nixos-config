@@ -1274,28 +1274,6 @@
         "type": "github"
       }
     },
-    "nix-jetbrains-plugins": {
-      "inputs": {
-        "flake-compat": "flake-compat_5",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "systems": "systems_5"
-      },
-      "locked": {
-        "lastModified": 1791018792,
-        "narHash": "sha256-J7OIYYt+2zyst/+jfMF0vjrNt7a5ib3qn5A2+lAlaNA=",
-        "owner": "theCapypara",
-        "repo": "nix-jetbrains-plugins",
-        "rev": "7e03dbc5698ff7d356267d1a058a106d7b257fc2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "theCapypara",
-        "repo": "nix-jetbrains-plugins",
-        "type": "github"
-      }
-    },
     "nixos-hardware": {
       "inputs": {
         "nixpkgs": [
@@ -1593,7 +1571,6 @@
         "hyprpanel": "hyprpanel",
         "impermanence": "impermanence",
         "jovian-nixos": "jovian-nixos",
-        "nix-jetbrains-plugins": "nix-jetbrains-plugins",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
         "nur": "nur",

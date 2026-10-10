@@ -28,7 +28,6 @@
 
           dev = {
             enable = false;
-            jetbrains.enable = false;
           };
           media = false;
           crypto = false;

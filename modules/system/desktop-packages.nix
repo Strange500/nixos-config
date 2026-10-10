@@ -67,7 +67,6 @@
       pkgs.nixd
       pkgs.delta
       pkgs.podman-compose
-      pkgs.jetbrains-toolbox
       pkgs.vscode-extensions.vadimcn.vscode-lldb.adapter
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [

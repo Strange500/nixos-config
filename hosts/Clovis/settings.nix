@@ -19,7 +19,6 @@
 
         dev = {
           enable = true;
-          jetbrains.enable = true;
         };
         media = true;
         crypto = true;

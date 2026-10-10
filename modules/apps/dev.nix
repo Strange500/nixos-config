@@ -1,14 +1,9 @@
 {
   pkgs,
   lib,
-  inputs,
   config,
   ...
 }: let
-  pluginListInte = [
-    inputs.nix-jetbrains-plugins.plugins."${pkgs.system}".idea-ultimate."2025.2"."com.github.copilot"
-  ];
-
   # Custom VSCode extension: Dynamic Base16 DankShell theme
   dynamic-base16-dankshell = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
@@ -70,9 +65,6 @@ in {
         android-studio
 
         antigravity-cli
-      ]
-      ++ lib.optionals config.qgroget.nixos.apps.dev.jetbrains.enable [
-        (jetbrains.plugins.addPlugins jetbrains.idea pluginListInte)
       ]
   );
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {

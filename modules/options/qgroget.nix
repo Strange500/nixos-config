@@ -139,11 +139,6 @@
               default = true;
               description = "Enable development apps.";
             };
-            jetbrains.enable = lib.mkOption {
-              type = lib.types.bool;
-              default = false;
-              description = "Whether to enable JetBrains IDEs.";
-            };
             vbox.enable = lib.mkOption {
               type = lib.types.bool;
               default = false;
