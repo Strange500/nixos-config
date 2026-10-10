@@ -16,7 +16,6 @@
       apps = {
         dev = {
           enable = false;
-          jetbrains.enable = false;
         };
         media = true;
         crypto = false;

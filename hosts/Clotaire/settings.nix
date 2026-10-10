@@ -15,7 +15,6 @@
         school = true;
         dev = {
           enable = true;
-          jetbrains.enable = true;
           vbox.enable = true;
         };
         media = true;
