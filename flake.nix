@@ -205,6 +205,28 @@
     gamingModules = [
       jovian-nixos.nixosModules.default
       protontricksTestSkip
+      # nixpkgs' rpcs3 lags upstream (0.0.42-unstable vs 0.0.43 release) — bump to the latest tag
+      ({
+        nixpkgs.overlays = [
+          (final: prev: {
+            rpcs3 = prev.rpcs3.overrideAttrs (old: {
+              version = "0.0.43";
+              src = final.fetchFromGitHub {
+                owner = "RPCS3";
+                repo = "rpcs3";
+                rev = "v0.0.43";
+                postCheckout = ''
+                  cd $out/3rdparty
+                  git submodule update --init \
+                    fusion/fusion asmjit/asmjit yaml-cpp/yaml-cpp SoundTouch/soundtouch stblib/stb \
+                    feralinteractive/feralinteractive wolfssl/wolfssl
+                '';
+                hash = "sha256-tcCH6zHvdKyTKeysJqqjU1fwK1j0sUZtLhZmpr8X+Ko=";
+              };
+            });
+          })
+        ];
+      })
     ];
 
     # Work around upstream protontricks 1.15.0: `test_get_runtime_library_paths`
