@@ -11,6 +11,7 @@
     ../system/dev.nix
     ../system/home-manager.nix
     ../system/update/update.nix
+    ../system/comin.nix
     ../system/remoteAccess.nix
     ../shared
     ../logo
