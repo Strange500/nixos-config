@@ -35,6 +35,9 @@
   .tag { background:rgba(79,140,255,.12); color:var(--g2); border-radius:4px; padding:0 5px; font-size:10px; font-weight:600; }
   .tag.rust { color:var(--g4); }
   .tag.loc { color:var(--muted); }
+  .fit { background:rgba(86,211,100,.14); color:var(--accent2); border-radius:4px; padding:0 5px; font-size:10px; font-weight:700; }
+  .fit.mid { background:rgba(255,140,66,.14); color:var(--g2); }
+  .fit.low { background:rgba(139,152,165,.14); color:var(--muted); }
   .card a { color:var(--accent); text-decoration:none; font-size:11px; }
   .modal { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:10; }
   .modal.open { display:flex; }
@@ -52,9 +55,10 @@
 </style>
 </head>
 <body>
-<h1>⚡ Applications USA <span id="sub">stage · Rust prioritaire</span></h1>
+<h1>⚡ Applications USA <span id="sub">stage · Rust prioritaire · trié par correspondance</span></h1>
 <div class="bar">
   <button class="btn primary" onclick="openModal()">+ Nouvelle candidature</button>
+  <button class="btn" id="sortBtn" onclick="toggleSort()">Tri : Correspondance ↓</button>
   <div class="stats" id="stats"></div>
 </div>
 <div class="kanban" id="kanban"></div>
@@ -97,6 +101,7 @@ const COLUMNS = [
 ];
 let jobs = [];
 let editing = null;
+let sortMode = "match";
 
 async function api(path, opts){
   const r = await fetch(path, {headers:{"Content-Type":"application/json"}, ...opts});
@@ -104,8 +109,14 @@ async function api(path, opts){
   return r.status===204?null:r.json();
 }
 async function load(){
-  jobs = await api("/api/jobs");
+  jobs = await api("/api/jobs?sort="+sortMode);
   render(); renderStats();
+}
+function toggleSort(){
+  sortMode = sortMode === "match" ? "added" : "match";
+  document.getElementById("sortBtn").textContent =
+    sortMode === "match" ? "Tri : Correspondance ↓" : "Tri : Ajout récent";
+  load();
 }
 function render(){
   const kb = document.getElementById("kanban");
@@ -124,7 +135,8 @@ function card(j){
   const isRust = /rust/i.test(j.title+" "+j.notes);
   let lochtml = "";
   (j.location||"").split(/[;,]/).forEach(s=>s=s.trim());
-  const tags = `${isRust?'<span class="tag rust">RUST</span>':''}${j.salary?'<span class="tag">'+j.salary+'</span>':''}`;
+  const fit = (typeof j.match === "number") ? `<span class="fit ${j.match>=75?'':j.match>=50?'mid':'low'}">${j.match}%</span>` : "";
+  const tags = `${isRust?'<span class="tag rust">RUST</span>':''}${fit}${j.salary?'<span class="tag">'+j.salary+'</span>':''}`;
   const meta = [];
   if(j.deadline) meta.push("📅 "+j.deadline);
   if(j.added_at) meta.push("+"+j.added_at);
