@@ -6,11 +6,16 @@ Persistence: data.json next to this script (lives under /home/hermes which is
 on the persisted ZFS pool, so it survives reboots).
 
 Endpoints:
-  GET  /                    -> the dashboard (index.html)
-  GET  /api/jobs            -> list all applications
-  POST /api/jobs            -> create one   (JSON body)
-  PATCH /api/jobs/<id>      -> update one
-  DELETE /api/jobs/<id>     -> delete one
+  GET  /                          -> the dashboard (index.html)
+  GET  /api/jobs[?sort=match|added] -> list all applications
+  GET  /api/stats                 -> counts per status
+  POST /api/jobs                  -> create one (match score auto-computed)
+  PATCH /api/jobs/<id>            -> update one (match score recomputed)
+  DELETE /api/jobs/<id>           -> delete one
+
+Fit scoring: each job is ranked 0-100 ("match") against Strange's target
+profile (Rust-first: backend/systems/low-level/infra/cloud/DevOps-SRE/
+fullstack/DB/ML), so the board can be sorted by best fit.
 """
 import json
 import os
@@ -18,7 +23,7 @@ import re
 import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "data.json")
@@ -29,7 +34,71 @@ _lock = threading.Lock()
 
 STATUSES = ["backlog", "applied", "interview", "offer", "rejected"]
 VALID_KEYS = {"company", "title", "location", "url", "status", "deadline",
-              "notes", "source", "salary", "added_at", "updated_at"}
+              "notes", "source", "salary", "added_at", "updated_at", "match"}
+
+# --- Fit scoring -----------------------------------------------------------
+# Strange's target profile, regex -> weight. Each group scores at most once.
+PROFILE = [
+    (re.compile(r"\brust\b"), 28),
+    (re.compile(r"\bsystems?\b"), 12),
+    (re.compile(r"\blow[- ]?level\b"), 12),
+    (re.compile(r"\bback[- ]?end\b"), 12),
+    (re.compile(r"\binfra(?:structure)?\b"), 10),
+    (re.compile(r"\bdevops\b"), 10),
+    (re.compile(r"\bsre\b|site reliability"), 10),
+    (re.compile(r"\bcloud\b"), 8),
+    (re.compile(r"\baws\b|\bgcp\b|\bazure\b"), 8),
+    (re.compile(r"\bgo(?:lang)?\b|\bkotlin\b"), 7),
+    (re.compile(r"\bfull[- ]?stack\b"), 7),
+    (re.compile(r"\bjava\b|\bspring\b"), 6),
+    (re.compile(r"\btypescript\b|\bangular\b|\breact\b|\bnode(?:\.js)?\b"), 6),
+    (re.compile(r"\bpostgres(?:ql)?\b|\bsql\b|\bdatabase\b"), 6),
+    (re.compile(r"\bdata\b|\bml\b|machine learning"), 6),
+    (re.compile(r"\bnetwork(?:ing)?\b"), 5),
+    (re.compile(r"\bsecurity\b|cyber"), 5),
+    (re.compile(r"\bdistributed\b|\bconcurr\w*\b|\bparallel\b"), 5),
+    (re.compile(r"\bgit\b|\blinux\b|\bdocker\b|\bkubernetes\b|\bk8s\b"), 5),
+]
+
+# Location hints (checked on the lowercased location string).
+US_HINTS = re.compile(
+    r"\b(usa|united states|california|ca\b|texas|tx\b|new york|ny\b|washington|"
+    r"seattle|san francisco|sf\b|bay area|silicon valley|new jersey|nj\b|"
+    r"colorado|co\b|massachusetts|boston|virginia|va\b|illinois|chicago|"
+    r"north carolina|nc\b|georgia|atlanta|oregon|portland|austin|"
+    r"remote in us|us remote)\b")
+NON_US_HINTS = re.compile(
+    r"\b(canada|toronto|uk\b|united kingdom|london|france|paris|germany|berlin|"
+    r"netherlands|amsterdam|ireland|dublin|india|bangalore|israel|tel aviv|"
+    r"singapore|australia|europe|remote in eu|switzerland|zurich)\b")
+
+
+def _words(*fields):
+    return " ".join(str(f or "") for f in fields).lower()
+
+
+def score_job(job):
+    """Return 0-100 fit score for a job against Strange's profile."""
+    hay = _words(job.get("title"), job.get("notes"), job.get("company"),
+                 job.get("location"), job.get("salary"))
+    s = 20  # base: a relevant US internship
+    for pat, weight in PROFILE:
+        if pat.search(hay):
+            s += weight
+    title = _words(job.get("title"))
+    if re.search(r"\brust\b", title):
+        s += 10  # Rust central in the role title
+    if re.search(r"\b(intern|internship|co-op|coop|student|apprentice)\b", title):
+        s += 4
+    loc = _words(job.get("location"))
+    if loc:
+        if US_HINTS.search(loc):
+            s += 6
+        elif NON_US_HINTS.search(loc):
+            s -= 14
+    if job.get("salary"):
+        s += 3
+    return max(0, min(100, s))
 
 
 def load_data():
@@ -48,19 +117,23 @@ def save_data(data):
 
 
 def clean_job(job, job_id=None):
-    """Keep only known keys + sane defaults."""
+    """Keep only known keys + sane defaults + fit score."""
     clean = {k: v for k, v in job.items() if k in VALID_KEYS and v is not None}
     clean["status"] = clean.get("status", "backlog")
     if clean["status"] not in STATUSES:
         clean["status"] = "backlog"
-    for f in ("company", "title", "location", "location") :
+    for f in ("company", "title", "location"):
         clean.setdefault(f, "")
     clean.setdefault("url", "")
     clean.setdefault("deadline", "")
     clean.setdefault("notes", "")
     clean.setdefault("source", "")
     clean.setdefault("salary", "")
-    clean["id"] = job_id if job_id is not None else str(hash(json.dumps(clean, sort_keys=True)) & 0xFFFFFFFF)
+    clean["match"] = score_job(clean)
+    if job_id is None:
+        seed = {k: clean[k] for k in ("company", "title", "url", "location")}
+        job_id = str(hash(json.dumps(seed, sort_keys=True)) & 0xFFFFFFFF)
+    clean["id"] = job_id
     return clean
 
 
@@ -95,8 +168,13 @@ class Handler(BaseHTTPRequestHandler):
                 self._send(500, {"error": "index.html missing"})
             return
         if parsed.path == "/api/jobs":
-            data = load_data()
-            self._send(200, data["jobs"])
+            jobs = load_data()["jobs"]
+            sort = parse_qs(parsed.query).get("sort", ["added"])[0]
+            if sort == "match":
+                jobs = sorted(jobs, key=lambda j: (j.get("match", 0),
+                                                   j.get("added_at", "")),
+                              reverse=True)
+            self._send(200, jobs)
             return
         if parsed.path == "/api/stats":
             jobs = load_data()["jobs"]
