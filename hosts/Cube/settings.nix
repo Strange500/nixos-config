@@ -8,6 +8,7 @@
         ];
       };
       auto-update = false;
+      comin.enable = true;
       remote-access = {
         enable = true;
         tailscale.enable = false;

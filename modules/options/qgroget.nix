@@ -116,6 +116,9 @@
           default = true;
           description = "Enable automatic updates for NixOS.";
         };
+        comin = {
+          enable = lib.mkEnableOption "comin GitOps auto-deploy (pulls the flake from git and runs nixos-rebuild switch)";
+        };
         isDesktop = lib.mkOption {
           type = lib.types.bool;
           default = true;

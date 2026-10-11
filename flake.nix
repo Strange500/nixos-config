@@ -147,6 +147,7 @@
       sops-nix.nixosModules.sops
       chaotic.nixosModules.default
       inputs.nur.modules.nixos.default
+      comin.nixosModules.comin
       ./modules/iopq-modules/xraya.nix
       ({pkgs, ...}: {
         # Add nvf neovim to all systems
@@ -187,7 +188,6 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       celler.nixosModules.cellerd
-      comin.nixosModules.comin
       # {
       #   nixpkgs.overlays = [
       #     (final: prev: {
