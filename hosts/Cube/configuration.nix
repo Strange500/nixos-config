@@ -108,6 +108,7 @@
     heroic # Epic/GOG launcher
     lutris # non-Steam launcher
     gamescope # per-game compositor (HDR, upscale, nested)
+    rpcs3 # PlayStation 3 emulator
   ];
 
   boot.loader.grub = {
