@@ -2,6 +2,7 @@
   config = {
     qgroget.nixos = {
       auto-update = false;
+      comin.enable = true;
       theme = "wide";
       desktop = {
         monitors = [", preferred, auto, 1"];
