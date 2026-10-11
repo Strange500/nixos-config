@@ -60,8 +60,8 @@ in {
   # --- hermes ---
   hermes = pin.mkPinnedImage {
     imageName = "docker.io/nousresearch/hermes-agent";
-    imageDigest = "sha256:d4da4a40cd7a28aba983775d9fd31d94cbf153eeb0cb9e844d6d0f612b7c24db";
-    sha256 = "sha256-cGQbkN3L2BruEKjPwIPcewRxTVPnC0HB6DWueFa5qss=";
+    imageDigest = "sha256:9774f4f39a9bb8c2f68ce728ed5e99ddbad282163be56764afacf88ed952b784";
+    sha256 = "sha256-vfEGKLCecIVKAlzwXJ3UeYJRScBPPSZ8Q3TETTyo6wk=";
   };
 
   # --- misc infra ---
