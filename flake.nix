@@ -221,7 +221,7 @@
                     fusion/fusion asmjit/asmjit yaml-cpp/yaml-cpp SoundTouch/soundtouch stblib/stb \
                     feralinteractive/feralinteractive wolfssl/wolfssl
                 '';
-                hash = "sha256-tcCH6zHvdKyTKeysJqqjU1fwK1j0sUZtLhZmpr8X+Ko=";
+                hash = "sha256-lJE4NeIXsGA7Fb/7dL0FpDLohP21tVIWTtTpCvEFuKA=";
               };
             });
           })
