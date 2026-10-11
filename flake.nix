@@ -188,7 +188,6 @@
       declarative-jellyfin.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       celler.nixosModules.cellerd
-      comin.nixosModules.comin
       # {
       #   nixpkgs.overlays = [
       #     (final: prev: {
