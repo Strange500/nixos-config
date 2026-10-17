@@ -15,6 +15,6 @@
     ./misc
     ./automation
     ./comin.nix
-    # ./homeAssistant
+    ./homeAssistant
   ];
 }
