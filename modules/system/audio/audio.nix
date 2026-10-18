@@ -5,8 +5,6 @@
   ...
 }: {
   config = lib.mkIf (config.qgroget.nixos.isDesktop) {
-    nixpkgs.config.pulseaudio = true;
-
     security.rtkit.enable = true;
     services.pipewire = {
       enable = true;

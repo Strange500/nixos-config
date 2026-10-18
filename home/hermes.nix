@@ -92,7 +92,7 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "${inputs.portfolio-test.packages.${pkgs.system}.default}/bin/portfolio";
+      ExecStart = "${inputs.portfolio-test.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/portfolio";
       Restart = "always";
       RestartSec = "10";
       Environment = [
