@@ -39,8 +39,10 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0BEci8hnaklKkXlnbagEMdf+/Ad7+USRH+ykQkYFdy ${config.qgroget.user.username}@Clovis"
   ];
 
-  # Set a root password
-  users.users.root.initialPassword = "nixos";
+  # Root access on the installer: the `installation-cd-minimal` module already
+  # provides a passwordless root, so defining `initialPassword` here duplicates
+  # it and triggers the "user 'root' has multiple of the options" eval warning.
+  # Leave root to the ISO's default (ephemeral boot media).
 
   services.openssh.settings.PasswordAuthentication = false;
 
