@@ -66,21 +66,21 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          # Warning lines land on stderr. Nix prefixes a timestamp; strip it so
-          # the same warning dedupes across hosts/runs.
+          : > /tmp/warnings.txt
           for f in /tmp/ev/*.err; do
+            host="$(basename "$f" .err)"
             # A host whose eval errored (not warned) also shows up here; its
             # .drv will be empty. Report those as eval errors below.
-            host="$(basename "$f" .err)"
             if [ ! -s "/tmp/ev/$host.drv" ]; then
               echo "[EVAL-ERROR] $host (no drv produced):"
               sed 's/^/    /' "$f" | head -30
               echo
             fi
+            # Prefix each warning with its host so fixes can be attributed to
+            # the right configuration (a warning on one host vs. all hosts).
+            grep -hE 'warning:' "$f" | sed -E "s/^/[$host] /" >> /tmp/warnings.txt
           done
-          grep -hE 'warning:' /tmp/ev/*.err \
-            | sed -E 's/^/  [NIX] /' \
-            | sort -u > /tmp/warnings.txt
+          sort -u /tmp/warnings.txt -o /tmp/warnings.txt
           printf '=== WARNING COUNT === %s\n' "$(wc -l </tmp/warnings.txt)"
 
       - name: Show warnings
