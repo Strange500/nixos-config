@@ -1,0 +1,109 @@
+name: Nix Eval Warnings
+
+# Lightweight job that evaluates every host (and home-manager user) and
+# collects warnings emitted during evaluation. Pure `nix eval` (no builds),
+# so it's cheap. The job FAILS when any warning is present so the failure
+# is visible in the Actions list and easy for a monitor to detect.
+#
+# Triggered:
+#   - daily (06:00 UTC) — after the "Daily Nix Flake Update" bot bumps nixpkgs,
+#     catching new deprecation/rename warnings introduced by the bump
+#   - on push to main touching the flake or any .nix file
+#   - manually (`workflow_dispatch`)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - "flake.lock"
+      - "**/*.nix"
+      - ".github/workflows/nix-warnings.yml"
+
+jobs:
+  eval:
+    name: Collect eval warnings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Evaluate all hosts & home-manager configs
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p /tmp/ev
+          # nixosConfigurations (x86_64 hosts + arm pi) and homeConfigurations.
+          # Evaluating the toplevel drvPath forces full option evaluation,
+          # which is what surfaces eval-time warnings. Parallel for speed.
+          evaluate() {
+            local target="$1" name="$2"
+            nix eval --raw "$target" 2>"/tmp/ev/$name.err" \
+              >"/tmp/ev/$name.drv"
+            local rc=$?
+            echo "eval [$name] rc=$rc"
+          }
+          evaluate ".#nixosConfigurations.Server.config.system.build.toplevel.drvPath" Server &
+          evaluate ".#nixosConfigurations.Clovis.config.system.build.toplevel.drvPath" Clovis &
+          evaluate ".#nixosConfigurations.Cube.config.system.build.toplevel.drvPath" Cube &
+          evaluate ".#nixosConfigurations.Septimius.config.system.build.toplevel.drvPath" Septimius &
+          evaluate ".#nixosConfigurations.Clotaire.config.system.build.toplevel.drvPath" Clotaire &
+          evaluate ".#nixosConfigurations.installer.config.system.build.toplevel.drvPath" installer &
+          evaluate ".#nixosConfigurations.pi.config.system.build.toplevel.drvPath" pi &
+          wait
+
+      - name: Aggregate warnings
+        shell: bash
+        run: |
+          set -uo pipefail
+          # Warning lines land on stderr. Nix prefixes a timestamp; strip it so
+          # the same warning dedupes across hosts/runs.
+          for f in /tmp/ev/*.err; do
+            # A host whose eval errored (not warned) also shows up here; its
+            # .drv will be empty. Report those as eval errors below.
+            host="$(basename "$f" .err)"
+            if [ ! -s "/tmp/ev/$host.drv" ]; then
+              echo "[EVAL-ERROR] $host (no drv produced):"
+              sed 's/^/    /' "$f" | head -30
+              echo
+            fi
+          done
+          grep -hE 'warning:' /tmp/ev/*.err \
+            | sed -E 's/^/  [NIX] /' \
+            | sort -u > /tmp/warnings.txt
+          printf '=== WARNING COUNT === %s\n' "$(wc -l </tmp/warnings.txt)"
+
+      - name: Show warnings
+        shell: bash
+        run: |
+          if [ -s /tmp/warnings.txt ]; then
+            echo "::group::Evaluation warnings"
+            cat /tmp/warnings.txt
+            echo "::endgroup::"
+          else
+            echo "No warnings."
+          fi
+
+      - name: Upload warnings artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: warnings
+          path: /tmp/warnings.txt
+          if-no-files-found: ignore
+
+      - name: Fail when warnings are present
+        shell: bash
+        run: |
+          if [ -s /tmp/warnings.txt ]; then
+            echo "::error::Nix evaluation produced warnings. Inspect the 'warnings' artifact and fix them."
+            exit 1
+          fi
+          echo "Clean evaluation: no warnings."
