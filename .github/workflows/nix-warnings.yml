@@ -21,6 +21,9 @@ on:
       - "flake.lock"
       - "**/*.nix"
       - ".github/workflows/nix-warnings.yml"
+  # Also run on PRs so a warning-fix branch is evaluated and the check stays
+  # red until the warnings are gone (self-validating fix loop).
+  pull_request:
 
 jobs:
   eval:
