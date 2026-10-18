@@ -10,7 +10,7 @@
       enable = true;
       xwayland.enable = true;
       systemd.setPath.enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage =
         inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
@@ -72,7 +72,7 @@
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "hyprland") [
       pkgs.hyprpolkitagent
       pkgs.hypridle
-      inputs.rose-pine-hyprcursor.packages.${pkgs.system}.default
+      inputs.rose-pine-hyprcursor.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ lib.optionals (config.qgroget.nixos.desktop.desktopEnvironment == "kde") [
       pkgs.kdePackages.ksystemlog

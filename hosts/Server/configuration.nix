@@ -35,6 +35,10 @@
   # ZFS global options (kernel modules, host-id, etc.)
   # -----------------------------------------------------------------
   boot.supportedFilesystems = ["zfs"];
+  # Silence the 26.11 warning without changing current behaviour (the default
+  # is `true` today; it becomes `false` in 26.11). Kept explicit to prevent
+  # a silent behavioural change on that bump.
+  boot.zfs.forceImportRoot = true;
   networking.hostId = "8425e3c1"; # <-- generate with `head -c4 /dev/urandom | od -An -t u4`
   services.zfs = {
     trim.enable = true;
@@ -68,7 +72,10 @@
 
     # Allow short-name resolution (e.g. `podman run hello-world`) so that
     # rootless users can pull & run images without fully-qualified names.
-    containers.registries.search = [ "docker.io" ];
+    # Declared via `.settings` (`.search`/`.insecure`/`.block` are deprecated).
+    containers.registries.settings = {
+      search = [ "docker.io" ];
+    };
 
     containers.storage.settings = {
       storage = {

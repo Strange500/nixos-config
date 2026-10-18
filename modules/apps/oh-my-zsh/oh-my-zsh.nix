@@ -237,6 +237,10 @@
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
+    # Atuin is sourced after fzf and owns Ctrl-R today. Yield it to Atuin
+    # (current runtime behaviour) instead of double-binding — fixes the
+    # "fzf and a history manager both configure Ctrl-R" eval warning.
+    historyWidget.zsh.command = "";
   };
 
   programs.starship = {
