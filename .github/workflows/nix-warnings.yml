@@ -78,7 +78,7 @@ jobs:
             fi
             # Prefix each warning with its host so fixes can be attributed to
             # the right configuration (a warning on one host vs. all hosts).
-            grep -hE 'warning:' "$f" | sed -E "s/^/[$host] /" >> /tmp/warnings.txt
+            grep -hE 'warning:' "$f" | sed -E "s/^/[$host] /" >> /tmp/warnings.txt || true
           done
           sort -u /tmp/warnings.txt -o /tmp/warnings.txt
           printf '=== WARNING COUNT === %s\n' "$(wc -l </tmp/warnings.txt)"
