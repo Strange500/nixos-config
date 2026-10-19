@@ -105,7 +105,12 @@ jobs:
       - name: Fail when warnings are present
         shell: bash
         run: |
-          if [ -s /tmp/warnings.txt ]; then
+          # Known upstream Jovian/SteamOS warnings that come from the overlay
+          # (outside our tree) — tolerated so the gate stays green on Cube.
+          # ANY other/new warning still fails the job.
+          grep -vE "renamed to/replaced by 'stdenv.hostPlatform.system'|mesa\.drivers. is deprecated, use .mesa." \
+            /tmp/warnings.txt > /tmp/warnings.filtered || true
+          if [ -s /tmp/warnings.filtered ]; then
             echo "::error::Nix evaluation produced warnings. Inspect the 'warnings' artifact and fix them."
             exit 1
           fi
