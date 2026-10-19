@@ -272,6 +272,9 @@
       dnsTest = import ./tests/dns {
         inherit pkgs;
       };
+      vaultwardenTest = import ./tests/vaultwarden {
+        inherit pkgs sops-nix quadlet-nix;
+      };
     };
 
     packages."x86_64-linux".default = let
