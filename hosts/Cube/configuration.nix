@@ -65,7 +65,10 @@
     # needs touch ~/.steam/steam/.cef-enable-remote-debugging to work
     decky-loader = {
       enable = true;
-      package = pkgs.decky-loader-prerelease;
+      # nixpkgs no longer ships decky-loader; the package now only exists in
+      # the Jovian overlay, which the jovian-nixos module pulls in. The
+      # top-level `pkgs.decky-loader*` attrs are therefore gone.
+      package = pkgs.jovianPackages.decky-loader-prerelease;
       extraPackages = with pkgs; [
         coreutils
         bash
