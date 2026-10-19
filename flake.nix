@@ -269,6 +269,12 @@
       jellyseerrTest = import ./tests/jellyseerr {
         inherit pkgs;
       };
+      dnsTest = import ./tests/dns {
+        inherit pkgs;
+      };
+      vaultwardenTest = import ./tests/vaultwarden {
+        inherit pkgs quadlet-nix;
+      };
     };
 
     packages."x86_64-linux".default = let
