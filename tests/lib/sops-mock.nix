@@ -20,8 +20,9 @@
     # Redirect the secret store to the fake one.
     defaultSopsFile = ../../secrets/secrets-test.yaml;
     # No real key: generate an ephemeral throwaway age key at activation.
+    # NOTE: do NOT set keyFile = null — sops-nix asserts a key source exists;
+    # generateKey writes to the default keyFile path instead.
     age = {
-      keyFile = null;
       generateKey = true;
     };
   };
