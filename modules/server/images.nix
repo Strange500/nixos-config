@@ -21,8 +21,8 @@ in {
   };
   radarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/radarr";
-    imageDigest = "sha256:ea6822c956d26db648b237919f41340318f32e5b7dcc4ba702cf256a0f5f3c12";
-    sha256 = "sha256-ij1blvlqDL4uDhI5MAauv7qx9oewWwPB58iC589KMk8=";
+    imageDigest = "sha256:ff4430fe2d6159b4dbaac9903acfecee5aa68dec8c929259e2f3114c63f7a09e";
+    sha256 = "sha256-bIISWAsEek2WkLelm75EgU/0R4vesramdcSNt4BqNDs=";
   };
   bazarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/bazarr";
