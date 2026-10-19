@@ -12,13 +12,15 @@ pkgs.testers.nixosTest {
 
       config = {
         # AdGuard Home bind_hosts hardcodes qgroget.server.network.ip
-        # (192.168.0.28 on prod). nixosTest assigns nodes 192.168.1.1 +
-        # 192.168.1.2, so point the bind at the VM's own IP.
+        # (192.168.0.28 on prod), an address that does not exist inside the
+        # VM — AdGuardHome would die with "bind: cannot assign requested
+        # address" on 192.168.0.28.
+        #
+        # nixosTest hands out 192.168.1.<n> in ALPHABETICAL order of node
+        # name, starting at 1. `server` is the only node, so it owns .1 —
+        # keep this in sync if a node sorting before "server" is ever added.
         qgroget.server.network.ip = "192.168.1.1";
       };
-    };
-    client = {...}: {
-      config = {};
     };
   };
 

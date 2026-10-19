@@ -8,7 +8,7 @@ pkgs.testers.nixosTest {
   name = "vaultwarden-test";
 
   nodes = {
-    server = {...}: {
+    server = {config, ...}: {
       imports = [
         ../../settings.nix
         ../../modules/server/options.nix
@@ -24,6 +24,18 @@ pkgs.testers.nixosTest {
         # In the VM, container images load from the docker-archive already in
         # the Nix store — no registry pull, no network needed.
         virtualisation.quadlet.enable = true;
+
+        # The module only carries a `Z` tmpfiles rule for the vaultwarden data
+        # dir, and `Z` restores SELinux contexts on an EXISTING path — it does
+        # not create one. On prod the container dir comes from the
+        # impermanence setup (environment.persistence."/persist".directories in
+        # modules/server/settings.nix), which this test node does not import.
+        # Without it the bind mount has no source and podman dies with
+        # "statfs <containerDir>/vaultwarden: no such file or directory".
+        systemd.tmpfiles.rules = [
+          "d ${config.qgroget.server.containerDir} 0755 root root -"
+          "d ${config.qgroget.server.containerDir}/vaultwarden 0700 vaultwarden password-manager -"
+        ];
       };
     };
   };
