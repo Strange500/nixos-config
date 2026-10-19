@@ -269,6 +269,9 @@
       jellyseerrTest = import ./tests/jellyseerr {
         inherit pkgs;
       };
+      dnsTest = import ./tests/dns {
+        inherit pkgs;
+      };
     };
 
     packages."x86_64-linux".default = let
