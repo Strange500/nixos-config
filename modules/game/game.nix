@@ -8,7 +8,11 @@
     programs = {
       steam = {
         enable = true;
-        package = pkgs.steam;
+        # Low priority on purpose: jovian-nixos also defines this option (with
+        # its SteamOS fhsenv wrapper) and the two derivations differ, which
+        # throws on this unique option. mkDefault lets the environment win —
+        # jovian's steam on Deck-like hosts, nixpkgs' steam elsewhere.
+        package = lib.mkDefault pkgs.steam;
         gamescopeSession.enable = true;
         remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
         dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
