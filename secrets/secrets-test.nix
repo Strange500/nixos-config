@@ -63,4 +63,5 @@ in {
   # Vaultwarden mounts this one as /data/config.json, so it must be VALID JSON
   # or the container's config parser rejects it.
   "server/vaultwarden/config" = "{}";
+  "server/vaultwarden/env" = fake;
 }
