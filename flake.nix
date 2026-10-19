@@ -273,7 +273,7 @@
         inherit pkgs;
       };
       vaultwardenTest = import ./tests/vaultwarden {
-        inherit pkgs sops-nix quadlet-nix;
+        inherit pkgs quadlet-nix;
       };
     };
 

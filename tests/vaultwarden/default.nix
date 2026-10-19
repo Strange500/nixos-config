@@ -1,6 +1,5 @@
 {
   pkgs,
-  sops-nix,
   quadlet-nix,
   ...
 }:
@@ -12,7 +11,6 @@ pkgs.testers.nixosTest {
       imports = [
         ../../settings.nix
         ../../modules/server/options.nix
-        sops-nix.nixosModules.sops
         quadlet-nix.nixosModules.quadlet
         ../lib/sops-mock.nix
         ../../modules/server/password-manager
