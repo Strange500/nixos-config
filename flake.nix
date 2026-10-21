@@ -180,6 +180,7 @@
         }
       )
       protontricksTestSkip
+      khalManOutputFix
     ];
 
     # Server-specific modules
@@ -205,6 +206,7 @@
     gamingModules = [
       jovian-nixos.nixosModules.default
       protontricksTestSkip
+      websockifyJwcryptoTestSkip
       # nixpkgs' rpcs3 lags upstream (0.0.42-unstable vs 0.0.43 release) — bump to the latest tag
       ({
         nixpkgs.overlays = [
@@ -239,6 +241,47 @@
           protontricks = prev.protontricks.overrideAttrs (old: {
             disabledTests = (old.disabledTests or []) ++ ["test_get_runtime_library_paths"];
           });
+        })
+      ];
+    };
+
+    # Work around upstream khal 0.14.1: nixpkgs declares a `man` output but
+    # khal's docs no longer produce man pages, so the builder aborts with
+    # "failed to produce output path for output 'man'" and every desktop
+    # home-manager closure fails. Keep `out`+`doc`, drop the `man` output.
+    khalManOutputFix = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          khal = prev.khal.overridePythonAttrs (old: {
+            outputs = ["out" "doc"];
+            sphinxBuilders = ["html"];
+          });
+        })
+      ];
+    };
+
+    # Work around upstream websockify 0.13.0 tests: two JWS cases assume a
+    # 72-bit `secret` while jwcrypto now enforces the JWK key length (256
+    # bits), so they always fail and block Cube's game-installer closure
+    # (via noVNC). The patch also has to reach `python3.pkgs`, which noVNC
+    # uses for its `replaceVars` on the websockify path — overriding
+    # `python3Packages` alone leaves noVNC pointing at the unfixed set.
+    websockifyJwcryptoTestSkip = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          python3Packages = prev.python3Packages.overrideScope (_pfinal: pprev: {
+            websockify = pprev.websockify.overridePythonAttrs (old: {
+              disabledTests =
+                (old.disabledTests or [])
+                ++ [
+                  "test_symmetric_jws_token_plugin"
+                  "test_symmetric_jws_token_plugin_with_illigal_key_exception"
+                ];
+            });
+          });
+          # Rebuild the interpreter reference from the overridden set so
+          # `python3.pkgs` is the patched scope (same interpreter drv).
+          python3 = final.python3Packages.python;
         })
       ];
     };

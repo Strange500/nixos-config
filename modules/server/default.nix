@@ -15,6 +15,7 @@
     ./misc
     ./automation
     ./comin.nix
+    ./nix-cache.nix
     # ./homeAssistant
   ];
 }
