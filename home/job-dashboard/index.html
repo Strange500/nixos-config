@@ -80,6 +80,7 @@
       <label>Deadline<input id="f_deadline" placeholder="2026-12-15"></label>
       <label>Salaire (indicatif)<input id="f_salary" placeholder="$45-60/h"></label>
       <label class="full">Lien (offre/candidature)<input id="f_url" placeholder="https://..."></label>
+      <label class="full">Contact (recruteur / email / page)<input id="f_contact" placeholder="recruiter@company.com ou nom + lien"></label>
       <label class="full">Source<input id="f_source" placeholder="Simplify / LinkedIn / crypto…"></label>
       <label class="full">Notes<textarea id="f_notes" placeholder="Stack, remarques, points d'attention…"></textarea></label>
     </div>
@@ -139,6 +140,7 @@ function card(j){
   const tags = `${isRust?'<span class="tag rust">RUST</span>':''}${fit}${j.salary?'<span class="tag">'+j.salary+'</span>':''}`;
   const meta = [];
   if(j.deadline) meta.push("📅 "+j.deadline);
+  if(j.contact) meta.push("✉️ "+j.contact);
   if(j.added_at) meta.push("+"+j.added_at);
   d.innerHTML = `<div class="c">${j.company||"?"}</div>
     <div class="t">${j.title||""} ${tags}</div>
@@ -149,7 +151,7 @@ function openModal(j){
   editing = j||null;
   document.getElementById("m_title").textContent = j?"Modifier la candidature":"Nouvelle candidature";
   document.getElementById("f_delete").style.display = j?"":"none";
-  ["company","title","location","status","deadline","salary","url","source","notes"].forEach(f=>{
+  ["company","title","location","status","deadline","salary","url","contact","source","notes"].forEach(f=>{
     document.getElementById("f_"+f).value = j?(j[f]||""):(f==="status"?"backlog":"");
   });
   document.getElementById("modal").classList.add("open");
@@ -157,7 +159,7 @@ function openModal(j){
 function closeModal(){ document.getElementById("modal").classList.remove("open"); editing=null; }
 async function saveJob(){
   const body = {};
-  ["company","title","location","status","deadline","salary","url","source","notes"].forEach(f=>{
+  ["company","title","location","status","deadline","salary","url","contact","source","notes"].forEach(f=>{
     body[f] = document.getElementById("f_"+f).value.trim();
   });
   if(!body.company && !body.title){ alert("Entreprise ou poste requis"); return; }

@@ -34,7 +34,8 @@ _lock = threading.Lock()
 
 STATUSES = ["backlog", "applied", "interview", "offer", "rejected"]
 VALID_KEYS = {"company", "title", "location", "url", "status", "deadline",
-              "notes", "source", "salary", "added_at", "updated_at", "match"}
+              "notes", "source", "salary", "contact", "added_at", "updated_at",
+              "match"}
 
 # --- Fit scoring -----------------------------------------------------------
 # Strange's target profile, regex -> weight. Each group scores at most once.
@@ -98,6 +99,8 @@ def score_job(job):
             s -= 14
     if job.get("salary"):
         s += 3
+    if job.get("contact"):
+        s += 2  # a candidate contact/email exists => actionable
     return max(0, min(100, s))
 
 
@@ -129,6 +132,7 @@ def clean_job(job, job_id=None):
     clean.setdefault("notes", "")
     clean.setdefault("source", "")
     clean.setdefault("salary", "")
+    clean.setdefault("contact", "")
     clean["match"] = score_job(clean)
     if job_id is None:
         seed = {k: clean[k] for k in ("company", "title", "url", "location")}
