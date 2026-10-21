@@ -66,6 +66,14 @@ in {
 
         antigravity-cli
       ]
+      ++ lib.optionals config.qgroget.nixos.apps.dev.rust.enable [
+        # Rust: rustc/cargo (and their clippy/rustfmt components) come from the
+        # rust-overlay toolchain (my-rust), so only the tools cargo does not
+        # ship are added here. rust-analyzer is installed so VS Code uses the
+        # Nix-built server instead of the glibc binary the extension downloads.
+        rust-analyzer
+        lldb
+      ]
   );
   home.sessionVariables = lib.mkIf config.qgroget.nixos.apps.dev.enable {
     EDITOR = "vim";
@@ -161,6 +169,13 @@ in {
             # latex
             james-yu.latex-workshop
           ]
+          ++ lib.optionals config.qgroget.nixos.apps.dev.rust.enable [
+            # rust
+            rust-lang.rust-analyzer
+            vadimcn.vscode-lldb
+            tamasfe.even-better-toml
+            fill-labs.dependi
+          ]
           ++ [
             dynamic-base16-dankshell
           ]
@@ -222,6 +237,35 @@ in {
             "http.systemCertificatesNode" = true;
             "editor.semanticHighlighting.enabled" = true;
           }
+          // lib.optionalAttrs config.qgroget.nixos.apps.dev.rust.enable {
+            # --- Rust ---
+            # NixOS: the extension's bundled server is a glibc download that will
+            # not run here, so point rust-analyzer at the Nix-built binary.
+            "rust-analyzer.server.path" = "${pkgs.rust-analyzer}/bin/rust-analyzer";
+            "rust-analyzer.check.command" = "clippy";
+            "rust-analyzer.check.extraArgs" = ["--all-targets"];
+            "rust-analyzer.cargo.allFeatures" = true;
+            "rust-analyzer.cargo.buildScripts.enable" = true;
+            "rust-analyzer.procMacro.enable" = true;
+            "rust-analyzer.restartServerOnConfigChange" = true;
+            "rust-analyzer.files.excludeDirs" = ["target" "**/target"];
+            "rust-analyzer.imports.granularity.group" = "module";
+            "rust-analyzer.completion.autoimport.enable" = true;
+            "rust-analyzer.inlayHints.bindingModeHints.enable" = true;
+            "rust-analyzer.inlayHints.chainingHints.enable" = true;
+            "rust-analyzer.inlayHints.parameterHints.enable" = true;
+            "rust-analyzer.inlayHints.closureReturnTypeHints.enable" = "always";
+            "rust-analyzer.inlayHints.lifetimeElisionHints.enable" = "skip_trivial";
+            "[rust]" = {
+              "editor.defaultFormatter" = "rust-lang.rust-analyzer";
+              "editor.formatOnSave" = true;
+              "editor.rulers" = [100];
+            };
+            "[toml]" = {
+              "editor.defaultFormatter" = "tamasfe.even-better-toml";
+              "editor.formatOnSave" = true;
+            };
+          }
           // lib.optionalAttrs config.qgroget.nixos.apps.dev.acp.enable {
             # ACP Client: Hermes Agent reachable over SSH from anywhere (solution B).
             # Runs remotely: ssh <host> sudo podman exec -i hermes hermes acp
@@ -243,6 +287,61 @@ in {
             };
             "acp.autoApprovePermissions" = "manual";
           };
+        # Ready-to-use cargo tasks (Ctrl+Shift+B = build, Ctrl+Shift+P > Run Task).
+        userTasks = lib.mkIf config.qgroget.nixos.apps.dev.rust.enable {
+          version = "2.0.0";
+          tasks = [
+            {
+              type = "shell";
+              label = "rust: cargo build";
+              command = "cargo";
+              args = ["build"];
+              group = {
+                kind = "build";
+                isDefault = true;
+              };
+              presentation.reveal = "always";
+            }
+            {
+              type = "shell";
+              label = "rust: cargo run";
+              command = "cargo";
+              args = ["run"];
+              presentation.reveal = "always";
+            }
+            {
+              type = "shell";
+              label = "rust: cargo test";
+              command = "cargo";
+              args = ["test"];
+              group = {
+                kind = "test";
+                isDefault = true;
+              };
+              presentation.reveal = "always";
+            }
+            {
+              type = "shell";
+              label = "rust: cargo check";
+              command = "cargo";
+              args = ["check" "--all-targets"];
+              presentation.reveal = "always";
+            }
+            {
+              type = "shell";
+              label = "rust: cargo clippy";
+              command = "cargo";
+              args = ["clippy" "--all-targets"];
+              presentation.reveal = "always";
+            }
+            {
+              type = "shell";
+              label = "rust: cargo fmt";
+              command = "cargo";
+              args = ["fmt"];
+            }
+          ];
+        };
       };
     };
   };
