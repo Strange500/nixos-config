@@ -261,23 +261,27 @@
     };
 
     # Work around upstream websockify 0.13.0 tests: two JWS cases assume a
-    # 256-bit `secret` while jwcrypto now enforces the JWK key length, so they
-    # always fail and block Cube's game-installer closure.
+    # 72-bit `secret` while jwcrypto now enforces the JWK key length (256
+    # bits), so they always fail and block Cube's game-installer closure
+    # (via noVNC). The patch also has to reach `python3.pkgs`, which noVNC
+    # uses for its `replaceVars` on the websockify path — overriding
+    # `python3Packages` alone leaves noVNC pointing at the unfixed set.
     websockifyJwcryptoTestSkip = {
       nixpkgs.overlays = [
         (final: prev: {
-          python3Packages = prev.python3Packages.overrideScope (
-            _pfinal: pprev: {
-              websockify = pprev.websockify.overridePythonAttrs (old: {
-                disabledTests =
-                  (old.disabledTests or [])
-                  ++ [
-                    "test_symmetric_jws_token_plugin"
-                    "test_symmetric_jws_token_plugin_with_illigal_key_exception"
-                  ];
-              });
-            }
-          );
+          python3Packages = prev.python3Packages.overrideScope (_pfinal: pprev: {
+            websockify = pprev.websockify.overridePythonAttrs (old: {
+              disabledTests =
+                (old.disabledTests or [])
+                ++ [
+                  "test_symmetric_jws_token_plugin"
+                  "test_symmetric_jws_token_plugin_with_illigal_key_exception"
+                ];
+            });
+          });
+          # Rebuild the interpreter reference from the overridden set so
+          # `python3.pkgs` is the patched scope (same interpreter drv).
+          python3 = final.python3Packages.python;
         })
       ];
     };
