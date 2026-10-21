@@ -105,6 +105,14 @@ in {
     sha256 = "sha256-IVzqAed1tZEe5AyFdJGmQLU31wUsUnoiSPvT9KK7nlY=";
   };
 
+  # --- home automation ---
+  home-assistant = pin.mkPinnedImage {
+    imageName = "ghcr.io/home-assistant/home-assistant";
+    imageDigest = "sha256:130241f28d01fa80dfa3b44f7d89781c188d8642ecab9024f079f19f9f82baa0";
+    sha256 = "sha256-CQCZuj+UviNyFQf7d0CFehVlKD+D/etno5Gm0Z6gQFM=";
+    finalImageTag = "stable";
+  };
+
   # --- vaultwarden ---
   vaultwarden = pin.mkPinnedImage {
     imageName = "docker.io/vaultwarden/server";
