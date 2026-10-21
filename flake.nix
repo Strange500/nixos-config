@@ -180,6 +180,7 @@
         }
       )
       protontricksTestSkip
+      khalManOutputFix
     ];
 
     # Server-specific modules
@@ -205,6 +206,7 @@
     gamingModules = [
       jovian-nixos.nixosModules.default
       protontricksTestSkip
+      websockifyJwcryptoTestSkip
       # nixpkgs' rpcs3 lags upstream (0.0.42-unstable vs 0.0.43 release) — bump to the latest tag
       ({
         nixpkgs.overlays = [
@@ -239,6 +241,43 @@
           protontricks = prev.protontricks.overrideAttrs (old: {
             disabledTests = (old.disabledTests or []) ++ ["test_get_runtime_library_paths"];
           });
+        })
+      ];
+    };
+
+    # Work around upstream khal 0.14.1: nixpkgs declares a `man` output but
+    # khal's docs no longer produce man pages, so the builder aborts with
+    # "failed to produce output path for output 'man'" and every desktop
+    # home-manager closure fails. Keep `out`+`doc`, drop the `man` output.
+    khalManOutputFix = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          khal = prev.khal.overridePythonAttrs (old: {
+            outputs = ["out" "doc"];
+            sphinxBuilders = ["html"];
+          });
+        })
+      ];
+    };
+
+    # Work around upstream websockify 0.13.0 tests: two JWS cases assume a
+    # 256-bit `secret` while jwcrypto now enforces the JWK key length, so they
+    # always fail and block Cube's game-installer closure.
+    websockifyJwcryptoTestSkip = {
+      nixpkgs.overlays = [
+        (final: prev: {
+          python3Packages = prev.python3Packages.overrideScope (
+            _pfinal: pprev: {
+              websockify = pprev.websockify.overridePythonAttrs (old: {
+                disabledTests =
+                  (old.disabledTests or [])
+                  ++ [
+                    "test_symmetric_jws_token_plugin"
+                    "test_symmetric_jws_token_plugin_with_illigal_key_exception"
+                  ];
+              });
+            }
+          );
         })
       ];
     };
