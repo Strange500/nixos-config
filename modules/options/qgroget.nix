@@ -186,6 +186,17 @@
               default = {};
               description = "VS Code <-> Hermes Agent connection over the ACP protocol (stdio over SSH).";
             };
+            rust = {
+              enable = lib.mkOption {
+                type = lib.types.bool;
+                default = true;
+                description = ''
+                  Enable the Rust toolchain extras (rust-analyzer, lldb) and the
+                  ready-to-use VS Code Rust setup (rust-analyzer, CodeLLDB,
+                  TOML support, cargo tasks).
+                '';
+              };
+            };
           };
           media = lib.mkOption {
             type = lib.types.bool;
