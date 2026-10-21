@@ -109,6 +109,22 @@
         comin = {
           enable = lib.mkEnableOption "comin GitOps deployment for the Server host";
         };
+        nix-cache = {
+          enable = lib.mkEnableOption "Self-hosted harmonia Nix binary cache (serves the Server's /nix/store over the tailnet)";
+        };
+      };
+      nix-cache = {
+        enable = lib.mkEnableOption "Pull Nix binaries from the self-hosted qgroget cache (Server harmonia instance)";
+        host = lib.mkOption {
+          type = lib.types.str;
+          default = "server";
+          description = "Hostname (Tailscale MagicDNS name) or IP of the binary cache server.";
+        };
+        port = lib.mkOption {
+          type = lib.types.port;
+          default = 5000;
+          description = "Port of the binary cache server.";
+        };
       };
       nixos = {
         auto-update = lib.mkOption {

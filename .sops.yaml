@@ -8,6 +8,10 @@ creation_rules:
     key_groups:
       - age:
           - *primary
+  - path_regex: secrets/nix-cache.yaml$
+    key_groups:
+      - age:
+          - *primary
   - path_regex: \.p12$
     key_groups:
       - age:

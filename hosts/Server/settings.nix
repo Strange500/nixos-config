@@ -7,6 +7,7 @@
         calibre-importer.enable = true;
         grimmory.enable = true;
         comin.enable = true;
+        nix-cache.enable = true;
       };
       nixos = {
         auto-update = false;
