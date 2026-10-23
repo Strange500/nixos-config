@@ -4,6 +4,12 @@ on:
   pull_request:
   push:
     branches: [main]
+  # Auto-bumps push with GITHUB_TOKEN -> GitHub suppresses their push events (anti-recursion),
+  # so push:main alone never validates them. Chain on completion instead.
+  workflow_run:
+    workflows: [Daily Nix Flake Update, Daily Container Image Update]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
