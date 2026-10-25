@@ -31,8 +31,8 @@ in {
   };
   prowlarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/prowlarr";
-    imageDigest = "sha256:4e992f9b9229bc8c97c666b10b042a7360bce1d99b196e8aa29fd9805849cbf1";
-    sha256 = "sha256-yKLbs/9uo3tuXoHhjjpz3VKTZX96LRi8qr/TypfjdYI=";
+    imageDigest = "sha256:b3b00047ed20f6ce2b16780145cb6a0acb51c9e28ea6aa6f5dcd33c7034f1797";
+    sha256 = "sha256-LbQl2gqk96P3oa+xctm5+cuh7dbqyJ6hjOTLvj9iIe4=";
   };
   qui = pin.mkPinnedImage {
     imageName = "ghcr.io/autobrr/qui";
