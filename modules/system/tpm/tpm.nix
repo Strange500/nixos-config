@@ -20,6 +20,6 @@
 
   boot.kernelModules = ["tpm_tis" "tpm_crb"];
   boot.initrd.availableKernelModules = ["tpm_tis" "tpm_crb"];
-
-  boot.initrd.systemd.enable = true;
+  # `boot.initrd.systemd.enable` was removed upstream: scripted initrd is gone,
+  # systemd initrd is unconditional. Defining it is a hard eval failure.
 }
