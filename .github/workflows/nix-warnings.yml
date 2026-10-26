@@ -67,14 +67,24 @@ jobs:
         run: |
           set -uo pipefail
           : > /tmp/warnings.txt
+          : > /tmp/eval-errors.txt
           for f in /tmp/ev/*.err; do
             host="$(basename "$f" .err)"
             # A host whose eval errored (not warned) also shows up here; its
             # .drv will be empty. Report those as eval errors below.
             if [ ! -s "/tmp/ev/$host.drv" ]; then
-              echo "[EVAL-ERROR] $host (no drv produced):"
-              sed 's/^/    /' "$f" | head -30
-              echo
+              echo "::group::[EVAL-ERROR] $host (no drv produced)"
+              # head FIRST: `sed ... | head` makes sed die on SIGPIPE, and the
+              # Actions shell runs with -o pipefail, so the step aborted mid-loop
+              # and uploaded an EMPTY warnings artifact (2026-10-26).
+              head -n 40 "$f" | sed 's/^/    /'
+              echo "::endgroup::"
+              # Keep eval errors in the artifact so a red run is diagnosable from
+              # the download alone (checked by the gate step below).
+              {
+                echo "[$host] EVAL-ERROR:"
+                grep -m3 -E '^ *error:' "$f" | sed 's/^ *//' || echo "  (no 'error:' line captured, see job log)"
+              } >> /tmp/eval-errors.txt
             fi
             # Prefix each warning with its host so fixes can be attributed to
             # the right configuration (a warning on one host vs. all hosts).
@@ -82,6 +92,11 @@ jobs:
           done
           sort -u /tmp/warnings.txt -o /tmp/warnings.txt
           printf '=== WARNING COUNT === %s\n' "$(wc -l </tmp/warnings.txt)"
+          if [ -s /tmp/eval-errors.txt ]; then
+            echo "::group::Evaluation errors"
+            cat /tmp/eval-errors.txt
+            echo "::endgroup::"
+          fi
 
       - name: Show warnings
         shell: bash
@@ -99,8 +114,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: warnings
-          path: /tmp/warnings.txt
+          path: |
+            /tmp/warnings.txt
+            /tmp/eval-errors.txt
           if-no-files-found: ignore
+
+      - name: Fail on evaluation errors
+        shell: bash
+        run: |
+          # An eval error produces no warnings for that host, so without this
+          # check a broken host would sail through as "clean".
+          if [ -s /tmp/eval-errors.txt ]; then
+            echo "::error::Nix evaluation ERRORS (host(s) did not evaluate). See artifact eval-errors.txt."
+            exit 1
+          fi
+          echo "No eval errors."
 
       - name: Fail when warnings are present
         shell: bash
