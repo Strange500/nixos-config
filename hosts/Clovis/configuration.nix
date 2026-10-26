@@ -68,7 +68,7 @@
         };
       };
       systemd = {
-        enable = true;
+        # `enable` was removed upstream: systemd initrd is unconditional now.
         services.rollback = {
           description = "Rollback BTRFS root subvolume to a pristine state";
           wantedBy = ["initrd.target"];
