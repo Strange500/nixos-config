@@ -49,7 +49,7 @@
     };
 
     impermanence = {
-      url = "github:nix-community/impermanence?rev=69ecf31e8fddc9354a4b418f3a517445d486bb54";
+      url = "github:nix-community/impermanence?rev=fa627f4c8b8e92f58f58a73d99ee4e1304e64eb2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

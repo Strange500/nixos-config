@@ -16,11 +16,12 @@
     };
     zsh.enable = true;
     dconf.enable = lib.mkIf (config.qgroget.nixos.isDesktop) true;
-    dms-shell.enable =
-      lib.mkIf (
-        config.qgroget.nixos.desktop.desktopEnvironment == "niri"
-      )
-      true;
+    # nixpkgs renamed programs.dms-shell -> programs.dux-shell. Set the whole
+    # sub-attrset: assigning `lib.mkIf cond true` to the boolean leaf
+    # (`<shell>.enable`) makes eval fail with "not of type `boolean'".
+    dux-shell = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") {
+      enable = true;
+    };
   };
 
   programs.niri = lib.mkIf (config.qgroget.nixos.desktop.desktopEnvironment == "niri") {
