@@ -77,15 +77,23 @@
       search = [ "docker.io" ];
     };
 
+    # Podman 6.0: base `settings` now applies to BOTH rootful and rootless.
+    # graphroot/runroot must therefore be scoped per-mode, or rootless would
+    # be pointed at root-only paths (/var/lib, /run) and break.
     containers.storage.settings = {
       storage = {
         driver = "overlay";
-        runroot = "/run/containers/storage"; # tmpfs is fine for runtime
-        graphroot = "/var/lib/containers/storage";
         options = {
           mount_program = "/run/current-system/sw/bin/fuse-overlayfs";
         };
       };
+    };
+
+    # Keep the privileged store paths rootful-only (same values as before).
+    # Rootless keeps its defaults (~/.local/share/containers/storage).
+    containers.storage.rootful.settings.storage = {
+      runroot = "/run/containers/storage"; # tmpfs is fine for runtime
+      graphroot = "/var/lib/containers/storage";
     };
   };
 
