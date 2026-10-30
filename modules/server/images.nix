@@ -48,8 +48,8 @@ in {
   # --- downloaders ---
   gluetun = pin.mkPinnedImage {
     imageName = "docker.io/qmcgaw/gluetun";
-    imageDigest = "sha256:2733bb22b27e3efa7a9f2cef9057ec12791b8b225793fcd3dbfd0508404dfc25";
-    sha256 = "sha256-Mr0hS6oMbRda0IhwCCdTBbB9tikjkKE/8hhXujaX7H4=";
+    imageDigest = "sha256:4af0c804003481e100180e1f8d4d5e9c48163fedc0f88d061881b615aef9d183";
+    sha256 = "sha256-GCpNkNqPJ9zZ2WIQCTvRCUfntOpbUeRFa6oUsKubhHQ=";
   };
   qbittorrent = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/qbittorrent";
