@@ -60,8 +60,11 @@ in {
   # --- hermes ---
   hermes = pin.mkPinnedImage {
     imageName = "docker.io/nousresearch/hermes-agent";
-    imageDigest = "sha256:9774f4f39a9bb8c2f68ce728ed5e99ddbad282163be56764afacf88ed952b784";
-    sha256 = "sha256-vfEGKLCecIVKAlzwXJ3UeYJRScBPPSZ8Q3TETTyo6wk=";
+    # Follow NousResearch's rolling main channel while keeping each rebuild
+    # reproducible through the pinned manifest digest and archive hash.
+    imageDigest = "sha256:e39055b7c9c0a7655a84cdce601fe6bdcef2740e1b524744375424b66fed6495";
+    sha256 = "sha256-KRZ+gV0RntLYUiG/hRxckoRtTLtovxa5cxvmywoxbHQ=";
+    finalImageTag = "main";
   };
 
   # --- misc infra ---
