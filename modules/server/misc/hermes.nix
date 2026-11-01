@@ -5,6 +5,12 @@
   ...
 }: let
   images = import ../images.nix { inherit pkgs lib; };
+  # Build a constrained wrapper for read-only rootful Podman diagnostics.
+  hermesPodmanReadOnly = pkgs.writeShellApplication {
+    name = "hermes-podman-readonly";
+    runtimeInputs = [pkgs.podman];
+    text = builtins.readFile ./hermes-podman-readonly.sh;
+  };
 in {
   # Define the SOPS secrets for Hermes
   sops.secrets."server/hermes/env" = {};
@@ -84,8 +90,13 @@ in {
           options = ["NOPASSWD"];
         }
         {
-          # Allow hermes to exec into the (root) hermes container for ACP
+          # Existing ACP access; retained to avoid breaking gateway integration.
           command = "/run/current-system/sw/bin/podman exec *";
+          options = ["NOPASSWD"];
+        }
+        {
+          # Read-only diagnostics only; wrapper enforces subcommands/targets.
+          command = "${hermesPodmanReadOnly}/bin/hermes-podman-readonly *";
           options = ["NOPASSWD"];
         }
       ];
