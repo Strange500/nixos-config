@@ -163,7 +163,7 @@ in {
       containerConfig = {
         name = "hermes-dashboard";
         image = "docker-archive:${images.hermes}";
-        networks = ["host"];
+        pod = config.virtualisation.quadlet.pods.honcho.ref;
         environmentFiles = [
           "${config.sops.secrets."server/hermes/env".path}"
           "/var/lib/hermes/dynamic-env"
@@ -172,6 +172,9 @@ in {
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
           HERMES_DASHBOARD_PUBLIC_URL = "https://hermes.${config.qgroget.server.domain}";
+          # The dashboard runs separately from the gateway. Both now share the
+          # honcho pod network namespace, so probe the gateway's loopback listener.
+          GATEWAY_HEALTH_URL = "http://127.0.0.1:8642";
         };
         volumes = [
           "/persist/hermes:/opt/data:Z"
