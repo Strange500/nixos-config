@@ -3,6 +3,7 @@
   config,
   inputs,
   pkgs,
+  secretPaths,
   ...
 }: let
   # Voice dictation toggle agent (issue #48). Pure user-space: toggles a
@@ -36,7 +37,6 @@ in {
     ./modules/apps/desktopsApps.nix
     ./modules/shared
     ./home/modules/traefik-router.nix
-    inputs.sops-nix.homeManagerModule
     inputs.dms.homeModules.dank-material-shell
   ];
 
@@ -44,7 +44,7 @@ in {
     username = "${config.qgroget.user.username}";
     homeDirectory = "/home/${config.qgroget.user.username}";
     sessionVariables = {
-      GH_TOKEN = "$(cat ${config.sops.secrets."github_token".path})";
+      GH_TOKEN = "$(cat ${secretPaths."github_token"})";
     };
     stateVersion = "25.11";
     packages = lib.mkIf (config.qgroget.nixos.isDesktop) (
@@ -85,26 +85,15 @@ in {
         source = ./home/wallpapers/${config.qgroget.nixos.theme};
         recursive = true;
       };
-      ".ssh/config".text = "Host *\n          User ${config.qgroget.user.username}\n          IdentityFile '${
-        config.sops.secrets."git/ssh/private".path
-      }'\n          ";
+      ".ssh/config".text = "Host *\n          User ${config.qgroget.user.username}\n          IdentityFile '${secretPaths."git/ssh/private"}'\n          ";
     };
   };
 
-  sops = {
-    age.keyFile = "${config.qgroget.secretAgeKeyPath}";
-    defaultSopsFile = ./secrets/secrets.yaml;
-
-    defaultSymlinkPath = "/run/user/1000/secrets";
-    defaultSecretsMountPoint = "/run/user/1000/secrets.d";
-
-    secrets = {
-      "git/ssh/private" = {
-        path = "${config.sops.defaultSymlinkPath}/git/ssh/private";
-      };
-      "github_token" = {};
-    };
-  };
+  # Issue #64: home-manager sops has been REMOVED. The plaintext secret paths used
+  # above (GH_TOKEN session var, .ssh/config IdentityFile) are the SYSTEM sops
+  # secrets declared in modules/system/sops.nix (same file secrets/secrets.yaml,
+  # paths /run/secrets/<name>), injected via `secretPaths` (extraSpecialArgs). The
+  # user never touches the age master key anymore, so it can stay root-only.
 
   programs.gh = {
     enable = true;
