@@ -13,6 +13,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  hermes-webui:
+    name: Hermes WebUI (native module + HTTP smoke)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check the native WebUI integration in isolation
+        run: nix build .#checks.x86_64-linux.hermesWebuiTest --no-link --print-build-logs
+
   tests:
     name: Flake check (nixosTests)
     runs-on: ubuntu-latest

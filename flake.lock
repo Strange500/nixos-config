@@ -699,6 +699,27 @@
         "type": "gitlab"
       }
     },
+    "hermes-webui": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793649524,
+        "narHash": "sha256-CN8XGX9A1Ovw9ulGoWuxwyQ3RNdRerIJMK2Wj8ij13g=",
+        "owner": "nesquena",
+        "repo": "hermes-webui",
+        "rev": "40e09c086bef47dc91229c82ff456a9645b50c7a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nesquena",
+        "repo": "hermes-webui",
+        "rev": "40e09c086bef47dc91229c82ff456a9645b50c7a",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -1516,6 +1537,7 @@
         "disko": "disko",
         "dms": "dms",
         "game-installer": "game-installer",
+        "hermes-webui": "hermes-webui",
         "home-manager": "home-manager_2",
         "hyprland": "hyprland",
         "hyprpanel": "hyprpanel",
