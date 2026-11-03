@@ -154,10 +154,9 @@
       else b)
     bks;
 in {
-  sops.secrets."firefox/certFilePKCS12.p12" = lib.mkIf config.qgroget.nixos.apps.basic {
-    format = "binary";
-    sopsFile = ../../../secrets/client.p12;
-  };
+  # Issue #64: the firefox client certificate is now a SYSTEM sops secret
+  # (declared in modules/system/sops.nix, mkIf apps.basic), so the user-level sops
+  # module is gone entirely.
   programs.firefox = lib.mkIf config.qgroget.nixos.apps.basic {
     enable = true;
     configPath = ".mozilla/firefox";

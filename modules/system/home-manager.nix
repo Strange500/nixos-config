@@ -30,6 +30,10 @@ in {
 
     extraSpecialArgs = {
       inherit inputs pkgs hostname;
+      # Issue #64: expose the SYSTEM sops secret paths to user modules (home.nix:
+      # GH_TOKEN session var, .ssh/config IdentityFile) so no home-manager sops and
+      # no user-level access to the age master key is needed anymore.
+      secretPaths = lib.mapAttrs (name: v: v.path) config.sops.secrets;
     };
 
     # Primary user (every host) + the server's rootless users (Server only).

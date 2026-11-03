@@ -89,9 +89,9 @@ in {
     "server/borg/repoPassword" = {
       mode = "0600";
     };
-    "git/ssh/private" = {
-      mode = "0600";
-    };
+    # Note (issue #64): "git/ssh/private" is declared in modules/system/sops.nix
+    # (owner = primary user, mode 0400) so every host can reference the system
+    # path. borg runs as root (see below) and reads it regardless of ownership.
     # URL of the self-hosted n8n Telegram-alert webhook (the path is the secret).
     "n8n/alertWebhookUrl" = {
       mode = "0400";
