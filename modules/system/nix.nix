@@ -7,6 +7,8 @@
     allowUnfree = true;
     allowUnfreePredicate = _: true;
     android_sdk.accept_license = true;
+    # Keep the GTK2 migration reminder visible until its removal in NixOS 27.05.
+    problems.handlers."gtk+".broken = "warn";
   };
 
   programs.nix-ld.enable = true;
