@@ -25,6 +25,12 @@ in
   "Hermes API must bind the pod interface for the native WebUI";
   assert lib.elem "127.0.0.1:8642:8642" serverConfig.virtualisation.quadlet.pods.honcho.podConfig.publishPorts;
   assert serverConfig.virtualisation.quadlet.containers.hermes.containerConfig.environments.API_SERVER_PORT == "8642";
+  # Dashboard/TUI clients can spawn a gateway in their own container. It shares
+  # the pod port, so its inherited bind settings must match the supervised one.
+  assert lib.assertMsg
+  ((serverConfig.virtualisation.quadlet.containers.hermes-dashboard.containerConfig.environments.API_SERVER_HOST or null) == "0.0.0.0")
+  "Dashboard-spawned gateways must also bind the pod interface";
+  assert (serverConfig.virtualisation.quadlet.containers.hermes-dashboard.containerConfig.environments.API_SERVER_PORT or null) == "8642";
   assert !(lib.elem 8642 serverConfig.networking.firewall.allowedTCPPorts);
   assert lib.elem "/persist/hermes:/opt/data" unit.serviceConfig.BindPaths;
   assert serverConfig.users.users.hermes-webui.uid == 10000;
@@ -37,6 +43,8 @@ in
     } ''
       export HOME="$TMPDIR/home"
       mkdir -p "$HOME"
-      python ${./smoke.py} ${cfg.package}/hermes-webui ${lib.escapeShellArg serverConfig.virtualisation.quadlet.containers.hermes.containerConfig.environments.API_SERVER_HOST}
+      for bind in ${lib.escapeShellArgs (map (name: serverConfig.virtualisation.quadlet.containers.${name}.containerConfig.environments.API_SERVER_HOST) ["hermes" "hermes-dashboard"])}; do
+        python ${./smoke.py} ${cfg.package}/hermes-webui "$bind"
+      done
       touch "$out"
     ''

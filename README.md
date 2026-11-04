@@ -122,10 +122,17 @@ The pinned WebUI selects its health base URL in this order:
 `/health` and probes `/health/detailed` with the shared Bearer key before falling
 back to public health paths. Do not point it at the mTLS browser hostname.
 If pod-local `/health` succeeds but the host request fails, verify the Agent's
-bind address, not just the published port. Applying the bind fix requires an
-authorized rebuild/activation that recreates the Agent container; a WebUI-only
-restart cannot change the gateway's network listener. The PR itself does not
-deploy or restart either service.
+bind address **and the process/container owning the socket**, not just the
+published port. The built-in dashboard/TUI can auto-start a gateway in the
+`hermes-dashboard` container; it must inherit the same `API_SERVER_HOST=0.0.0.0`
+and `API_SERVER_PORT=8642` as the s6-supervised gateway in `hermes`. Both share
+the pod's port, so a dashboard child with default bind settings can claim it on
+loopback while the supervised gateway retries. Compare `ss -ltnp` in both
+containers and inspect the gateway child's command/environment, not only
+`podman exec hermes env`.
+Applying the bind fix requires an authorized rebuild/activation that recreates
+**both Agent and dashboard containers**; a WebUI-only restart cannot change the
+gateway's network listener. The PR itself does not deploy or restart services.
 
 ## 🕸️ Architecture Graph
 

@@ -181,8 +181,11 @@ in {
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
           HERMES_DASHBOARD_PUBLIC_URL = "https://hermes.${config.qgroget.server.domain}";
-          # The dashboard runs separately from the gateway. Both now share the
-          # honcho pod network namespace, so probe the gateway's loopback listener.
+          # Dashboard/TUI clients may spawn their own gateway process. Both
+          # containers share the pod port: keep its bind identical to the s6
+          # gateway, otherwise it can claim 8642 on loopback before s6 starts.
+          API_SERVER_HOST = "0.0.0.0";
+          API_SERVER_PORT = "8642";
           GATEWAY_HEALTH_URL = "http://127.0.0.1:8642";
         };
         volumes = [
