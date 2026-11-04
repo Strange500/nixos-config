@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  images = import ../images.nix { inherit pkgs lib; };
+  images = import ../images.nix {inherit pkgs lib;};
   # Build a constrained wrapper for read-only rootful Podman diagnostics.
   hermesPodmanReadOnly = pkgs.writeShellApplication {
     name = "hermes-podman-readonly";
@@ -134,6 +134,12 @@ in {
         environments = {
           PATH = "/opt/hermes/.venv/bin:/command:/opt/hermes/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
           XDG_CONFIG_HOME = "/home/strange/.config";
+          # Podman publishes this API to host loopback for the native WebUI.
+          # Binding only pod loopback makes that forwarding path unreachable;
+          # 0.0.0.0 is inside the pod, NOT a public host listener. Chat requests
+          # still require the Agent's API_SERVER_KEY from its runtime home .env.
+          API_SERVER_HOST = "0.0.0.0";
+          API_SERVER_PORT = "8642";
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
         };

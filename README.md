@@ -85,6 +85,11 @@ existing built-in dashboard at `hermes.qgroget.com`.
 - **Agent:** browser chat uses the existing container's authenticated gateway at
   `127.0.0.1:8642`, with the Runs API enabled for approval prompts. No second
   gateway, host-side Agent installation, or boot-time package download is added.
+  The Agent binds `API_SERVER_HOST=0.0.0.0` **inside the honcho pod**, with
+  `API_SERVER_PORT=8642`; Podman publishes only `127.0.0.1:8642:8642` on the host.
+  Pod loopback alone cannot receive traffic forwarded from the host WebUI.
+  No public host listener or firewall port is added; chat still requires the
+  shared runtime `API_SERVER_KEY`.
   Features requiring local Agent Python modules are not provided by this split
   deployment; use the existing dashboard/Agent for those operations.
 - **State:** the service reserves UID/GID `10000` to match the Agent's existing
@@ -106,6 +111,21 @@ After merging/deploying, use a configured client certificate to open
 `https://hermes-webui.qgroget.com`. Inspect the service with
 `systemctl status hermes-webui.service` and `journalctl -u hermes-webui.service`.
 The PR/build checks do not activate the service or send a billable LLM request.
+
+If WebUI lists existing chats but reports **Gateway endpoint not reachable**,
+listing chats only proves the shared state is readable. Check
+`curl --fail http://127.0.0.1:8642/health` on the host, then
+`curl --fail http://127.0.0.1:8787/api/health/agent` (`alive` must be `true`).
+The pinned WebUI selects its health base URL in this order:
+`GATEWAY_HEALTH_URL`, `HERMES_GATEWAY_HEALTH_URL`, `HERMES_API_URL`, then
+`HERMES_WEBUI_GATEWAY_BASE_URL` (configured here). It normalizes a trailing
+`/health` and probes `/health/detailed` with the shared Bearer key before falling
+back to public health paths. Do not point it at the mTLS browser hostname.
+If pod-local `/health` succeeds but the host request fails, verify the Agent's
+bind address, not just the published port. Applying the bind fix requires an
+authorized rebuild/activation that recreates the Agent container; a WebUI-only
+restart cannot change the gateway's network listener. The PR itself does not
+deploy or restart either service.
 
 ## 🕸️ Architecture Graph
 

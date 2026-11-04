@@ -19,6 +19,13 @@ in
   assert cfg.extraEnvironment.HERMES_WEBUI_CHAT_BACKEND == "gateway";
   assert cfg.extraEnvironment.HERMES_WEBUI_GATEWAY_BASE_URL == "http://127.0.0.1:8642";
   assert cfg.extraEnvironment.HERMES_WEBUI_GATEWAY_USE_RUNS_API == "true";
+  # Podman forwards to the pod's interface, not its loopback listener.
+  assert lib.assertMsg
+  ((serverConfig.virtualisation.quadlet.containers.hermes.containerConfig.environments.API_SERVER_HOST or null) == "0.0.0.0")
+  "Hermes API must bind the pod interface for the native WebUI";
+  assert lib.elem "127.0.0.1:8642:8642" serverConfig.virtualisation.quadlet.pods.honcho.podConfig.publishPorts;
+  assert serverConfig.virtualisation.quadlet.containers.hermes.containerConfig.environments.API_SERVER_PORT == "8642";
+  assert !(lib.elem 8642 serverConfig.networking.firewall.allowedTCPPorts);
   assert lib.elem "/persist/hermes:/opt/data" unit.serviceConfig.BindPaths;
   assert serverConfig.users.users.hermes-webui.uid == 10000;
   assert serverConfig.users.groups.hermes-webui.gid == 10000;
@@ -30,6 +37,6 @@ in
     } ''
       export HOME="$TMPDIR/home"
       mkdir -p "$HOME"
-      python ${./smoke.py} ${cfg.package}/hermes-webui
+      python ${./smoke.py} ${cfg.package}/hermes-webui ${lib.escapeShellArg serverConfig.virtualisation.quadlet.containers.hermes.containerConfig.environments.API_SERVER_HOST}
       touch "$out"
     ''

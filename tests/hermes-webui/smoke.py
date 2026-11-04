@@ -2,22 +2,56 @@
 
 import json
 import os
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 import socket
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.request
 
 
 source = Path(sys.argv[1])
-with tempfile.TemporaryDirectory(prefix="hermes-webui-", dir=os.environ["TMPDIR"]) as temp:
+fixture_key = "hermes-webui-test-fixture-only"
+
+
+class GatewayFixture(BaseHTTPRequestHandler):
+    """Offline gateway fixture, not an Agent or an LLM response."""
+
+    def do_GET(self):
+        if self.path != "/health/detailed":
+            self.send_error(404)
+            return
+        if self.headers.get("Authorization") != f"Bearer {fixture_key}":
+            self.send_error(401)
+            return
+        body = json.dumps({"gateway_state": "running"}).encode()
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def log_message(self, format, *args):
+        pass
+
+
+with (
+    tempfile.TemporaryDirectory(prefix="hermes-webui-", dir=os.environ["TMPDIR"]) as temp,
+    ThreadingHTTPServer((sys.argv[2], 0), GatewayFixture) as gateway_server,
+):
+    gateway_thread = threading.Thread(target=gateway_server.serve_forever, daemon=True)
+    gateway_thread.start()
+    # A different local destination models forwarding to the pod's interface:
+    # binding only 127.0.0.1 must NOT pass. No real pod, Agent or secrets are used.
+    gateway_url = f"http://127.0.0.2:{gateway_server.server_port}"
     home = Path(temp)
     # A deterministic fixture, not a real credential: verify the shared Agent
     # home's dotenv is used without putting gateway secrets in the Nix store.
-    (home / ".env").write_text("API_SERVER_KEY=hermes-webui-test-fixture-only\n")
+    (home / ".env").write_text(f"API_SERVER_KEY={fixture_key}\n")
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
@@ -34,7 +68,7 @@ with tempfile.TemporaryDirectory(prefix="hermes-webui-", dir=os.environ["TMPDIR"
         "HERMES_WEBUI_PORT": str(port),
         "HERMES_WEBUI_AUTO_INSTALL": "0",
         "HERMES_WEBUI_CHAT_BACKEND": "gateway",
-        "HERMES_WEBUI_GATEWAY_BASE_URL": "http://127.0.0.1:8642",
+        "HERMES_WEBUI_GATEWAY_BASE_URL": gateway_url,
         "HERMES_WEBUI_GATEWAY_USE_RUNS_API": "true",
         "PYTHONDONTWRITEBYTECODE": "1",
     }
@@ -65,12 +99,19 @@ with tempfile.TemporaryDirectory(prefix="hermes-webui-", dir=os.environ["TMPDIR"
                 assert b"<html" in response.read().lower()
             with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health/agent", timeout=15) as response:
                 assert response.status == 200
-                gateway = json.load(response)["gateway_chat"]
+                health = json.load(response)
+                assert health["alive"], health
+                assert health["details"]["reason"] == "remote_gateway", health
+                assert health["details"]["endpoint"] == gateway_url + "/health/detailed", health
+                assert health["details"]["gateway_state"] == "running", health
+                gateway = health["gateway_chat"]
                 assert gateway["enabled"] and gateway["backend"] == "gateway"
                 assert gateway["base_url_configured"] and gateway["api_key_configured"]
             assert (home / "webui").is_dir(), "WebUI state must stay outside the read-only source"
-            print("Hermes WebUI: HTTP 200 on health/index/agent health; gateway backend and dotenv key configured")
+            print("Hermes WebUI: HTTP 200 on health/index; authenticated gateway probe alive across distinct loopback addresses")
         finally:
+            gateway_server.shutdown()
+            gateway_thread.join(timeout=5)
             process.terminate()
             try:
                 process.wait(timeout=15)
