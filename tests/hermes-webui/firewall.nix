@@ -31,7 +31,8 @@ pkgs.testers.runNixOSTest {
     machine.fail("su -s /bin/sh nobody -c 'curl --fail --max-time 3 -H Remote-User:forged http://127.0.0.1:8787/'")
     machine.fail("curl --fail --max-time 3 -H Remote-User:forged http://127.0.0.1:8787/")
     machine.succeed("systemctl restart firewall.service")
-    machine.succeed("su -s /bin/sh traefik -c 'curl --fail --max-time 3 http://127.0.0.1:8787/'")
+    # Type=simple is active before Python has bound its socket after restart.
+    machine.wait_until_succeeds("su -s /bin/sh traefik -c 'curl --fail --max-time 3 http://127.0.0.1:8787/'")
     machine.fail("su -s /bin/sh nobody -c 'curl --fail --max-time 3 -H Remote-User:forged http://127.0.0.1:8787/'")
   '';
 }
