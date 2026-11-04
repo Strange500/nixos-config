@@ -70,6 +70,8 @@ with (
         "HERMES_WEBUI_CHAT_BACKEND": "gateway",
         "HERMES_WEBUI_GATEWAY_BASE_URL": gateway_url,
         "HERMES_WEBUI_GATEWAY_USE_RUNS_API": "true",
+        "HERMES_WEBUI_TRUSTED_AUTH_HEADER": "Remote-User",
+        "HERMES_WEBUI_TRUSTED_PROXY_CIDRS": "127.0.0.1/32",
         "PYTHONDONTWRITEBYTECODE": "1",
     }
     with (home / "server.log").open("w+") as log:
@@ -97,7 +99,14 @@ with (
             with urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=5) as response:
                 assert response.status == 200
                 assert b"<html" in response.read().lower()
-            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/health/agent", timeout=15) as response:
+            api_url = f"http://127.0.0.1:{port}/api/health/agent"
+            try:
+                urllib.request.urlopen(api_url, timeout=5)
+                raise AssertionError("API accepted a missing SSO identity")
+            except urllib.error.HTTPError as exc:
+                assert exc.code == 401
+            request = urllib.request.Request(api_url, headers={"Remote-User": "fixture-admin"})
+            with urllib.request.urlopen(request, timeout=15) as response:
                 assert response.status == 200
                 health = json.load(response)
                 assert health["alive"], health

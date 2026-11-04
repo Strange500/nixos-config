@@ -314,6 +314,10 @@
         inherit pkgs;
         serverConfig = inputs.self.nixosConfigurations.Server.config;
       };
+      hermesWebuiFirewallTest = import ./tests/hermes-webui/firewall.nix {
+        inherit pkgs;
+        serverConfig = inputs.self.nixosConfigurations.Server.config;
+      };
       jellyfinTest = import ./tests/jellyfin {
         inherit pkgs;
         inherit declarative-jellyfin;

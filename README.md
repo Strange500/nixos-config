@@ -80,8 +80,17 @@ Server config is composed from:
 and package, pinned by the `hermes-webui` flake input. It is separate from the
 existing built-in dashboard at `hermes.qgroget.com`.
 
-- **Access:** Traefik HTTPS with the existing **mTLS client certificate** policy;
-  the backend only listens on `127.0.0.1:8787`, with no new firewall port.
+- **Access:** Traefik HTTPS with the existing Authelia `SSO` ForwardAuth
+  middleware, requiring **two-factor authentication and the `admin` group**.
+  Only this router drops mTLS; other private routes retain their client certificates.
+  Client-supplied `Remote-*` identity headers are removed before Authelia runs.
+  The pinned upstream supports trusted-header auth: `Remote-User`, with the
+  actual native proxy peer allowlisted as `127.0.0.1/32` (no container/NAT hop).
+  The backend only listens on `127.0.0.1:8787`, with no new firewall port.
+  An OUTPUT UID rule allows only `traefik` to connect locally, preventing other
+  local users from forging identity against upstream's implicit loopback trust.
+  Root, the Traefik UID and writers of Traefik's dynamic configuration are trusted.
+  WebUI starts after the firewall and follows its stop/restart lifecycle.
 - **Agent:** browser chat uses the existing container's authenticated gateway at
   `127.0.0.1:8642`, with the Runs API enabled for approval prompts. No second
   gateway, host-side Agent installation, or boot-time package download is added.
@@ -107,15 +116,17 @@ existing built-in dashboard at `hermes.qgroget.com`.
   Python dependencies. Users, environment mapping and service lifecycle still
   come from the upstream module.
 
-After merging/deploying, use a configured client certificate to open
+After merging/deploying, sign in to Authelia with an admin account to open
 `https://hermes-webui.qgroget.com`. Inspect the service with
 `systemctl status hermes-webui.service` and `journalctl -u hermes-webui.service`.
 The PR/build checks do not activate the service or send a billable LLM request.
 
 If WebUI lists existing chats but reports **Gateway endpoint not reachable**,
 listing chats only proves the shared state is readable. Check
-`curl --fail http://127.0.0.1:8642/health` on the host, then
-`curl --fail http://127.0.0.1:8787/api/health/agent` (`alive` must be `true`).
+`curl --fail http://127.0.0.1:8642/health` on the host, then visit
+`https://hermes-webui.qgroget.com/api/health/agent` in an authenticated browser
+(`alive` must be `true`). Direct local connections to port 8787 are intentionally
+rejected unless owned by Traefik; do not disable that guard for diagnostics.
 The pinned WebUI selects its health base URL in this order:
 `GATEWAY_HEALTH_URL`, `HERMES_GATEWAY_HEALTH_URL`, `HERMES_API_URL`, then
 `HERMES_WEBUI_GATEWAY_BASE_URL` (configured here). It normalizes a trailing
