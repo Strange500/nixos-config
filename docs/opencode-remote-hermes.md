@@ -2,9 +2,9 @@
 
 Cette recette lance **OpenCode 1.19.5 sur le PC**, depuis un dépôt local, avec le
 provider `@ai-sdk/openai-compatible` dirigé vers `/v1/chat/completions` de Hermes.
-Elle ne déploie rien, ne démarre aucun service et ne modifie aucune configuration
-NixOS / Home Manager. Le dépôt `Strange500/nixos-config` est pertinent car il
-contient déjà `home/hermes.nix` et `modules/server/misc/hermes.nix`.
+Elle ne démarre aucun service distant et ne modifie aucun déploiement serveur.
+L'intégration Home Manager est **opt-in** et désactivée par défaut ; aucun hôte
+n'est activé dans cette PR.
 
 ## Limites à lire avant utilisation
 
@@ -31,7 +31,73 @@ contient déjà `home/hermes.nix` et `modules/server/misc/hermes.nix`.
   l'instance distante réelle. Aucun test d'inférence ni appel d'outil n'a été
   envoyé à la production. La mise en service distante reste à valider séparément.
 
-## Prérequis et installation sur le PC
+## Activation déclarative Nix / Home Manager (recommandée)
+
+Le module `modules/apps/opencode-hermes.nix` est importé par
+`modules/apps/desktopsApps.nix`, déjà importé par `home.nix`. Les options suivent
+le namespace existant `qgroget.nixos.apps.dev`, déclaré dans
+`modules/options/qgroget.nix`. Exemple **dans un module Home Manager** (pas dans
+la configuration système seule : ses options qgroget sont indépendantes) :
+
+```nix
+{
+  qgroget.nixos.apps.dev = {
+    enable = true;
+    opencodeHermes = {
+      enable = true;
+      baseUrl = "http://127.0.0.1:18642/v1"; # tunnel vers un profil de test
+      modelId = "hermes-agent";
+    };
+  };
+}
+```
+
+Depuis un module NixOS de cette flake, utiliser
+`home-manager.users.strange.qgroget.nixos.apps.dev.opencodeHermes = { ... };`
+avec les mêmes valeurs, en gardant le parent `dev.enable = true` dans Home Manager.
+Sur une configuration Home Manager indépendante, importer `settings.nix` et
+`modules/apps/opencode-hermes.nix` explicitement. Rien n'est activé implicitement.
+
+Après activation **sur le PC de test autorisé**, la commande `opencode-hermes`
+est disponible : Python, le CLI OpenCode **1.19.5** et le JSON existant sont
+référencés par chemins immuables du store, sans dépendre du clone ni d'un npm global.
+Le package épinglé `modules/apps/opencode-hermes-package.nix` utilise l'archive
+npm officielle avec hash SRI, patchée pour Nix. Le défaut supporte **x86_64-linux**
+(binaire baseline sans exigence AVX2). L'option `package` permet une substitution
+explicite ; une autre plateforme/version nécessite ses propres tests.
+
+```bash
+# Le tunnel de test doit déjà être ouvert ; aucune clé dans Nix ou le store.
+read -r -s -p 'Clé du profil Hermes de test : ' HERMES_API_KEY; echo
+export HERMES_API_KEY
+opencode-hermes --check
+opencode-hermes --workspace "$PWD" -- run 'Bonjour'
+unset HERMES_API_KEY
+```
+
+`HERMES_API_BASE_URL` et `HERMES_MODEL_ID` peuvent remplacer les valeurs Nix à
+l'exécution ; `HERMES_API_KEY` reste obligatoire à l'exécution. Ne jamais mettre
+un bearer dans `baseUrl`, une option Nix ou `home.sessionVariables`. Le lanceur
+ignore `OPENCODE_BIN` ambiant et impose le package choisi dans Nix. Désactiver
+`opencodeHermes.enable` retire le lanceur et ses variables ; `dev.enable = false`
+le désactive également. Aucune configuration globale OpenCode n'est écrasée.
+
+Tests reproductibles sans activation ni déploiement :
+
+```bash
+nix eval --impure --raw --file tests/opencode-remote-check.nix evaluation
+wrapper=$(nix build --impure --no-link --print-out-paths --file tests/opencode-remote-check.nix wrapper)
+client=$(nix build --impure --no-link --print-out-paths --file tests/opencode-remote-check.nix package)
+OPENCODE_WRAPPER="$wrapper/bin/opencode-hermes" OPENCODE_BIN="$client/bin/opencode" \
+  python3 -B -W error::ResourceWarning -m unittest discover -s tests -p 'test_opencode_*.py' -v
+```
+
+L'évaluation utilise les entrées **racines** nixpkgs/Home Manager de `flake.lock`,
+vérifie défaut désactivé, activation, désactivation du parent, substitution du
+package et absence de clé. Le job CI `nix` construit puis exécute le lanceur
+installable contre les mêmes fixtures SSE loopback que le client manuel.
+
+## Installation manuelle alternative sur le PC
 
 Python 3.10+, Node/npm pour installer OpenCode, accès à une instance **de test**
 Hermes dont le serveur API est déjà activé et accessible. La clé client

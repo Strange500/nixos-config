@@ -59,7 +59,9 @@ class OpenCodeSmoke(unittest.TestCase):
                        "OPENCODE_BIN": os.environ["OPENCODE_BIN"],
                        "HERMES_API_BASE_URL": f"http://127.0.0.1:{server.server_port}/v1",
                        "HERMES_API_KEY": "fixture-only", "HERMES_MODEL_ID": "staging"}
-                result = subprocess.run([sys.executable, "-B", str(ROOT / "scripts/opencode-remote.py"),
+                command = ([os.environ["OPENCODE_WRAPPER"]] if os.environ.get("OPENCODE_WRAPPER")
+                           else [sys.executable, "-B", str(ROOT / "scripts/opencode-remote.py")])
+                result = subprocess.run([*command,
                                          "--workspace", tmp, "--", "run", "--format", "json",
                                          "Reply with the test fixture."],
                                         env=env, text=True, capture_output=True, timeout=120)

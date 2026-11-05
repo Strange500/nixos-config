@@ -7,6 +7,11 @@ on:
       - 'examples/opencode/**'
       - 'scripts/opencode-remote.py'
       - 'tests/test_opencode_*.py'
+      - 'tests/opencode-remote*.nix'
+      - 'modules/apps/opencode-hermes*.nix'
+      - 'modules/apps/desktopsApps.nix'
+      - 'modules/options/qgroget.nix'
+      - 'flake.lock'
       - 'docs/opencode-remote-hermes.md'
   push:
     branches: [main]
@@ -15,6 +20,11 @@ on:
       - 'examples/opencode/**'
       - 'scripts/opencode-remote.py'
       - 'tests/test_opencode_*.py'
+      - 'tests/opencode-remote*.nix'
+      - 'modules/apps/opencode-hermes*.nix'
+      - 'modules/apps/desktopsApps.nix'
+      - 'modules/options/qgroget.nix'
+      - 'flake.lock'
       - 'docs/opencode-remote-hermes.md'
   workflow_dispatch:
 
@@ -44,3 +54,23 @@ jobs:
               -s tests -p 'test_opencode_*.py' -v
       - name: Whitespace check
         run: git diff --check
+  nix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: cachix/install-nix-action@v31
+      - name: Evaluate opt-in and opt-out with locked Home Manager
+        run: nix eval --impure --raw --file tests/opencode-remote-check.nix evaluation
+      - name: Build the actual declarative launcher and pinned CLI
+        run: |
+          wrapper=$(nix build --impure --no-link --print-out-paths --file tests/opencode-remote-check.nix wrapper)
+          client=$(nix build --impure --no-link --print-out-paths --file tests/opencode-remote-check.nix package)
+          test "$("$client/bin/opencode" --version)" = '1.19.5'
+          echo "OPENCODE_WRAPPER=$wrapper/bin/opencode-hermes" >> "$GITHUB_ENV"
+          echo "OPENCODE_BIN=$client/bin/opencode" >> "$GITHUB_ENV"
+      - name: Exercise store launcher against loopback SSE fixtures (no production)
+        run: python -B -W error::ResourceWarning -m unittest discover -s tests -p 'test_opencode_*.py' -v
