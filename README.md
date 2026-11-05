@@ -145,6 +145,13 @@ Applying the bind fix requires an authorized rebuild/activation that recreates
 **both Agent and dashboard containers**; a WebUI-only restart cannot change the
 gateway's network listener. The PR itself does not deploy or restart services.
 
+## 💻 Local OpenCode → remote Hermes (experimental)
+
+See [the opt-in client recipe](docs/opencode-remote-hermes.md) for a pinned
+OpenCode client, environment-only API credentials and offline tests. This is
+**remote-agent chat, not local coding-tool execution**; named SSE events have
+known compatibility constraints. No service deployment or Nix change is included.
+
 ## 🕸️ Architecture Graph
 
 ```mermaid

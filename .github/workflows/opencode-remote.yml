@@ -1,0 +1,46 @@
+name: OpenCode remote client
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/opencode-remote.yml'
+      - 'examples/opencode/**'
+      - 'scripts/opencode-remote.py'
+      - 'tests/test_opencode_*.py'
+      - 'docs/opencode-remote-hermes.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/opencode-remote.yml'
+      - 'examples/opencode/**'
+      - 'scripts/opencode-remote.py'
+      - 'tests/test_opencode_*.py'
+      - 'docs/opencode-remote-hermes.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned local CLI (no server changes)
+        run: |
+          npm install --global opencode-ai@1.19.5
+          test "$(opencode --version)" = '1.19.5'
+      - name: Offline contracts and real CLI against loopback fixtures
+        run: |
+          OPENCODE_BIN="$(command -v opencode)" \
+            python -B -W error::ResourceWarning -m unittest discover \
+              -s tests -p 'test_opencode_*.py' -v
+      - name: Whitespace check
+        run: git diff --check
