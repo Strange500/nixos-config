@@ -16,6 +16,9 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [autoPatchelfHook];
   dontConfigure = true;
   dontBuild = true;
+  # Bun stores the compiled JS after the ELF sections. Stripping discards it
+  # and silently turns `opencode --version` into the Bun runtime's version.
+  dontStrip = true;
   installPhase = ''
     runHook preInstall
     install -Dm755 bin/opencode $out/bin/opencode
