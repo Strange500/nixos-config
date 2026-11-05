@@ -70,6 +70,11 @@
 
     quadlet-nix.url = "github:SEIAROTg/quadlet-nix";
 
+    hermes-webui = {
+      url = "github:nesquena/hermes-webui/40e09c086bef47dc91229c82ff456a9645b50c7a";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     portfolio = {
       url = "github:strange500/nextPortfolio";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -208,7 +213,7 @@
       protontricksTestSkip
       websockifyJwcryptoTestSkip
       # nixpkgs' rpcs3 lags upstream (0.0.42-unstable vs 0.0.43 release) — bump to the latest tag
-      ({
+      {
         nixpkgs.overlays = [
           (final: prev: {
             rpcs3 = prev.rpcs3.overrideAttrs (old: {
@@ -228,7 +233,7 @@
             });
           })
         ];
-      })
+      }
     ];
 
     # Work around upstream protontricks 1.15.0: `test_get_runtime_library_paths`
@@ -305,6 +310,14 @@
     checks.${system} = let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
+      hermesWebuiTest = import ./tests/hermes-webui {
+        inherit pkgs;
+        serverConfig = inputs.self.nixosConfigurations.Server.config;
+      };
+      hermesWebuiFirewallTest = import ./tests/hermes-webui/firewall.nix {
+        inherit pkgs;
+        serverConfig = inputs.self.nixosConfigurations.Server.config;
+      };
       jellyfinTest = import ./tests/jellyfin {
         inherit pkgs;
         inherit declarative-jellyfin;

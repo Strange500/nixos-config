@@ -4,7 +4,7 @@
   lib,
   ...
 }: let
-  images = import ../images.nix { inherit pkgs lib; };
+  images = import ../images.nix {inherit pkgs lib;};
   # Build a constrained wrapper for read-only rootful Podman diagnostics.
   hermesPodmanReadOnly = pkgs.writeShellApplication {
     name = "hermes-podman-readonly";
@@ -134,6 +134,12 @@ in {
         environments = {
           PATH = "/opt/hermes/.venv/bin:/command:/opt/hermes/bin:/opt/data/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/strange/.nix-profile/bin:/run/current-system/sw/bin";
           XDG_CONFIG_HOME = "/home/strange/.config";
+          # Podman publishes this API to host loopback for the native WebUI.
+          # Binding only pod loopback makes that forwarding path unreachable;
+          # 0.0.0.0 is inside the pod, NOT a public host listener. Chat requests
+          # still require the Agent's API_SERVER_KEY from its runtime home .env.
+          API_SERVER_HOST = "0.0.0.0";
+          API_SERVER_PORT = "8642";
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
         };
@@ -175,8 +181,11 @@ in {
           HERMES_DASHBOARD_OIDC_ISSUER = "https://auth.${config.qgroget.server.domain}";
           HERMES_DASHBOARD_OIDC_CLIENT_ID = "hermes";
           HERMES_DASHBOARD_PUBLIC_URL = "https://hermes.${config.qgroget.server.domain}";
-          # The dashboard runs separately from the gateway. Both now share the
-          # honcho pod network namespace, so probe the gateway's loopback listener.
+          # Dashboard/TUI clients may spawn their own gateway process. Both
+          # containers share the pod port: keep its bind identical to the s6
+          # gateway, otherwise it can claim 8642 on loopback before s6 starts.
+          API_SERVER_HOST = "0.0.0.0";
+          API_SERVER_PORT = "8642";
           GATEWAY_HEALTH_URL = "http://127.0.0.1:8642";
         };
         volumes = [
