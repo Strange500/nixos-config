@@ -39,4 +39,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add modules/server/images.nix
           git commit -m "chore(images): bump container image digests - $(date +'%Y-%m-%d')"
+          git -c pull.rebase=true pull --quiet origin main
           git push

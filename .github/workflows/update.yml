@@ -39,4 +39,5 @@ jobs:
         git config --local user.name "GitHub Action"
         git add flake.lock
         git commit -m "chore: update flake.lock - $(date +'%Y-%m-%d')"
+        git -c pull.rebase=true pull --quiet origin main
         git push
