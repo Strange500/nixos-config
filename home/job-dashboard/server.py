@@ -32,7 +32,7 @@ HOST = os.environ.get("HOSTNAME", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "3003"))
 _lock = threading.Lock()
 
-STATUSES = ["backlog", "applied", "interview", "offer", "rejected"]
+STATUSES = ["backlog", "triage", "applied", "interview", "offer", "rejected"]
 VALID_KEYS = {"company", "title", "location", "url", "status", "deadline",
               "notes", "source", "salary", "contact", "added_at", "updated_at",
               "match"}

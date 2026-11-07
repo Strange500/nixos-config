@@ -13,6 +13,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  job-dashboard:
+    name: Job dashboard (HTTP + Chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: HTTP regression tests
+        run: python3 -m unittest discover -s home/job-dashboard -v
+      - name: Install browser test tools (test-only dependencies)
+        run: |
+          npm install --prefix "$RUNNER_TEMP/job-dashboard" playwright@1.65.0
+          "$RUNNER_TEMP/job-dashboard/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Chromium user flows and responsive layouts
+        run: NODE_PATH="$RUNNER_TEMP/job-dashboard/node_modules" node home/job-dashboard/test_browser.cjs
+
   hermes-webui:
     name: Hermes WebUI (native module + HTTP smoke)
     runs-on: ubuntu-latest
