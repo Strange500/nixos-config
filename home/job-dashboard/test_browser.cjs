@@ -77,6 +77,12 @@ httpd.serve_forever()
     await count('triage', 0);
     await count('applied', 1);
     assert.equal(await column('applied').locator('.card').count(), 1);
+    // Dragging a card to any column persists the new status.
+    await column('applied').locator('.card').dragTo(column('interview'));
+    await count('applied', 0);
+    await count('interview', 1);
+    await page.reload();
+    await count('interview', 1);
 
     // Network failure leaves the card in place, reports the error and enables retry.
     await page.route('**/api/jobs/*', route => route.abort());

@@ -23,6 +23,9 @@
   .stat b { color:var(--txt); }
   .kanban { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; align-items:start; }
   .card { overflow-wrap:anywhere; }
+  .col.drag-over { border-color:var(--accent); background:var(--panel2); }
+  .card[draggable="true"] { cursor:grab; }
+  .card.dragging { opacity:.45; cursor:grabbing; }
   .card-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
   @media(max-width:1100px){ .kanban{grid-template-columns:repeat(2,1fr);} }
   @media(max-width:640px){ .kanban{grid-template-columns:1fr;} }
@@ -123,6 +126,18 @@ function toggleSort(){
     sortMode === "match" ? "Tri : Correspondance ↓" : "Tri : Ajout récent";
   load();
 }
+let draggedJobId = null;
+async function moveJob(id, status){
+  try {
+    await api("/api/jobs/"+encodeURIComponent(id), {
+      method:"PATCH", body:JSON.stringify({status}),
+    });
+    await load();
+  } catch(error){
+    alert("Impossible de déplacer la candidature : " + error.message);
+    await load();
+  }
+}
 function render(){
   const kb = document.getElementById("kanban");
   kb.innerHTML = "";
@@ -130,6 +145,12 @@ function render(){
     const list = jobs.filter(j=>j.status===col.k);
     const el = document.createElement("div"); el.className="col";
     el.dataset.status = col.k;
+    el.addEventListener("dragover", event => { event.preventDefault(); el.classList.add("drag-over"); });
+    el.addEventListener("dragleave", event => { if(!el.contains(event.relatedTarget)) el.classList.remove("drag-over"); });
+    el.addEventListener("drop", event => {
+      event.preventDefault(); el.classList.remove("drag-over");
+      if(draggedJobId){ const id = draggedJobId; draggedJobId = null; moveJob(id, col.k); }
+    });
     el.innerHTML = `<h2>${col.label} <b class="count">${list.length}</b></h2>`;
     if(!list.length){ el.innerHTML += `<div class="empty">—</div>`; }
     list.forEach(j => el.appendChild(card(j)));
@@ -137,7 +158,14 @@ function render(){
   }
 }
 function card(j){
-  const d = document.createElement("div"); d.className="card"; d.onclick=()=>openModal(j);
+  const d = document.createElement("div"); d.className="card"; d.draggable=true;
+  d.addEventListener("dragstart", event => {
+    draggedJobId = j.id; d.classList.add("dragging");
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", String(j.id));
+  });
+  d.addEventListener("dragend", () => { draggedJobId = null; d.classList.remove("dragging"); });
+  d.onclick=()=>openModal(j);
   const isRust = /rust/i.test(j.title+" "+j.notes);
   let lochtml = "";
   (j.location||"").split(/[;,]/).forEach(s=>s=s.trim());
