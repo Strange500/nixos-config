@@ -1,0 +1,43 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "hermes/hermes-agent",
+  "small_model": "hermes/hermes-agent",
+  "enabled_providers": ["hermes"],
+  "autoupdate": false,
+  "share": "disabled",
+  "snapshot": false,
+  "compaction": {"auto": false},
+  "permission": {"*": "deny"},
+  "default_agent": "hermes-chat",
+  "agent": {
+    "title": {"disable": true},
+    "summary": {"disable": true},
+    "compaction": {"disable": true},
+    "hermes-chat": {
+      "description": "Chat with the remote Hermes agent; no local tools",
+      "mode": "primary",
+      "tools": {"*": false},
+      "prompt": "You are accessed through a local OpenCode chat client. Tools you execute run on the Hermes server, not on the client PC. Never claim access to the client's working directory. Do not execute commands or change files unless the user explicitly requests server-side work."
+    }
+  },
+  "provider": {
+    "hermes": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Hermes remote agent (not raw inference)",
+      "options": {
+        "baseURL": "{env:HERMES_API_BASE_URL}",
+        "apiKey": "{env:HERMES_API_KEY}",
+        "timeout": 300000,
+        "maxRetries": 0
+      },
+      "models": {
+        "hermes-agent": {
+          "id": "{env:HERMES_MODEL_ID}",
+          "name": "Hermes remote agent",
+          "tool_call": false,
+          "limit": {"context": 32768, "output": 4096}
+        }
+      }
+    }
+  }
+}
