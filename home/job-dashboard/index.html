@@ -21,7 +21,9 @@
   .stats { display:flex; gap:6px; flex-wrap:wrap; }
   .stat { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:4px 10px; font-size:12px; color:var(--muted); }
   .stat b { color:var(--txt); }
-  .kanban { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; align-items:start; }
+  .kanban { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; align-items:start; }
+  .card { overflow-wrap:anywhere; }
+  .card-actions { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
   @media(max-width:1100px){ .kanban{grid-template-columns:repeat(2,1fr);} }
   @media(max-width:640px){ .kanban{grid-template-columns:1fr;} }
   .col { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px; }
@@ -72,6 +74,7 @@
       <label>Lieu<input id="f_location" placeholder="San Jose, CA"></label>
       <label>Statut<select id="f_status">
         <option value="backlog">📥 À postuler</option>
+        <option value="triage">⭐ Triage</option>
         <option value="applied">✈️ Postulé</option>
         <option value="interview">🗨️ Entretien</option>
         <option value="offer">🎉 Offre</option>
@@ -95,10 +98,11 @@
 <script>
 const COLUMNS = [
   {k:"backlog",  label:"📥 À postuler",  num:1},
-  {k:"applied",  label:"✈️ Postulé",     num:2},
-  {k:"interview",label:"🗨️ Entretien",  num:3},
-  {k:"offer",    label:"🎉 Offre",       num:4},
-  {k:"rejected", label:"❌ Refusé",      num:5},
+  {k:"triage",   label:"⭐ Triage",      num:2},
+  {k:"applied",  label:"✈️ Postulé",     num:3},
+  {k:"interview",label:"🗨️ Entretien",  num:4},
+  {k:"offer",    label:"🎉 Offre",       num:5},
+  {k:"rejected", label:"❌ Refusé",      num:6},
 ];
 let jobs = [];
 let editing = null;
@@ -111,7 +115,7 @@ async function api(path, opts){
 }
 async function load(){
   jobs = await api("/api/jobs?sort="+sortMode);
-  render(); renderStats();
+  render(); await renderStats();
 }
 function toggleSort(){
   sortMode = sortMode === "match" ? "added" : "match";
@@ -125,6 +129,7 @@ function render(){
   for(const col of COLUMNS){
     const list = jobs.filter(j=>j.status===col.k);
     const el = document.createElement("div"); el.className="col";
+    el.dataset.status = col.k;
     el.innerHTML = `<h2>${col.label} <b class="count">${list.length}</b></h2>`;
     if(!list.length){ el.innerHTML += `<div class="empty">—</div>`; }
     list.forEach(j => el.appendChild(card(j)));
@@ -145,6 +150,33 @@ function card(j){
   d.innerHTML = `<div class="c">${j.company||"?"}</div>
     <div class="t">${j.title||""} ${tags}</div>
     <div class="meta">${meta.join(" · ")}${j.url?' · <a href="'+j.url+'" target="_blank" onclick="event.stopPropagation()">lien ↗</a>':''}</div>`;
+  if(j.status === "backlog" || j.status === "triage"){
+    const actions = document.createElement("div"); actions.className = "card-actions";
+    const choices = j.status === "backlog"
+      ? [["triage", "Sélectionner pour le triage"]]
+      : [["backlog", "Remettre à postuler"], ["applied", "Marquer postulé"]];
+    for(const [status, label] of choices){
+      const button = document.createElement("button"); button.className = "btn";
+      button.type = "button"; button.textContent = label;
+      button.onclick = async event => {
+        event.stopPropagation();
+        const buttons = actions.querySelectorAll("button");
+        buttons.forEach(b => b.disabled = true);
+        try {
+          await api("/api/jobs/"+encodeURIComponent(j.id), {
+            method:"PATCH", body:JSON.stringify({status}),
+          });
+          await load();
+        } catch(error){
+          alert("Impossible de déplacer la candidature : " + error.message);
+        } finally {
+          buttons.forEach(b => b.disabled = false);
+        }
+      };
+      actions.appendChild(button);
+    }
+    d.appendChild(actions);
+  }
   return d;
 }
 function openModal(j){
@@ -177,6 +209,7 @@ async function renderStats(){
   const el = document.getElementById("stats");
   el.innerHTML = `<span class="stat">Total <b>${st.total}</b></span>
     <span class="stat">À postuler <b>${st.backlog}</b></span>
+    <span class="stat">Triage <b>${st.triage}</b></span>
     <span class="stat">Postulé <b>${st.applied}</b></span>
     <span class="stat">Entretiens <b>${st.interview}</b></span>
     <span class="stat">Offres <b>${st.offer}</b></span>
