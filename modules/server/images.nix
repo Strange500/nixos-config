@@ -16,8 +16,8 @@ in {
   # --- arr stack (linuxserver / ghcr) ---
   sonarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/sonarr";
-    imageDigest = "sha256:3b8c947d7fa173f70e40047d2c8d02835fb8416aeb5ae36def57d9ad15e2f906";
-    sha256 = "sha256-lKmpj8xU0Mlw13PwLbxiax6lOLeo0eg51Mtx4IXIV9s=";
+    imageDigest = "sha256:673dc4609a5672bc8e46069c86ffcea283a86b48d34a6c93d8da8c24a1b87571";
+    sha256 = "sha256-zrzTpSuhwwGzDRFYynAP++hCbJEnWGeC2wjCQQGEFrM=";
   };
   radarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/radarr";
