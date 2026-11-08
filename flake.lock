@@ -1455,11 +1455,11 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1794167586,
-        "narHash": "sha256-bP4VP40uNeCILNcAKrRUn1RM56uDWsR/BWtf6SbrXmk=",
+        "lastModified": 1794170491,
+        "narHash": "sha256-0pQfmZsYL+sLA0gxOebrI3noH6F59vjykOMMtxAb/bY=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "f4ebd42fe92eaf0cc48cdf320e3e6372f7178815",
+        "rev": "a4f8e5e69c81afd8d2b8be1bfb83d086ed28ee58",
         "type": "github"
       },
       "original": {
