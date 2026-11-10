@@ -41,8 +41,8 @@ in {
   };
   questarr = pin.mkPinnedImage {
     imageName = "ghcr.io/doezer/questarr";
-    imageDigest = "sha256:8b6a6df437aa3983a4ccffe164f3f33f664646c48cde05d263434e9768598621";
-    sha256 = "sha256-fASx0zSgpjQRVxQCI3YsQxRyWw0fXbN0uiuRUoY+zzo=";
+    imageDigest = "sha256:495a1648f1ad8dddd4c7f96b4bf817d9d061bfd5608ef520522f0d891415e972";
+    sha256 = "sha256-6yorp9qwMqzc/YKifmC7gwiYgHSlM1DBM6SKUHJKgB8=";
   };
 
   # --- downloaders ---
