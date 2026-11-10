@@ -13,6 +13,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  sops-activation:
+    name: SOPS activation (mount ordering)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Check SOPS with and without a persist mount
+        run: nix build .#checks.x86_64-linux.sopsActivationTest --no-link --print-build-logs
+
   job-dashboard:
     name: Job dashboard (HTTP + Chromium)
     runs-on: ubuntu-latest

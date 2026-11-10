@@ -1,5 +1,9 @@
 {config, lib, ...}: {
   sops = {
+    # Early activation runs before non-initrd filesystems such as /persist are
+    # mounted. The upstream unit orders decryption after local-fs.target and
+    # derives RequiresMountsFor from age.keyFile (also safe without /persist).
+    useSystemdActivation = true;
     age.keyFile = "${config.qgroget.secretAgeKeyPath}";
     defaultSopsFile = ../../secrets/secrets.yaml;
 
@@ -37,6 +41,6 @@
   # every boot. `z` only adjusts an existing file and is a no-op on hosts without
   # it, so this is safe on every host.
   systemd.tmpfiles.rules = [
-    "z /persist/var/lib/sops/age/keys.txt 0400 root root -"
+    "z ${config.sops.age.keyFile} 0400 root root -"
   ];
 }

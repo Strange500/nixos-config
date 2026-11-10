@@ -310,6 +310,9 @@
     checks.${system} = let
       pkgs = nixpkgs.legacyPackages.${system};
     in {
+      sopsActivationTest = import ./tests/sops-activation {
+        inherit pkgs nixpkgs sops-nix;
+      };
       hermesWebuiTest = import ./tests/hermes-webui {
         inherit pkgs;
         serverConfig = inputs.self.nixosConfigurations.Server.config;
