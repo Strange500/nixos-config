@@ -26,8 +26,8 @@ in {
   };
   bazarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/bazarr";
-    imageDigest = "sha256:7ef0e58216900dbce30b123e0eb65f5cb30e36f126de9474acdd2022fb069c54";
-    sha256 = "sha256-PBBA2CMOrNKDbjtRY/N+wAsRT0Bia++gc2DdC5nqthc=";
+    imageDigest = "sha256:832820dec70bce9e912c6eee7a95baf6551e03dbc63325a7208daaa455423752";
+    sha256 = "sha256-lvXUFr4NoFN6mOh1efotrrs5rAb41JurEybM6nUsmIc=";
   };
   prowlarr = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/prowlarr";
