@@ -157,10 +157,10 @@ in {
       serviceConfig = {
         Restart = "always";
         # Issue #64: github_token is now a SYSTEM sops secret mounted at
-        # /run/secrets/github_token by sops-nix.service; order the ExecStartPre
+        # /run/secrets/github_token by sops-install-secrets.service; order the ExecStartPre
         # after it so the token is materialized before dynamic-env is written.
-        After = ["honcho-api.service" "sops-nix.service"];
-        Requires = ["honcho-api.service"];
+        After = ["honcho-api.service" "sops-install-secrets.service"];
+        Requires = ["honcho-api.service" "sops-install-secrets.service"];
         ExecStartPre = [
           "+${pkgs.bash}/bin/bash -c 'mkdir -p /var/lib/hermes && touch /var/lib/hermes/dynamic-env'"
           "+${pkgs.bash}/bin/bash -c 'if [ -f ${config.sops.secrets."github_token".path} ]; then echo \"GH_TOKEN=$(cat ${config.sops.secrets."github_token".path})\" > /var/lib/hermes/dynamic-env; echo \"GITHUB_TOKEN=$(cat ${config.sops.secrets."github_token".path})\" >> /var/lib/hermes/dynamic-env; fi'"
