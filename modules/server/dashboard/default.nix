@@ -165,6 +165,7 @@ in {
 
   services.glances = {
     enable = true;
+    package = import ./glances.nix {inherit pkgs;};
     port = 61208;
   };
 
