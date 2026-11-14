@@ -1,0 +1,29 @@
+diff --git a/tests/conftest.py b/tests/conftest.py
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -49,1 +49,1 @@
+-SERVER_STARTUP_TIMEOUT = 15
++SERVER_STARTUP_TIMEOUT = 60
+@@ -95,1 +95,1 @@
+-def _wait_for_webserver(pid, timeout=SERVER_STARTUP_TIMEOUT):
++def _wait_for_webserver(pid, timeout=SERVER_STARTUP_TIMEOUT, port=SERVER_PORT):
+@@ -102,1 +102,1 @@
+-            if requests.get(f"{URL}/api/4/status", timeout=1).status_code == 200:
++            if requests.get(f"http://localhost:{port}/api/4/status", timeout=1).status_code == 200:
+diff --git a/tests/test_restful.py b/tests/test_restful.py
+--- a/tests/test_restful.py
++++ b/tests/test_restful.py
+@@ -67,3 +67,4 @@
+         pid = subprocess.Popen(args)
+-        print("Please wait 5 seconds...")
+-        time.sleep(5)
++        from conftest import _wait_for_webserver
++
++        _wait_for_webserver(pid)
+@@ -351,3 +352,4 @@
+         pid_cors = subprocess.Popen(shlex.split(cmdline))
+-        print("Please wait 5 seconds...")
+-        time.sleep(5)
++        from conftest import _wait_for_webserver
++
++        _wait_for_webserver(pid_cors, port=CORS_PORT)
