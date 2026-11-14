@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  images = import ../images.nix { inherit pkgs lib; };
+  images = import ../images.nix {inherit pkgs lib;};
   icons = {
     jellyfin = "sh-jellyfin";
     adguardhome = "sh-adguard-home";
@@ -136,19 +136,13 @@
 
   dashConfYml = yamlFormat.generate "dashy.yml" dashyConf;
 in {
-  qgroget.services = {
-    top = {
-      subdomain = "top";
-      url = "http://127.0.0.1:61208";
-      type = "private";
-    };
-  };
-
-  qgroget.services.eth = {
-    subdomain = "eth";
-    url = "http://127.0.0.1:8545";
-    type = "public";
-  };
+  # qgroget.services = {
+  #   top = {
+  #     subdomain = "top";
+  #     url = "http://127.0.0.1:61208";
+  #     type = "private";
+  #   };
+  # };
 
   qgroget.services.dashy.traefikDynamicConfig = {
     http.middlewares.dashy = {
@@ -163,10 +157,10 @@ in {
     };
   };
 
-  services.glances = {
-    enable = true;
-    port = 61208;
-  };
+  # services.glances = {
+  #   enable = false;
+  #   port = 61208;
+  # };
 
   virtualisation.quadlet = {
     containers = {
