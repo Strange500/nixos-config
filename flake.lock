@@ -1455,15 +1455,16 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1794348868,
-        "narHash": "sha256-DHHUKcGn8DEFaLqzDR8T5eIMSRHnfflQPpr5+L0yjaM=",
+        "lastModified": 1794642250,
+        "narHash": "sha256-7+2WcYzNzGfzNqHarmiCgGQfmZhpPBMxZ+x3ZWubqsg=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "230f97922ec8c6e7e5a0b74abc25dada395495ec",
+        "rev": "d22105f202c85079c80735601b4e417cdd4410f1",
         "type": "github"
       },
       "original": {
         "owner": "strange500",
+        "ref": "feat/modern-ascii-portfolio",
         "repo": "nextPortfolio",
         "type": "github"
       }

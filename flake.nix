@@ -76,7 +76,7 @@
     };
 
     portfolio = {
-      url = "github:strange500/nextPortfolio";
+      url = "github:strange500/nextPortfolio/feat/modern-ascii-portfolio";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -170,20 +170,18 @@
     # Desktop-specific modules
     desktopModules = [
       impermanence.nixosModules.impermanence
-      (
-        {pkgs, ...}: {
-          nixpkgs.overlays = [
-            rust-overlay.overlays.default
-            (final: prev: {
-              my-rust = prev.rust-bin.stable.latest.default.override {
-                extensions = ["rust-src"];
-                targets = ["wasm32-unknown-unknown"];
-              };
-            })
-          ];
-          environment.systemPackages = [pkgs.my-rust];
-        }
-      )
+      ({pkgs, ...}: {
+        nixpkgs.overlays = [
+          rust-overlay.overlays.default
+          (final: prev: {
+            my-rust = prev.rust-bin.stable.latest.default.override {
+              extensions = ["rust-src"];
+              targets = ["wasm32-unknown-unknown"];
+            };
+          })
+        ];
+        environment.systemPackages = [pkgs.my-rust];
+      })
       protontricksTestSkip
       khalManOutputFix
     ];
@@ -258,7 +256,10 @@
       nixpkgs.overlays = [
         (final: prev: {
           khal = prev.khal.overridePythonAttrs (old: {
-            outputs = ["out" "doc"];
+            outputs = [
+              "out"
+              "doc"
+            ];
             sphinxBuilders = ["html"];
           });
         })
@@ -274,16 +275,18 @@
     websockifyJwcryptoTestSkip = {
       nixpkgs.overlays = [
         (final: prev: {
-          python3Packages = prev.python3Packages.overrideScope (_pfinal: pprev: {
-            websockify = pprev.websockify.overridePythonAttrs (old: {
-              disabledTests =
-                (old.disabledTests or [])
-                ++ [
-                  "test_symmetric_jws_token_plugin"
-                  "test_symmetric_jws_token_plugin_with_illigal_key_exception"
-                ];
-            });
-          });
+          python3Packages = prev.python3Packages.overrideScope (
+            _pfinal: pprev: {
+              websockify = pprev.websockify.overridePythonAttrs (old: {
+                disabledTests =
+                  (old.disabledTests or [])
+                  ++ [
+                    "test_symmetric_jws_token_plugin"
+                    "test_symmetric_jws_token_plugin_with_illigal_key_exception"
+                  ];
+              });
+            }
+          );
           # Rebuild the interpreter reference from the overridden set so
           # `python3.pkgs` is the patched scope (same interpreter drv).
           python3 = final.python3Packages.python;
