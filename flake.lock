@@ -1479,15 +1479,16 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1794348868,
-        "narHash": "sha256-DHHUKcGn8DEFaLqzDR8T5eIMSRHnfflQPpr5+L0yjaM=",
+        "lastModified": 1794751049,
+        "narHash": "sha256-4rfOs6x30gNSqfnKSRm/JSE/wtnm1UPAwOPMHUGvshQ=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "230f97922ec8c6e7e5a0b74abc25dada395495ec",
+        "rev": "7167e822ef525f1884f0eb76058f2b7ffe9f7ea2",
         "type": "github"
       },
       "original": {
         "owner": "strange500",
+        "ref": "feat/narrative-cube-portfolio",
         "repo": "nextPortfolio",
         "type": "github"
       }

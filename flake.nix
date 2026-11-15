@@ -81,10 +81,10 @@
     };
 
     # Private preview instance (test-portfolio.qgroget.com, mTLS) served
-    # rootless under the `hermes` user. Pinned to nextPortfolio main so the
-    # current CV/portfolio changes can be reviewed before promoting prod.
+    # rootless under the `hermes` user. Pin PR #41's reviewed revision here;
+    # production (`portfolio`) remains unchanged.
     portfolio-test = {
-      url = "github:strange500/nextPortfolio";
+      url = "github:strange500/nextPortfolio/feat/narrative-cube-portfolio";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
