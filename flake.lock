@@ -1455,16 +1455,15 @@
         "systems": "systems_6"
       },
       "locked": {
-        "lastModified": 1794642250,
-        "narHash": "sha256-7+2WcYzNzGfzNqHarmiCgGQfmZhpPBMxZ+x3ZWubqsg=",
+        "lastModified": 1794783926,
+        "narHash": "sha256-+K3qHL3CkGRVJrRjLRN30RvkXxMGubIlNVUT8LzNewY=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "d22105f202c85079c80735601b4e417cdd4410f1",
+        "rev": "342fb51e19d00d88ae8072436cdf380653b2c107",
         "type": "github"
       },
       "original": {
         "owner": "strange500",
-        "ref": "feat/modern-ascii-portfolio",
         "repo": "nextPortfolio",
         "type": "github"
       }
@@ -1488,7 +1487,6 @@
       },
       "original": {
         "owner": "strange500",
-        "ref": "feat/narrative-cube-portfolio",
         "repo": "nextPortfolio",
         "rev": "2e91f99c4be4a87c72e926cfcea92f34e507d177",
         "type": "github"

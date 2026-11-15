@@ -76,7 +76,7 @@
     };
 
     portfolio = {
-      url = "github:strange500/nextPortfolio/feat/modern-ascii-portfolio";
+      url = "github:strange500/nextPortfolio";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
