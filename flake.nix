@@ -81,10 +81,10 @@
     };
 
     # Private preview instance (test-portfolio.qgroget.com, mTLS) served
-    # rootless under the `hermes` user. Pinned to nextPortfolio main so the
-    # current CV/portfolio changes can be reviewed before promoting prod.
+    # rootless under the `hermes` user. Exact reviewed PR #41 revision;
+    # the production portfolio input stays unchanged.
     portfolio-test = {
-      url = "github:strange500/nextPortfolio";
+      url = "github:strange500/nextPortfolio/bc3e66fb362b7f66a1a6f93f70a6018f98136ed4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
