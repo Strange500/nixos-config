@@ -84,7 +84,7 @@
     # rootless under the `hermes` user. Exact reviewed PR #41 revision;
     # the production portfolio input stays unchanged.
     portfolio-test = {
-      url = "github:strange500/nextPortfolio/1143252cfe1741fb47396f8c279522d27fa0c0df";
+      url = "github:strange500/nextPortfolio/2e91f99c4be4a87c72e926cfcea92f34e507d177";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
