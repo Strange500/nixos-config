@@ -53,8 +53,8 @@ in {
   };
   qbittorrent = pin.mkPinnedImage {
     imageName = "ghcr.io/linuxserver/qbittorrent";
-    imageDigest = "sha256:b522f9f4b769f8f36d49d22d5eb6a92e9aa18904c6a1830b1439df511ec21983";
-    sha256 = "sha256-dHWpXghY7M6N71IpLNW06fHIADiYEtvGw3hjb38d2Fc=";
+    imageDigest = "sha256:3d4c4545d51a690a0df15a2ff99038823a88a9822df8e794526447b9afbd7384";
+    sha256 = "sha256-jBlHb95ksquCG6vYyP8ZPLSiNXE1WsZQjTdqxHx4thI=";
   };
 
   # --- hermes ---
