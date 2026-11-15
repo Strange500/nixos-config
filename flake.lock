@@ -1488,6 +1488,7 @@
       },
       "original": {
         "owner": "strange500",
+        "ref": "feat/narrative-cube-portfolio",
         "repo": "nextPortfolio",
         "rev": "2e91f99c4be4a87c72e926cfcea92f34e507d177",
         "type": "github"
