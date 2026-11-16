@@ -81,10 +81,10 @@
     };
 
     # Private preview instance (test-portfolio.qgroget.com, mTLS) served
-    # rootless under the `hermes` user. Exact reviewed PR #41 revision;
+    # rootless under the `hermes` user. Scroll-scene portfolio PR #42;
     # the production portfolio input stays unchanged.
     portfolio-test = {
-      url = "github:strange500/nextPortfolio/2e91f99c4be4a87c72e926cfcea92f34e507d177";
+      url = "github:strange500/nextPortfolio/56d8eb87448f7a76007a0131e35e829da07e60e2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
