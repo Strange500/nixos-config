@@ -60,17 +60,18 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1788979912,
-        "narHash": "sha256-xlbKUF3pulsjwQPshWwm1Ih0jHLvfnYcHyKkXf3gk54=",
+        "lastModified": 1794864276,
+        "narHash": "sha256-Ubm0SrQvtGy0SkGhvhCE6JiT9ruZuWvmd7wkRK8IqBA=",
         "owner": "Strange500",
         "repo": "ascii-cube-rs",
-        "rev": "5fd2c3101a1efd0c2acc926de0303ba7f8f3ab6b",
+        "rev": "e1945f26a858c86c2281bfde7a9706e1dbf36fe3",
         "type": "github"
       },
       "original": {
         "owner": "Strange500",
         "repo": "ascii-cube-rs",
-        "type": "github"
+        "type": "github",
+        "rev": "e1945f26a858c86c2281bfde7a9706e1dbf36fe3"
       }
     },
     "base16": {
@@ -1478,17 +1479,17 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1794859064,
-        "narHash": "sha256-ICW8UFqEVLjQO1msiRoBpRkXUxugibYB4uvtlp8Cjaw=",
+        "lastModified": 1794865776,
+        "narHash": "sha256-CXWe0MKddBMRo+vYvEdrbl1g9QiJGg1D95V8x/mkqSI=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "56d8eb87448f7a76007a0131e35e829da07e60e2",
+        "rev": "9fef8fe49ab673a82b22032b7072d94386c61fa4",
         "type": "github"
       },
       "original": {
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "56d8eb87448f7a76007a0131e35e829da07e60e2",
+        "rev": "9fef8fe49ab673a82b22032b7072d94386c61fa4",
         "type": "github"
       }
     },
