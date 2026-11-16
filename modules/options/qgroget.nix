@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   config,
   ...
 }: {
@@ -162,6 +163,25 @@
               type = lib.types.bool;
               default = false;
               description = "Enable VirtualBox support.";
+            };
+            opencodeHermes = {
+              enable = lib.mkEnableOption "experimental OpenCode chat through the remote Hermes API";
+              package = lib.mkOption {
+                type = lib.types.package;
+                default = pkgs.callPackage ../apps/opencode-hermes-package.nix {};
+                defaultText = lib.literalExpression "pkgs.callPackage ../apps/opencode-hermes-package.nix {}";
+                description = "OpenCode CLI; default pins tested 1.19.5 (x86_64-linux). Other versions/platforms require explicit validation.";
+              };
+              baseUrl = lib.mkOption {
+                type = lib.types.str;
+                default = "http://127.0.0.1:8642/v1";
+                description = "Hermes API URL ending in /v1. HTTPS or loopback HTTP only; validated at launch. No credentials here.";
+              };
+              modelId = lib.mkOption {
+                type = lib.types.str;
+                default = "hermes-agent";
+                description = "Remote Hermes model/profile ID; overridable at runtime with HERMES_MODEL_ID.";
+              };
             };
             acp = lib.mkOption {
               type = lib.types.submodule {
