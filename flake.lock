@@ -1479,17 +1479,17 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1794865776,
-        "narHash": "sha256-CXWe0MKddBMRo+vYvEdrbl1g9QiJGg1D95V8x/mkqSI=",
+        "lastModified": 1794868738,
+        "narHash": "sha256-RpIBVYdf5P3LU3HUnpw77HxUsNjl53kHD5bnA7CSy4Y=",
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "9fef8fe49ab673a82b22032b7072d94386c61fa4",
+        "rev": "f0e5ead6e65ad0f6d3ec0d3b9e83d3a06dc468ec",
         "type": "github"
       },
       "original": {
         "owner": "strange500",
         "repo": "nextPortfolio",
-        "rev": "9fef8fe49ab673a82b22032b7072d94386c61fa4",
+        "rev": "f0e5ead6e65ad0f6d3ec0d3b9e83d3a06dc468ec",
         "type": "github"
       }
     },
