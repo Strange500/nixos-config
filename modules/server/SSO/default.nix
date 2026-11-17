@@ -193,10 +193,10 @@ in {
       discovery_signed_response_key_id = "";
       require_pushed_authorization_requests = false;
       lifespans = {
-        access_token = "1h";
+        access_token = "2d";
         authorize_code = "1m";
-        id_token = "1h";
-        refresh_token = "90m";
+        id_token = "2d";
+        refresh_token = "2d";
       };
       cors = {
         endpoints = [
