@@ -84,7 +84,7 @@
     # rootless under the `hermes` user. Scroll-scene portfolio PR #42;
     # the production portfolio input stays unchanged.
     portfolio-test = {
-      url = "github:strange500/nextPortfolio/0918cae6395be805bee8a706e08e6936c9474d5b";
+      url = "github:strange500/nextPortfolio/480ea98e1ceb0f578444b54baaebfe588369a8b8";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
