@@ -13,7 +13,7 @@
     };
     vsix = pkgs.fetchurl {
       url = "https://github.com/AvengeMedia/DankMaterialShell/raw/master/quickshell/matugen/dms-theme.vsix";
-      sha256 = "01i92ryr2s9v6bpbpf9q7x2sajm7apik4s6g6wzhigxa13bp339h";
+      sha256 = "0qm47ywkhj9sjq8kxwxwqf7gvxaiz6mfi6qb3kgry7x2vb5szwzq";
     };
   };
 
