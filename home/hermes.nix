@@ -5,6 +5,7 @@
 }: {
   imports = [
     ./modules/traefik-router.nix
+    ./tempo
     inputs.quadlet-nix.homeManagerModules.quadlet
   ];
 

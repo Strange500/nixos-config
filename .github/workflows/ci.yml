@@ -13,6 +13,21 @@ on:
   workflow_dispatch:
 
 jobs:
+  tempo:
+    name: Tempo Home Manager deployment contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - name: Evaluate private route, credentials and persistent service
+        run: python3 tests/tempo/test_deployment.py -v
+      - name: Validate release staging script
+        run: bash -n home/tempo/stage-release.sh
+
   sops-activation:
     name: SOPS activation (mount ordering)
     runs-on: ubuntu-latest
