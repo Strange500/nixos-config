@@ -36,8 +36,8 @@ in {
   };
   qui = pin.mkPinnedImage {
     imageName = "ghcr.io/autobrr/qui";
-    imageDigest = "sha256:a5b2f5faf6388cce257137c88e4b189458fd799cf9119ed476c980e5a69341b2";
-    sha256 = "sha256-OQuCyII9P8BIsx6uzJrbixhYCMksFd9qQy8OaS4e+k4=";
+    imageDigest = "sha256:ecfd0f508f951f038b590f4fcfd33177d2ce0a8d4d33d86864b0d96e917caf59";
+    sha256 = "sha256-rvm+Y2RHr5t62eLFducDL1TwlwTKY1yZSIJr+G+mxPk=";
   };
   questarr = pin.mkPinnedImage {
     imageName = "ghcr.io/doezer/questarr";
