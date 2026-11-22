@@ -23,8 +23,7 @@ pkgs.stdenvNoCC.mkDerivation {
 
   installPhase = ''
     runHook preInstall
-    install -Dm644 -t $out/share/jellarr $src
-    mv $out/share/jellarr/jellarr-v0.1.0.cjs $out/share/jellarr/bundle.cjs
+    install -Dm644 $src $out/share/jellarr/bundle.cjs
     makeWrapper ${lib.getExe pkgs.nodejs_24} $out/bin/jellarr \
       --add-flags $out/share/jellarr/bundle.cjs
     runHook postInstall
