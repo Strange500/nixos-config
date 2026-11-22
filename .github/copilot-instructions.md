@@ -23,7 +23,7 @@ Key workflows and safe commands
 
 Repository-specific patterns and conventions (do not guess — follow these)
 - Secrets are stored encrypted in `secrets/secrets.yaml` and managed with `sops` + `sops-nix`. Do NOT attempt to commit plaintext secrets. Keep changes to `secrets/` minimal and only when using the existing SOPS workflow.
-- The flake pulls many inputs (see top of `flake.nix`). New features should prefer composing existing inputs (e.g., `sops-nix`, `impermanence`, `declarative-jellyfin`) instead of adding ad-hoc packages.
+- The flake pulls many inputs (see top of `flake.nix`). New features should prefer composing existing inputs (e.g., `sops-nix`, `impermanence`, `jellarr`) instead of adding ad-hoc packages.
 - Desktop vs Server: `flake.nix` builds different module lists for desktop (`desktopModules`) and server (`serverModules`). When adding services, prefer `modules/server/*` and import through `flake.nix`'s `serverModules`.
 - Per-service conventions: services are often defined under `modules/server/*/<service>/default.nix` and expose attributes as `qgroget.services.<name>`. Example: Immich configuration is in `modules/server/media/photo/default.nix` and registers `qgroget.services.immich` and `systemd.services."immich-server"`.
 

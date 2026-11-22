@@ -59,6 +59,7 @@ in {
   "server/authelia/storage-encryption-key" = fake;
   "server/jellyfin/user/admin/password" = fake;
   "server/jellyfin/user/strange/password" = fake;
+  "server/jellarr/env" = "JELLARR_API_KEY=fake-test-value\n";
 
   # Vaultwarden mounts this one as /data/config.json, so it must be VALID JSON
   # or the container's config parser rejects it.

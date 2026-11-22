@@ -4,11 +4,8 @@
   ...
 }: let
   cfg = config.qgroget.server.jellyfin;
-  commonFetchers = {
-    metadata = ["The Open Movie Database" "TheMovieDb"];
-    images = ["The Open Movie Database" "TheMovieDb"];
-  };
 in {
+  imports = [./jellarr.nix];
   options.qgroget.server.jellyfin = {
     enable = lib.mkEnableOption "Custom Jellyfin setup with declarative config";
     user = lib.mkOption {
@@ -52,36 +49,7 @@ in {
       };
       description = "Paths for media libraries.";
     };
-    users = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.submodule {
-        options = {
-          mutable = lib.mkOption {
-            type = lib.types.bool;
-            default = true;
-          };
-          hashedPasswordSecret = lib.mkOption {type = lib.types.str;};
-          permissions = lib.mkOption {
-            type = lib.types.attrs;
-            default = {};
-          };
-        };
-      });
-      default = {
-        admin = {
-          mutable = false;
-          hashedPasswordSecret = "server/jellyfin/user/admin/password";
-          permissions = {isAdministrator = true;};
-        };
-        # strange = {
-        #   mutable = true;
-        #   hashedPasswordSecret = "server/jellyfin/user/strange/password";
-        #   permissions = {
-        #     isAdministrator = false;
-        #     enableAllFolders = false;
-        #   };
-        # };
-      };
-    };
+
     allowDLNA = lib.mkOption {
       type = lib.types.bool;
       default = true;
