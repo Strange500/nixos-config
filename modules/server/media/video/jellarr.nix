@@ -1,9 +1,11 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.qgroget.server.jellyfin;
+  jellarr = pkgs.callPackage ./jellarr-package.nix {};
 in {
   config = lib.mkIf cfg.enable {
     # A separate, age-encrypted dotenv file avoids requiring the private age key
@@ -43,6 +45,9 @@ in {
       wants = ["jellyfin.service"];
       wantedBy = ["multi-user.target"];
       serviceConfig = {
+        # Upstream's module hardcodes its own source build; use the pinned
+        # release bundle instead (see jellarr-package.nix for the reason).
+        ExecStart = lib.mkForce "${jellarr}/bin/jellarr";
         UMask = "0077";
         NoNewPrivileges = true;
         PrivateTmp = true;

@@ -36,6 +36,17 @@ example server identity and network settings); those stay in Jellyfin's persiste
 configuration. Password hashes cannot be used as Jellarr plaintext passwords.
 No full private-state snapshot was possible with the available permissions.
 
+## Packaging
+
+The `jellarr` flake input supplies the module (typed config schema and unit
+generation). Its bundled `nix/package.nix` pins a `fetchPnpmDeps` hash that no
+longer matches current nixpkgs — CI failed with a hash mismatch — so
+`modules/server/media/video/jellarr-package.nix` wraps the **official v0.1.0
+release bundle** instead, pinned by sha256. That artifact is byte-identical to a
+`pnpm build` of the pinned commit (verified locally), so the executed code is the
+reviewed revision. The module's `ExecStart` is overridden accordingly; its
+`bootstrap` stays disabled.
+
 ## Secret storage
 
 `secrets/jellarr.env` is a SOPS-encrypted dotenv file, encrypted to the **existing**
