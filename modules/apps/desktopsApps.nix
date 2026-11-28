@@ -6,6 +6,8 @@
   hostname,
   ...
 }: {
+  imports = [./opencode-hermes.nix];
+
   config = lib.mkMerge [
     (import ./oh-my-zsh/oh-my-zsh.nix {inherit config lib pkgs inputs;})
     (
