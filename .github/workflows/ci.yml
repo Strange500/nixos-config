@@ -132,3 +132,33 @@ jobs:
 
       - name: Build ${{ matrix.host }}
         run: nix build .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel --show-trace
+
+  portfolio-preview:
+    name: Portfolio preview (package + HTTP/WASM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+      - uses: cachix/cachix-action@v14
+        with:
+          name: strange500
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      - name: Build and smoke-test only the pinned preview package
+        shell: bash
+        run: |
+          set -euo pipefail
+          preview_pkg=$(nix build --impure --no-link --print-build-logs --print-out-paths --expr '(builtins.getFlake (toString ./.)).inputs.portfolio-test.packages.x86_64-linux.default')
+          HOSTNAME=127.0.0.1 PORT=3002 "$preview_pkg/bin/portfolio" &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          curl --fail --silent --show-error --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:3002/fr -o "$RUNNER_TEMP/portfolio-fr.html"
+          cmp "$RUNNER_TEMP/portfolio-fr.html" "$preview_pkg/.next/server/app/fr.html"
+          wasm_asset=$(find "$preview_pkg/.next/static/media" -maxdepth 1 -name '*.wasm' -print -quit)
+          test -n "$wasm_asset"
+          curl --fail --silent --show-error -D "$RUNNER_TEMP/portfolio-wasm.headers" "http://127.0.0.1:3002/_next/static/media/$(basename "$wasm_asset")" -o "$RUNNER_TEMP/portfolio.wasm"
+          cmp "$RUNNER_TEMP/portfolio.wasm" "$wasm_asset"
+          grep -qi '^content-type: application/wasm' "$RUNNER_TEMP/portfolio-wasm.headers"
