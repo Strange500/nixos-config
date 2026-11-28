@@ -58,8 +58,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    declarative-jellyfin = {
-      url = "github:Sveske-Juice/declarative-jellyfin";
+    jellarr = {
+      # Includes upstream's compatibility fixes for current nixpkgs/pnpm.
+      url = "github:venkyr77/jellarr/de530bc0117eb4018598a67245e748623a6ce6dc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -121,7 +122,7 @@
 
   outputs = {
     nixpkgs,
-    declarative-jellyfin,
+    jellarr,
     home-manager,
     stylix,
     disko,
@@ -189,7 +190,7 @@
     # Server-specific modules
     serverModules = [
       impermanence.nixosModules.impermanence
-      declarative-jellyfin.nixosModules.default
+      jellarr.nixosModules.default
       quadlet-nix.nixosModules.quadlet
       celler.nixosModules.cellerd
       # {
@@ -326,7 +327,7 @@
       };
       jellyfinTest = import ./tests/jellyfin {
         inherit pkgs;
-        inherit declarative-jellyfin;
+        inherit jellarr;
       };
       jellyseerrTest = import ./tests/jellyseerr {
         inherit pkgs;
